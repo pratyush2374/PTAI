@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    background-color: rgb(229, 229, 0);
+}
+
+.container {
+    display: flex;
+    border-radius: 10px;
+    box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.53);   
+    overflow: hidden;
+    width: 900px;
+    height: auto;
+    margin: 20px;
+}
+
+.image-section {
+    flex: 1;
+    background: rgb(255, 227, 227);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.image-section img {
+    width: 80%;
+    border-radius: 10px;
+}
+
+.form-section {
+    flex: 1;
+    padding: 40px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.form-section h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-section form {
+    width: 100%;
+}
+
+.form-section label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    text-align: left;
+}
+
+.form-section input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.form-section button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f8e71c;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-section button:hover {
+    background-color: #e6d017;
+}
+
+.form-section p {
+    margin-top: 15px;
+    color: #666;
+}
+
+.form-section a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.form-section a:hover{
+    text-decoration: underline;
+}
+
+.form-section .social-login {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.social-login p {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.google{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid gray;
+    width: fit-content;
+    margin: auto;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.google:hover{
+    background-color: #dcdcdc;
+}
+
+/* Add the media query at the end of your CSS */
+
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 85%;
+        padding: 10px;
+        margin: 50px 0;
+    }
+
+    .image-section {
+        width: 100%;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .form-section input {
+        width: 100%;
+        box-sizing: border-box; 
+    }
+}
+

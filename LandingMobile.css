@@ -1,0 +1,148 @@
+@media (max-width: 768px) {
+    .innerNav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .links {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+    .links a {
+        margin: 10px 0;
+    }
+
+    .nameAndIcon {
+        margin-bottom: 10px;
+    }
+
+    .login {
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+
+    .hero1 {
+        padding: 20px;
+    }
+
+    .slogan h1 {
+        font-size: 40px;
+    }
+
+    .slogan p {
+        font-size: 28px;
+    }
+
+    .bmi {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .bmiInner {
+        flex-direction: column;
+    }
+
+    .calBMI {
+        width: 100%;
+        margin: 0;
+    }
+
+    .outerBar {
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .fitness-goals {
+        width: 90%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .goals-list {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .goal-item {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .show-plan {
+        width: 100%;
+        padding: 12px 20px;
+    }
+
+    .features {
+        padding: 20px;
+    }
+
+    .features-box {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .feature-list {
+        flex-direction: column;
+    }
+
+    .feature-item {
+        flex: 1 1 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .about-us {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .about-image {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .contact-us {
+        padding: 20px;
+    }
+
+    .contact-form-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .contact-form {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .contact-image {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-logo {
+        margin-bottom: 20px;
+    }
+
+    .footer-links, .footer-social {
+        margin-bottom: 20px;
+    }
+
+    .footer-links ul, .footer-social ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-social ul li {
+        margin-bottom: 10px;
+    }
+}
