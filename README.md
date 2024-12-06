@@ -4,8 +4,6 @@
 
 PTAI is a cutting-edge personal fitness web application that harnesses the power of artificial intelligence to deliver personalized fitness and wellness solutions. Our mission is to revolutionize how individuals approach their health and fitness journey by providing intelligent, adaptive, and tailored guidance.
 
-![PTAI Banner](https://via.placeholder.com/1200x400?text=PTAI+Personal+Trainer+AI)
-
 ## ✨ Key Features
 
 ### 🤖 Personalized AI-Driven Fitness
@@ -71,8 +69,7 @@ npm run dev
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before getting started.
-
+Contributions are welcome! 
 
 ## 🌟 Support
 
