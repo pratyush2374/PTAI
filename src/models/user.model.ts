@@ -11,7 +11,6 @@ interface IUser extends Document {
     password: string;
     googleId?: string;
     profilePic?: string;
-    dob: Date;
     age: number;
     gender: string;
     height: number;
@@ -32,7 +31,6 @@ const UserSchema: Schema<IUser> = new Schema(
         password: { type: String, required: true },
         googleId: { type: String, unique: true, sparse: true },
         profilePic: { type: String },
-        dob: { type: Date, required: true },
         age: { type: Number, required: true },
         gender: { type: String, required: true },
         height: { type: Number, required: true },

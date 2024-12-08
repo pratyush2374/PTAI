@@ -9,28 +9,36 @@ const signupSchema = z.object({
     userName: z.string().min(1, "Username is required"),
     email: z.string().email("Invalid email format"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    dob: z.coerce.date({
-        required_error: "Date of birth is required",
-        invalid_type_error: "Invalid date of birth",
-    }),
     height: z.number().positive("Height must be positive"),
     weight: z.number().positive("Weight must be positive"),
+    age : z.number().positive("Age must be positive"),
+    gender: z
+        .enum(["male", "female", "other"])
+        .refine((value) => ["male", "female", "other"].includes(value), {
+            message: "Invalid gender",
+        }),
     fitnessGoal: z.string().min(1, "Fitness goal is required"),
     pace: z.string().min(1, "Pace is required"),
     activityLevel: z.string().min(1, "Activity level is required"),
     availableEquipments: z.array(z.string()).optional(),
+    exerciseExperience: z
+        .enum(["beginner", "intermediate", "advanced"])
+        .refine(
+            (value) => ["beginner", "intermediate", "advanced"].includes(value),
+            {
+                message: "Invalid experience level",
+            }
+        ),
+    preferredExerciseType: z.array(z.string()).optional(), // Cardio, Strength training, Yoga, etc.
+    preferredWorkoutDuration: z.string().optional(), // e.g., "30 minutes", "1 hour"
+    exerciseFrequency: z.string().optional(), // e.g., "3 times a week"
+    macronutrientPreferences: z.array(z.string()).optional(), // High protein, Balanced, Low carb, etc.
+    dietaryPreferences: z.array(z.string()).optional(), // e.g., "Vegetarian", "Vegan", etc.
+    healthProblems: z.array(z.string()).optional(),
+    allergies: z.array(z.string()).optional(),
 });
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
-    if (req.method !== "POST") {
-        return res
-            .status(405)
-            .json({ success: false, message: "Method not allowed" });
-    }
-
+export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     await connectToDB();
 
     try {
@@ -39,13 +47,22 @@ export default async function handler(
             userName,
             email,
             password,
-            dob,
             height,
             weight,
+            age,
+            gender,
             fitnessGoal,
             pace,
             activityLevel,
             availableEquipments,
+            exerciseExperience,
+            preferredExerciseType,
+            preferredWorkoutDuration,
+            exerciseFrequency,
+            macronutrientPreferences,
+            dietaryPreferences,
+            healthProblems,
+            allergies,
         } = signupSchema.parse(req.body);
 
         const existingUser = await User.findOne({ email });
@@ -63,14 +80,22 @@ export default async function handler(
             userName,
             email,
             password: hashedPassword,
-            dob,
-            age: new Date().getFullYear() - new Date(dob).getFullYear(),
+            age,
             height,
             weight: [{ date: new Date().toISOString(), weight }],
+            gender,
             fitnessGoal,
             pace,
             activityLevel,
             availableEquipments: availableEquipments || [],
+            exerciseExperience,
+            preferredExerciseType: preferredExerciseType || [],
+            preferredWorkoutDuration,
+            exerciseFrequency,
+            macronutrientPreferences: macronutrientPreferences || [],
+            dietaryPreferences: dietaryPreferences || [],
+            healthProblems: healthProblems || [],
+            allergies: allergies || [],
         });
 
         await newUser.save();
@@ -93,4 +118,4 @@ export default async function handler(
             message: "Error registering user",
         });
     }
-}
+};
