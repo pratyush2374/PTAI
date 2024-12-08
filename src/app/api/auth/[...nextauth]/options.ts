@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.fullName = user.fullName;
                 token.userName = user.userName;
-                token.isVerified = user.isVerified;
+                token.email = user.email;
             }
             return token;
         },
@@ -115,7 +115,7 @@ export const authOptions: NextAuthOptions = {
                 session.user._id = token._id;
                 session.user.fullName = token.fullName;
                 session.user.userName = token.userName;
-                session.user.isVerified = token.isVerified;
+                session.user.email = token.email;
             }
             return session;
         },

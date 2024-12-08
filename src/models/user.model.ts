@@ -1,10 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { IWeight, WeightSchema } from "./weight.model";
+
+//Just in case if error happens
 import { IUserPreferences } from "./userPreferences.model";
 import { IUserStats } from "./userStats.model";
 import { IHealthAndDietary } from "./healthAndDietary.model";
-import { IWeight, WeightSchema } from "./weight.model";
 
-interface IUser extends Document {
+export interface IUser extends Document {
     fullName: string;
     userName: string;
     email: string;
@@ -15,9 +17,9 @@ interface IUser extends Document {
     gender: string;
     height: number;
     weight: IWeight[];
-    preferences: IUserPreferences;
-    stats: IUserStats;
-    healthAndDietary: IHealthAndDietary;
+    preferences: mongoose.Schema.Types.ObjectId;
+    stats: mongoose.Schema.Types.ObjectId;
+    healthAndDietary: mongoose.Schema.Types.ObjectId;
     dietId: mongoose.Schema.Types.ObjectId;
     exerciseId: mongoose.Schema.Types.ObjectId;
     userStatsId: mongoose.Schema.Types.ObjectId;

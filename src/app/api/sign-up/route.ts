@@ -1,96 +1,108 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import User from "@/models/user.model";
+import { NextRequest, NextResponse } from "next/server";
 import connectToDB from "@/lib/dbConnection";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import signupSchema from "@/schemas/signup.schema";
+import User from "@/models/user.model";
+import UserPreferences from "@/models/userPreferences.model";
+import HealthAndDietary from "@/models/healthAndDietary.model";
 
-const signupSchema = z.object({
-    fullName: z.string().min(1, "Full name is required"),
-    userName: z.string().min(1, "Username is required"),
-    email: z.string().email("Invalid email format"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    height: z.number().positive("Height must be positive"),
-    weight: z.number().positive("Weight must be positive"),
-    age : z.number().positive("Age must be positive"),
-    gender: z
-        .enum(["male", "female", "other"])
-        .refine((value) => ["male", "female", "other"].includes(value), {
-            message: "Invalid gender",
-        }),
-    fitnessGoal: z.string().min(1, "Fitness goal is required"),
-    pace: z.string().min(1, "Pace is required"),
-    activityLevel: z.string().min(1, "Activity level is required"),
-    availableEquipments: z.array(z.string()).optional(),
-    exerciseExperience: z
-        .enum(["beginner", "intermediate", "advanced"])
-        .refine(
-            (value) => ["beginner", "intermediate", "advanced"].includes(value),
-            {
-                message: "Invalid experience level",
-            }
-        ),
-    preferredExerciseType: z.array(z.string()).optional(), // Cardio, Strength training, Yoga, etc.
-    preferredWorkoutDuration: z.string().optional(), // e.g., "30 minutes", "1 hour"
-    exerciseFrequency: z.string().optional(), // e.g., "3 times a week"
-    macronutrientPreferences: z.array(z.string()).optional(), // High protein, Balanced, Low carb, etc.
-    dietaryPreferences: z.array(z.string()).optional(), // e.g., "Vegetarian", "Vegan", etc.
-    healthProblems: z.array(z.string()).optional(),
-    allergies: z.array(z.string()).optional(),
-});
-
-export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
+export async function POST(req: NextRequest) {
     await connectToDB();
 
     try {
+        const body = await req.json();
         const {
+            // User
             fullName,
             userName,
             email,
             password,
-            height,
-            weight,
             age,
             gender,
-            fitnessGoal,
-            pace,
+            height,
+            weight,
+
+            // UserPreferences
             activityLevel,
-            availableEquipments,
-            exerciseExperience,
             preferredExerciseType,
-            preferredWorkoutDuration,
+            exerciseExperience,
+            workoutDuration,
             exerciseFrequency,
             macronutrientPreferences,
+            fitnessGoal,
+            pace,
+            availableEquipments,
+
+            // HealthAndDietary
             dietaryPreferences,
             healthProblems,
             allergies,
-        } = signupSchema.parse(req.body);
+        } = signupSchema.parse(body);
 
-        const existingUser = await User.findOne({ email });
+        // Check for existing user
+        const existingUserByEmail = await User.findOne({ email });
+        const existingUserByUsername = await User.findOne({ userName });
 
-        if (existingUser) {
-            return res
-                .status(400)
-                .json({ success: false, message: "User already exists" });
+        if (existingUserByEmail) {
+            return NextResponse.json(
+                { success: false, message: "Email already exists" }, 
+                { status: 400 }
+            );
         }
 
+        if (existingUserByUsername) {
+            return NextResponse.json(
+                { success: false, message: "Username already exists" }, 
+                { status: 400 }
+            );
+        }
+
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create associated documents
+        const newUserPreferences = new UserPreferences({
+            activityLevel,
+            preferredExerciseType: preferredExerciseType || [],
+            exerciseExperience,
+            workoutDuration,
+            exerciseFrequency,
+            macronutrientPreferences: macronutrientPreferences || [],
+            fitnessGoals: [fitnessGoal],
+            pace,
+            availableEquipments: availableEquipments || [],
+        });
+
+        const newHealthAndDietary = new HealthAndDietary({
+            dietaryPreferences: dietaryPreferences || [],
+            healthProblems: healthProblems || [],
+            allergies: allergies || [],
+        });
+
+        // Save associated documents
+        await newUserPreferences.save();
+        await newHealthAndDietary.save();
+
+        // Create new user
         const newUser = new User({
             fullName,
             userName,
             email,
             password: hashedPassword,
             age,
+            gender,
             height,
             weight: [{ date: new Date().toISOString(), weight }],
-            gender,
+            preferences: newUserPreferences._id,
+            healthAndDietary: newHealthAndDietary._id,
             fitnessGoal,
             pace,
             activityLevel,
             availableEquipments: availableEquipments || [],
             exerciseExperience,
             preferredExerciseType: preferredExerciseType || [],
-            preferredWorkoutDuration,
+            workoutDuration,
             exerciseFrequency,
             macronutrientPreferences: macronutrientPreferences || [],
             dietaryPreferences: dietaryPreferences || [],
@@ -98,24 +110,38 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
             allergies: allergies || [],
         });
 
+        // Save user
         await newUser.save();
 
-        return res.status(201).json({
-            success: true,
-            message: "User registration successful",
-        });
+        return NextResponse.json(
+            { 
+                success: true, 
+                message: "User registration successful",
+                userId: newUser._id
+            }, 
+            { status: 201 }
+        );
+
     } catch (error) {
         console.error("Error registering user: ", error);
 
         if (error instanceof z.ZodError) {
-            return res
-                .status(400)
-                .json({ success: false, message: error.errors });
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    message: "Validation error",
+                    errors: error.errors 
+                }, 
+                { status: 400 }
+            );
         }
 
-        return res.status(500).json({
-            success: false,
-            message: "Error registering user",
-        });
+        return NextResponse.json(
+            { 
+                success: false, 
+                message: "Error registering user" 
+            }, 
+            { status: 500 }
+        );
     }
-};
+}
