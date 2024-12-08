@@ -10,7 +10,7 @@ interface IMeal {
     fats: string;
 }
 
-interface IDietAssignment extends Document {
+export interface IDietAssignment extends Document {
     userId: mongoose.Schema.Types.ObjectId;
     date: Date;
     meals: {
