@@ -1,30 +1,17 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ObjectId } from "mongodb";
 
 interface IDailyExercise extends Document {
-    userId: Schema.Types.ObjectId;
+    userId: ObjectId;
     date: Date;
-    exercises: {
-        exercise: Schema.Types.ObjectId;
-        repetitions: number;
-        sets: number;
-        duration?: number;
-    }[];
+    exercises: ObjectId[];
 }
 
 const DailyExerciseSchema = new Schema<IDailyExercise>({
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     date: { type: Date, required: true },
     exercises: [
-        {
-            exercise: {
-                type: Schema.Types.ObjectId,
-                ref: "Exercise",
-                required: true,
-            },
-            repetitions: { type: Number, required: true },
-            sets: { type: Number, required: true },
-            duration: { type: Number, default: 0 },
-        },
+        { type: Schema.Types.ObjectId, ref: "Exercise", required: true },
     ],
 });
 

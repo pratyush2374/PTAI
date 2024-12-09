@@ -1,41 +1,19 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ObjectId } from "mongodb";
 
 interface IWeeklyExercise extends Document {
-    userId: Schema.Types.ObjectId;
-    weekStartDate: Date;
-    exercises: {
-        day: string;
-        dailyExercises: Schema.Types.ObjectId[];
-    }[];
+    userId: ObjectId;
+    weekStart: Date;
+    weekEnd: Date;
+    dailyPlans: ObjectId[]; // References to DailyExercise
 }
 
 const WeeklyExerciseSchema = new Schema<IWeeklyExercise>({
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    weekStartDate: { type: Date, required: true },
-    exercises: [
-        {
-            day: {
-                type: String,
-                enum: [
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                ],
-                required: true,
-            },
-            dailyExercises: [
-                { type: Schema.Types.ObjectId, ref: "DailyExercise" },
-            ],
-        },
-    ],
+    weekStart: { type: Date, required: true },
+    weekEnd: { type: Date, required: true },
+    dailyPlans: [{ type: Schema.Types.ObjectId, ref: "DailyExercise", required: true }],
 });
 
-const WeeklyExercise = mongoose.model<IWeeklyExercise>(
-    "WeeklyExercise",
-    WeeklyExerciseSchema
-);
+const WeeklyExercise = mongoose.model<IWeeklyExercise>("WeeklyExercise", WeeklyExerciseSchema);
 export default WeeklyExercise;

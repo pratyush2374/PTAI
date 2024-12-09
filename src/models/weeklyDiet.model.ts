@@ -1,17 +1,19 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { IDietAssignment } from "./diet.model"; 
+import mongoose, { Schema, Document } from "mongoose";
+import { ObjectId } from "mongodb";
 
-interface IWeeklyDietPlan extends Document {
-    userId: mongoose.Schema.Types.ObjectId;
-    weekStartDate: Date;
-    weeklyMeals: IDietAssignment[];
+interface IWeeklyDiet extends Document {
+    userId: ObjectId;
+    weekStart: Date;
+    weekEnd: Date;
+    dailyPlans: ObjectId[]; // References to DailyDiet
 }
 
-const WeeklyDietPlanSchema: Schema<IWeeklyDietPlan> = new Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    weekStartDate: { type: Date, required: true },
-    weeklyMeals: { type: [Schema.Types.ObjectId], ref: "DietAssignment", required: true },
-}, { timestamps: true });
+const WeeklyDietSchema = new Schema<IWeeklyDiet>({
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    weekStart: { type: Date, required: true },
+    weekEnd: { type: Date, required: true },
+    dailyPlans: [{ type: Schema.Types.ObjectId, ref: "DailyDiet", required: true }], // List of DailyDiet plans
+});
 
-const WeeklyDietPlan = mongoose.model<IWeeklyDietPlan>("WeeklyDietPlan", WeeklyDietPlanSchema);
-export default WeeklyDietPlan;
+const WeeklyDiet = mongoose.model<IWeeklyDiet>("WeeklyDiet", WeeklyDietSchema);
+export default WeeklyDiet;

@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { IWeight, WeightSchema } from "./weight.model";
+import { ObjectId } from "mongodb";
 
 //Just in case if error happens
 import { IUserPreferences } from "./userPreferences.model";
@@ -17,12 +18,12 @@ export interface IUser extends Document {
     gender: string;
     height: number;
     weight: IWeight[];
-    preferences: mongoose.Schema.Types.ObjectId;
-    stats: mongoose.Schema.Types.ObjectId;
-    healthAndDietary: mongoose.Schema.Types.ObjectId;
-    dietId: mongoose.Schema.Types.ObjectId;
-    exerciseId: mongoose.Schema.Types.ObjectId;
-    userStatsId: mongoose.Schema.Types.ObjectId;
+    preferences: ObjectId;
+    stats: ObjectId;
+    healthAndDietary: ObjectId;
+    dietId: ObjectId;
+    exerciseId: ObjectId;
+    userStatsId: ObjectId;
 }
 
 const UserSchema: Schema<IUser> = new Schema(

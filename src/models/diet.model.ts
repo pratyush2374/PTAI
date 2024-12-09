@@ -1,73 +1,43 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface IMeal {
+interface IDiet extends Document {
     name: string;
-    ingredients: string[];
+    category: string[];
+    weight: number;
     calories: number;
-    time: string;
-    protein: string;
-    carbs: string;
-    fats: string;
+    protein: number;
+    carbs: number;
+    fats: number;
+    fibre: number;
+    otherMacroNutrients: string;
+    keyIngredients: string[];
+    commonAllergens?: string;
+    cookingTime: number;
+    recipe: string;
 }
 
-export interface IDietAssignment extends Document {
-    userId: mongoose.Schema.Types.ObjectId;
-    date: Date;
-    meals: {
-        breakfast: IMeal;
-        lunch: IMeal;
-        snacks: IMeal;
-        dinner: IMeal;
-    };
-    total: {
-        totalCalories: number;
-        protein: string;
-        carbs: string;
-        fats: string;
-    };
-}
-
-const MealSchema: Schema<IMeal> = new Schema(
-    {
-        name: { type: String, required: true },
-        ingredients: { type: [String], required: true },
-        calories: { type: Number, required: true },
-        time: { type: String, required: true },
-        protein: { type: String, required: true },
-        carbs: { type: String, required: true },
-        fats: { type: String, required: true },
-    },
-    { _id: false }
-);
-
-const DietAssignmentSchema: Schema<IDietAssignment> = new Schema(
-    {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        date: { type: Date, required: true },
-        meals: {
-            breakfast: { type: MealSchema, required: true },
-            lunch: { type: MealSchema, required: true },
-            snacks: { type: MealSchema, required: true },
-            dinner: { type: MealSchema, required: true },
-        },
-        total: {
-            totalCalories: { type: Number, required: true },
-            protein: { type: String, required: true },
-            carbs: { type: String, required: true },
-            fats: { type: String, required: true },
+const DietSchema = new Schema<IDiet>({
+    name: { type: String, required: true },
+    category: { type: [String], required: true },
+    weight: { type: Number, required: true },
+    calories: { type: Number, required: true },
+    protein: { type: Number, required: true },
+    carbs: { type: Number, required: true },
+    fats: { type: Number, required: true },
+    fibre: { type: Number, required: true },
+    otherMacroNutrients: { type: String, required: true },
+    keyIngredients: {
+        type: [String],
+        required: true,
+        validate: {
+            validator: (v: string[]) => v.length > 0,
+            message: "At least one ingredient must be specified.",
         },
     },
-    {
-        timestamps: true,
-    }
-);
+    commonAllergens: { type: String },
+    cookingTime: { type: Number, required: true },
+    recipe: { type: String, required: true, maxlength: 100 },
+});
 
-const DietAssignment = mongoose.model<IDietAssignment>(
-    "DietAssignment",
-    DietAssignmentSchema
-);
-export default DietAssignment;
+const Diet = mongoose.model<IDiet>("Diet", DietSchema);
+export default Diet;
