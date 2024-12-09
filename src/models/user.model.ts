@@ -2,10 +2,6 @@ import mongoose, { Document, Schema } from "mongoose";
 import { IWeight, WeightSchema } from "./weight.model";
 import { ObjectId } from "mongodb";
 
-//Just in case if error happens
-import { IUserPreferences } from "./userPreferences.model";
-import { IUserStats } from "./userStats.model";
-import { IHealthAndDietary } from "./healthAndDietary.model";
 
 export interface IUser extends Document {
     fullName: string;
@@ -19,11 +15,10 @@ export interface IUser extends Document {
     height: number;
     weight: IWeight[];
     preferences: ObjectId;
-    stats: ObjectId;
     healthAndDietary: ObjectId;
     dietId: ObjectId;
     exerciseId: ObjectId;
-    userStatsId: ObjectId;
+    userStats: ObjectId;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -42,10 +37,6 @@ const UserSchema: Schema<IUser> = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "UserPreferences",
         },
-        stats: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "UserStats",
-        },
         healthAndDietary: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "HealthAndDietary",
@@ -58,9 +49,9 @@ const UserSchema: Schema<IUser> = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "ExerciseAssignment",
         },
-        userStatsId: {
+        userStats: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "UserStats",
+            ref: "DailyStats",
         },
     },
     { timestamps: true }
