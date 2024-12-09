@@ -4,18 +4,15 @@ import connectToDB from "@/lib/dbConnection";
 import User from "@/models/user.model";
 import HealthAndDietary from "@/models/healthAndDietary.model";
 import { z } from "zod";
-
-// Validation schema for health and dietary updates
-const healthAndDietarySchema = z.object({
-    dietaryPreferences: z.array(z.string()).optional(),
-    healthProblems: z.array(z.string()).optional(),
-    allergies: z.array(z.string()).optional(),
-});
+import healthAndDietarySchema from "@/schemas/healthAndDietary.schema";
 
 export async function PUT(req: NextRequest) {
     try {
         // Authenticate the user
-        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        const token = await getToken({
+            req,
+            secret: process.env.NEXTAUTH_SECRET,
+        });
         if (!token) {
             return NextResponse.json(
                 { message: "Unauthorized: Please log in" },
@@ -31,7 +28,7 @@ export async function PUT(req: NextRequest) {
         await connectToDB();
 
         // Fetch the user and ensure they exist
-        const user = await User.findById(token.sub).populate("healthAndDietary");
+        const user = await User.findById(token.sub);
         if (!user) {
             return NextResponse.json(
                 { message: "User not found" },
@@ -40,12 +37,13 @@ export async function PUT(req: NextRequest) {
         }
 
         // Find or create the HealthAndDietary document
-        let healthAndDietary = await HealthAndDietary.findById(user.healthAndDietary);
+        let healthAndDietary = await HealthAndDietary.findById(
+            user.healthAndDietary
+        );
 
         if (!healthAndDietary) {
             // Create a new HealthAndDietary record if it doesn't exist
             healthAndDietary = new HealthAndDietary({
-                ...validatedData,
                 dietaryPreferences: validatedData.dietaryPreferences || [],
                 healthProblems: validatedData.healthProblems || [],
                 allergies: validatedData.allergies || [],
@@ -59,12 +57,13 @@ export async function PUT(req: NextRequest) {
             await user.save();
         } else {
             // Update existing HealthAndDietary document
-            healthAndDietary.set({
-                ...validatedData,
-                dietaryPreferences: validatedData.dietaryPreferences || healthAndDietary.dietaryPreferences,
-                healthProblems: validatedData.healthProblems || healthAndDietary.healthProblems,
-                allergies: validatedData.allergies || healthAndDietary.allergies,
-            });
+            healthAndDietary.dietaryPreferences =
+                validatedData.dietaryPreferences ||
+                healthAndDietary.dietaryPreferences;
+            healthAndDietary.healthProblems =
+                validatedData.healthProblems || healthAndDietary.healthProblems;
+            healthAndDietary.allergies =
+                validatedData.allergies || healthAndDietary.allergies;
 
             await healthAndDietary.save();
         }
