@@ -1,7 +1,10 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IWeight, WeightSchema } from "./weight.model";
 import { ObjectId } from "mongodb";
 
+export interface IWeight extends Document {
+    date: string;
+    weight: number;
+}
 
 export interface IUser extends Document {
     fullName: string;
@@ -32,7 +35,18 @@ const UserSchema: Schema<IUser> = new Schema(
         age: { type: Number, required: true },
         gender: { type: String, required: true },
         height: { type: Number, required: true },
-        weight: { type: [WeightSchema], default: [] },
+        weight: {
+            type: [
+                new Schema<IWeight>(
+                    {
+                        date: { type: String, required: true },
+                        weight: { type: Number, required: true },
+                    },
+                    { _id: false, strict: true } 
+                ),
+            ],
+            default: [],
+        },
         preferences: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "UserPreferences",

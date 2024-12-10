@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IDiet extends Document {
+export interface IDiet extends Document {
     name: string;
     category: string[];
     weight: number;

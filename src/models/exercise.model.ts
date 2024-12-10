@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IExercise extends Document {
+export interface IExercise extends Document {
     exerciseName: string;
     exerciseType: string[];
     primaryMuscleTarget: string;

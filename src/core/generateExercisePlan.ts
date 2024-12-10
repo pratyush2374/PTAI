@@ -1,9 +1,9 @@
 import { spawn } from 'child_process';
 import path from 'path';
+import { IExercise } from "@/models/exercise.model";
 import { IUserPreferences } from '@/models/userPreferences.model';
 import { IHealthAndDietary } from '@/models/healthAndDietary.model';
 import { IWeight } from '@/models/user.model';
-import { IDiet } from '@/models/diet.model';
 
 export interface UserData {
   age: number;
@@ -14,16 +14,12 @@ export interface UserData {
   healthAndDietary: IHealthAndDietary
 }
 
-export interface DietPlanResult {
-  meals: {
-    breakfast: IDiet; 
-    lunch: IDiet;     
-    snacks: IDiet;    
-    dinner: IDiet;    
-};
+export interface ExercisePlanResult {
+  exercises: IExercise[];
 }
 
-async function generateDietPlan(userData: UserData): Promise<DietPlanResult> {
+
+async function generateExercisePlan(userData: UserData): Promise<ExercisePlanResult> {
 
   return new Promise((resolve, reject) => {
     // Path to Python script
@@ -56,8 +52,8 @@ async function generateDietPlan(userData: UserData): Promise<DietPlanResult> {
       }
 
       try {
-        const result: DietPlanResult = JSON.parse(outputData);
-        resolve(result as DietPlanResult);
+        const result: ExercisePlanResult = JSON.parse(outputData);
+        resolve(result as ExercisePlanResult);
       } catch (parseError) {
         reject(new Error(`Failed to parse exercise plan: ${parseError}`));
       }
@@ -70,4 +66,4 @@ async function generateDietPlan(userData: UserData): Promise<DietPlanResult> {
   });
 }
 
-export default generateDietPlan;
+export default generateExercisePlan;
