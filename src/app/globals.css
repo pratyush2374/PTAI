@@ -27,6 +27,8 @@ body {
   overflow-x: hidden;
 }
 
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* Main navbar styles */
 .navbar {
   background: rgba(255, 255, 255, 0.7);
   opacity: 0.7;
@@ -36,22 +38,23 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Inner navigation styling */
 .innerNav {
   background: rgba(255, 255, 255, 0.7);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  align-content: center;
   padding: 10px 20px;
   font-weight: 500;
   width: 100vw;
   max-width: 1200px;
+  position: relative;
 }
 
+/* Logo and Icon */
 .nameAndIcon {
   display: flex;
   align-items: center;
-  margin: 10px;
 }
 
 .nameAndIcon img {
@@ -60,11 +63,7 @@ body {
   margin-right: 10px;
 }
 
-.nameAndIcon p {
-  margin: 0;
-  font-size: 24px;
-}
-
+/* Navigation Links */
 .links {
   list-style: none;
   display: flex;
@@ -83,12 +82,13 @@ body {
   color: #007bff;
   font-weight: 600;
   transition: 0.2s font-size ease-in;
-
-  &:hover {
-    font-size: 24px;
-  }
 }
 
+.links li:hover {
+  font-size: 24px;
+}
+
+/* Login button styling */
 .login {
   background-color: #007bff;
   padding: 10px 20px;
@@ -104,14 +104,41 @@ body {
   background-color: #006ee3;
 }
 
+/* Mobile styles */
+@media (max-width: 768px) {
+  .innerNav {
+    justify-content: space-between;
+  }
+
+  .login {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .links {
+    display: none;
+  }
+
+  .nameAndIcon {
+    flex: 1;
+  }
+
+  .login {
+    display: block;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 /* Slogan CSS */
 
 .slogan {
   color: #393E46;
   margin: 50px auto;
   display: flex;
+  gap: 20px;
   align-items: center;
-  gap: 40px;
 }
 
 .slogan h1 {
@@ -242,6 +269,8 @@ body {
   font-size: 40px;
 }
 
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 /* Fitness goals  */
 .fitness-goals {
   margin-top: 30px;
@@ -312,7 +341,9 @@ body {
 }
 
 
-/* -------------------------------- */
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
 .features {
   background-color: #222831;
   height: auto;
@@ -375,6 +406,8 @@ body {
 }
 
 
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 /* About Us */
 
 .about-us {
@@ -419,6 +452,9 @@ body {
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 
 /* Contact Us */
@@ -505,6 +541,8 @@ body {
   border-radius: 10px;
 }
 
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 /* Footer Section */
 
@@ -622,41 +660,24 @@ body {
 /* Landing Mobile CSS */
 
 @media (max-width: 768px) {
-  .innerNav {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
-
-  .links {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 10px;
-  }
-
-  .links a {
-    margin: 10px 0;
-  }
-
-  .nameAndIcon {
-    margin-bottom: 10px;
-  }
-
-  .login {
-    margin-top: 10px;
-    align-self: flex-start;
-  }
+  
 
   .hero1 {
     padding: 20px;
   }
 
+  .slogan {
+    flex-direction: column;
+    width: 80%;
+  }
+
   .slogan h1 {
-    font-size: 40px;
+    font-size: 30px;
+    align-self: start;
   }
 
   .slogan p {
-    font-size: 28px;
+    font-size: 25px;
   }
 
   .bmi {
@@ -773,6 +794,126 @@ body {
 }
 
 
+/* Introduction css */
+/* Container */
+.intro-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
 
-/* Login CSS --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* Flexbox layout for sections */
+.intro-section {
+  display: flex;
+  flex-direction: column; /* Default flex-direction for mobile */
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 30px;
+}
+
+.section-left {
+  flex-direction: row;
+}
+
+.section-right {
+  flex-direction: row-reverse;
+}
+
+.image-container {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  margin-left: 100px;
+}
+
+.image-container-plate {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  margin-right: 100px;
+}
+
+.section-image {
+  width: 300px;
+  height: 300px;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.section-image:hover {
+  transform: scale(1.05);
+}
+
+/* Text container */
+.text-container {
+  width: 100%;
+  margin-right: 100px;
+}
+
+.text-container-plate {
+  width: 100%;
+  margin-left: 100px;
+}
+
+.section-title {
+  font-size: 2.25rem; /* 4xl in Tailwind */
+  font-weight: bold;
+  color: #2d2d2d;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  font-size: 1.25rem; /* xl in Tailwind */
+  color: #4b4b4b;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .intro-section {
+      flex-direction: row; /* For larger screens, switch to row layout */
+  }
+
+  .section-left, .section-right {
+      flex-direction: row;
+  }
+
+  .section-title {
+      text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stack content vertically on small screens */
+  .section-left, .section-right {
+    flex-direction: column; 
+  }
+
+  .image-container, .image-container-plate {
+    justify-content: center;
+    margin: 0; 
+  }
+
+  .section-title {
+    font-size: 1.75rem; 
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+  }
+
+  .text-container {
+    margin-right: 0;
+  }
+  .text-container-plate {
+    margin-left: 0;
+  }
+
+  .image-container-plate {
+    margin-right: 0; 
+  }
+}
+
+
 

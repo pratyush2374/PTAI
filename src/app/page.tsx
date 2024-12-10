@@ -1,33 +1,39 @@
-"use client";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { Metadata } from "next";
+import LandingPage from "@/app/page-components/Landing";
 
-import AboutUs from "./page-components/AboutUs";
-import ContactUs from "./page-components/ContactUs";
-import Features from "./page-components/Features";
-import Footer from "./page-components/Footer";
-import Header from "./page-components/Header";
-import Hero1 from "./page-components/Hero1";
+export const metadata: Metadata = {
+    title: "PTAI - Personal Trainer AI",
+    description:
+        "PTAI is an AI-powered personal fitness app that tailors diet and exercise plans to your individual goals. Start your journey towards a healthier, fitter you today!",
+    keywords:
+        "PTAI, personal trainer, AI, fitness app, exercise plans, diet plans, health app, personalized fitness, AI for fitness, workout app",
+    authors: [{ name: "Pratyush Sharma" }],
+    robots: "index, follow",
 
-function LandingPage() {
-    const [isClient, setIsClient] = useState(false);
+    openGraph: {
+        title: "PTAI - Personal Trainer AI",
+        description:
+            "Transform your fitness journey with personalized, AI-powered diet and exercise plans tailored to your unique goals.",
+        url: "http://localhost:3000",
+        siteName: "PTAI - Personal Trainer AI",
+        images: [
+            {
+                url: "/Landing%20Images/Icon.svg",
+                width: 1200,
+                height: 630,
+                alt: "PTAI - Personal Trainer AI",
+            },
+        ],
+        type: "website",
+        locale: "en_US",
+    },
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+    icons: {
+        icon: "/Landing%20Images/Icon.svg",
+    },
 
-    if (!isClient) return null;
-    return (
-        <>
-            <Header />
-            <Hero1 />
-            <Features />
-            <AboutUs />
-            <ContactUs />
-            <Footer />
-        </>
-    );
+    viewport: "width=device-width, initial-scale=1",
+};
+export default function Landing() {
+    return <LandingPage />;
 }
-
-// export default dynamic (() => Promise.resolve(LandingPage), {ssr: false})
-export default LandingPage;

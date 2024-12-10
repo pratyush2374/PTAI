@@ -20,6 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* <head>
+        <link rel="shortcut icon" href="/Landing Images/Icon.svg" type="image/x-icon" />
+      </head> */}
       <body
         className={`${montserrat.className} antialiased`} 
       >

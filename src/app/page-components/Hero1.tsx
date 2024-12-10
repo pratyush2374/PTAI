@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import Link from "next/link";
+import Introduction from "./Introduction";
 
-const Hero1: React.FC  = () => {
+const Hero1: React.FC = () => {
     return (
         <>
             <div className="hero1">
@@ -10,6 +11,8 @@ const Hero1: React.FC  = () => {
                     <h1>PTAI</h1>
                     <p>Transform Your Fitness Journey with AI</p>
                 </div>
+
+                <Introduction />
 
                 <div className="bmi">
                     <div className="bmiInner">
@@ -38,7 +41,7 @@ const Hero1: React.FC  = () => {
                                         id="male"
                                         value="male"
                                     />
-                                    <label htmlFor="male">Male</label>
+                                    <label htmlFor="male"> Male</label>
 
                                     <input
                                         type="radio"
@@ -46,7 +49,7 @@ const Hero1: React.FC  = () => {
                                         id="female"
                                         value="female"
                                     />
-                                    <label htmlFor="female">Female</label>
+                                    <label htmlFor="female"> Female</label>
 
                                     <input
                                         type="radio"
@@ -54,7 +57,7 @@ const Hero1: React.FC  = () => {
                                         id="others"
                                         value="others"
                                     />
-                                    <label htmlFor="others">Others</label>
+                                    <label htmlFor="others"> Others</label>
                                 </div>
 
                                 <div className="convertToftandpound">
