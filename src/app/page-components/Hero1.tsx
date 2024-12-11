@@ -4,6 +4,20 @@ import Link from "next/link";
 import Introduction from "./Introduction";
 
 const Hero1: React.FC = () => {
+    const genderOptions = [
+        { id: "male", value: "male", label: "Male" },
+        { id: "female", value: "female", label: "Female" },
+        { id: "others", value: "others", label: "Others" },
+    ];
+
+    const fitnessGoals = [
+        "Lose Weight",
+        "Build Muscle",
+        "Improve Stamina",
+        "Enhance Flexibility",
+        "Boost Overall Health",
+    ];
+
     return (
         <>
             <div className="hero1">
@@ -35,38 +49,24 @@ const Hero1: React.FC = () => {
                                 />
 
                                 <div className="gender">
-                                    <input
-                                        type="radio"
-                                        name="gender"
-                                        id="male"
-                                        value="male"
-                                    />
-                                    <label htmlFor="male"> Male</label>
-
-                                    <input
-                                        type="radio"
-                                        name="gender"
-                                        id="female"
-                                        value="female"
-                                    />
-                                    <label htmlFor="female"> Female</label>
-
-                                    <input
-                                        type="radio"
-                                        name="gender"
-                                        id="others"
-                                        value="others"
-                                    />
-                                    <label htmlFor="others"> Others</label>
+                                    {genderOptions.map((option) => (
+                                        <div key={option.id}>
+                                            <input
+                                                type="radio"
+                                                name="gender"
+                                                id={option.id}
+                                                value={option.value}
+                                            />
+                                            <label htmlFor={option.id}>{` ${option.label}`}</label>
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <div className="convertToftandpound">
                                     <p>Convert to ft and pound</p>
                                 </div>
 
-                                <div className="buttonBMI">
-                                    Calculate BMI
-                                </div>
+                                <div className="buttonBMI">Calculate BMI</div>
                             </form>
                         </div>
 
@@ -81,13 +81,11 @@ const Hero1: React.FC = () => {
                     <div className="fitness-goals">
                         <h2>What Are Your Fitness Goals?</h2>
                         <div className="goals-list">
-                            <div className="goal-item">Lose Weight</div>
-                            <div className="goal-item">Build Muscle</div>
-                            <div className="goal-item">Improve Stamina</div>
-                            <div className="goal-item">Enhance Flexibility</div>
-                            <div className="goal-item">
-                                Boost Overall Health
-                            </div>
+                            {fitnessGoals.map((goal, index) => (
+                                <div className="goal-item" key={index}>
+                                    {goal}
+                                </div>
+                            ))}
                         </div>
                         <Link href="/login">
                             <button className="show-plan">

@@ -218,6 +218,8 @@ body {
 .gender {
   margin-top: 15px;
   width: fit-content;
+  display: flex;
+  justify-content: center;
 }
 
 #female,
@@ -890,6 +892,11 @@ body {
 
 /* Text container */
 .text-container {
+  width: 100%;
+  margin-left: 100px;
+}
+
+.text-container-right {
   width: 100%;
   margin-right: 100px;
 }

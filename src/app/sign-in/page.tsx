@@ -38,7 +38,7 @@ const SignIn = () => {
                                 className={styles.password}
                             />
 
-                            <Link href="/userInput">
+                            <Link href="/user-input">
                                 <button type="submit">Sign In</button>
                             </Link>
                         </form>

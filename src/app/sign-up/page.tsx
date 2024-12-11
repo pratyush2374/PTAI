@@ -45,7 +45,9 @@ const SignUp: React.FC = () => {
                                 className={styles.password}
                             />
 
-                            <button type="submit">Sign Up</button>
+                            <Link href="/user-input">
+                            <button>Sign Up</button>
+                            </Link>
                         </form>
                         <p>
                             Already have an account?{" "}

@@ -4,6 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 
 const Header: React.FC = () => {
+    const navLinks = [
+        { href: "#features", label: "Features" },
+        { href: "#about", label: "About Us" },
+        { href: "#contact", label: "Contact" },
+    ];
+
     return (
         <div className="navbar" id="home">
             <div className="innerNav">
@@ -18,18 +24,14 @@ const Header: React.FC = () => {
                     </a>
                 </div>
                 <ul className="links">
-                    <li>
-                        <a href="#features">Features</a>
-                    </li>
-                    <li>
-                        <a href="#about">About Us</a>
-                    </li>
-                    <li>
-                        <a href="#contact">Contact</a>
-                    </li>
+                    {navLinks.map((link) => (
+                        <li key={link.href}>
+                            <a href={link.href}>{link.label}</a>
+                        </li>
+                    ))}
                 </ul>
                 <div>
-                    <Link href="/login" className="nextLink">
+                    <Link href="/sign-in" className="nextLink">
                         <p className="login">Login/Sign Up</p>
                     </Link>
                 </div>
