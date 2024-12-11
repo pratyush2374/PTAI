@@ -185,7 +185,7 @@ body {
 
 .bmiInner {
   margin: 10% auto;
-  width: 80%;
+  width: 70%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -252,22 +252,43 @@ body {
   align-content: center;
   align-items: center;
   flex-direction: column;
-  margin: auto
+  margin: auto;
+  margin-right: 0px;
 }
 
-.barForBmi {
-  background: rgb(120, 255, 89);
-  background: linear-gradient(90deg, rgba(120, 255, 89, 1) 16%, rgba(245, 99, 99, 1) 70%);
-  width: 100%;
-  height: 30px;
-  border-radius: 5px;
+.userbmi {
+  text-align: center;
 }
-
 
 .userbmi h2 {
   text-align: center;
-  font-size: 40px;
+  font-size: 80px;
 }
+
+.bmiComment {
+  margin-top: 10px;
+  font-size: 25px;
+}
+
+.buttonBMI {
+  background-color: #007bff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #EEEEEE;
+  margin: 0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s background-color ease-in;
+  width: 50%;
+  margin: auto;
+  margin-top: 30px;
+  text-align: center;
+
+  &:hover {
+    background-color: #006ee3;
+  }
+}
+
 
 /* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -660,7 +681,7 @@ body {
 /* Landing Mobile CSS */
 
 @media (max-width: 768px) {
-  
+
 
   .hero1 {
     padding: 20px;
@@ -681,12 +702,32 @@ body {
   }
 
   .bmi {
-    width: 90%;
-    margin: 20px auto;
+    width: 100%;
+    margin: auto;
   }
 
   .bmiInner {
     flex-direction: column;
+    width: 90%;
+  }
+
+  .gender {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .buttonBMI {
+    margin-top: 20px;
+  }
+
+  .userbmi h2 {
+    font-size: 60px;
+  }
+
+  .bmiComment {
+    font-size: 20px;
   }
 
   .calBMI {
@@ -708,6 +749,7 @@ body {
   .goals-list {
     flex-direction: column;
     gap: 10px;
+    width: 100%;
   }
 
   .goal-item {
@@ -731,14 +773,21 @@ body {
 
   .feature-list {
     flex-direction: column;
+    gap: 5px;
   }
 
   .feature-item {
     flex: 1 1 100%;
     max-width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
+  .feature-item h2 {
+    font-size: 18px;
+  }
+  .feature-item p {
+    font-size: 13px;
+  }
   .about-us {
     flex-direction: column;
     text-align: center;
@@ -755,7 +804,8 @@ body {
 
   .contact-form-container {
     flex-direction: column;
-    padding: 20px;
+    padding: 25px;
+    width: 100%;
   }
 
   .contact-form {
@@ -763,36 +813,27 @@ body {
     margin-bottom: 20px;
   }
 
+  .contact-form h1 {
+    text-align: center;
+    font-size: 28px;
+  }
+
   .contact-image {
     width: 100%;
     margin-top: 20px;
   }
 
-  .footer-container {
-    flex-direction: column;
-    align-items: center;
+  .footer-links{
+    text-align: right;
   }
 
-  .footer-logo {
-    margin-bottom: 20px;
-  }
-
-  .footer-links,
   .footer-social {
-    margin-bottom: 20px;
-  }
-
-  .footer-links ul,
-  .footer-social ul {
-    flex-direction: column;
+    display: flex;
     align-items: center;
-  }
-
-  .footer-social ul li {
-    margin-bottom: 10px;
+    flex-direction: column;
+    margin-top: 30px;
   }
 }
-
 
 /* Introduction css */
 /* Container */
@@ -805,7 +846,8 @@ body {
 /* Flexbox layout for sections */
 .intro-section {
   display: flex;
-  flex-direction: column; /* Default flex-direction for mobile */
+  flex-direction: column;
+  /* Default flex-direction for mobile */
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
@@ -858,45 +900,56 @@ body {
 }
 
 .section-title {
-  font-size: 2.25rem; /* 4xl in Tailwind */
+  font-size: 2.25rem;
+  /* 4xl in Tailwind */
   font-weight: bold;
   color: #2d2d2d;
   margin-bottom: 1rem;
 }
 
 .section-subtitle {
-  font-size: 1.25rem; /* xl in Tailwind */
+  font-size: 1.25rem;
+  /* xl in Tailwind */
   color: #4b4b4b;
 }
 
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .intro-section {
-      flex-direction: row; /* For larger screens, switch to row layout */
+    flex-direction: row;
+    /* For larger screens, switch to row layout */
   }
 
-  .section-left, .section-right {
-      flex-direction: row;
+  .section-left,
+  .section-right {
+    flex-direction: row;
   }
 
   .section-title {
-      text-align: left;
+    text-align: left;
   }
 }
 
 @media (max-width: 768px) {
+
   /* Stack content vertically on small screens */
-  .section-left, .section-right {
-    flex-direction: column; 
+  .section-left {
+    flex-direction: column;
   }
 
-  .image-container, .image-container-plate {
+  .section-right {
+    margin-top: 20px;
+    flex-direction: column-reverse;
+  }
+
+  .image-container,
+  .image-container-plate {
     justify-content: center;
-    margin: 0; 
+    margin: 0;
   }
 
   .section-title {
-    font-size: 1.75rem; 
+    font-size: 1.75rem;
   }
 
   .section-subtitle {
@@ -906,14 +959,12 @@ body {
   .text-container {
     margin-right: 0;
   }
+
   .text-container-plate {
     margin-left: 0;
   }
 
   .image-container-plate {
-    margin-right: 0; 
+    margin-right: 0;
   }
 }
-
-
-

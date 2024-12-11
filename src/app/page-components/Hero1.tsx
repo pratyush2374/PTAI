@@ -64,20 +64,17 @@ const Hero1: React.FC = () => {
                                     <p>Convert to ft and pound</p>
                                 </div>
 
-                                <div className="button">
-                                    <p></p>
+                                <div className="buttonBMI">
+                                    Calculate BMI
                                 </div>
                             </form>
                         </div>
 
                         <div className="outerBar">
-                            <div className="barForBmi"></div>
-                            <div className="arrow">
-                                <b>^</b>
-                            </div>
                             <div className="userbmi">
                                 <h2>24</h2>
                                 <h3>Your BMI</h3>
+                                <h3 className="bmiComment">Healthy</h3>
                             </div>
                         </div>
                     </div>

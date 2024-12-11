@@ -31,8 +31,6 @@ export const metadata: Metadata = {
     icons: {
         icon: "/Landing%20Images/Icon.svg",
     },
-
-    viewport: "width=device-width, initial-scale=1",
 };
 export default function Landing() {
     return <LandingPage />;
