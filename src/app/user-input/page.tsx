@@ -182,7 +182,7 @@ const UserInput: React.FC = () => {
                         />
                     )}
                     <h2 className="text-2xl font-bold text-black ml-4">
-                        Step {step}
+                        Step {step} / 7
                     </h2>
                 </div>
 

@@ -14,23 +14,23 @@ const Graph: React.FC = () => {
 
                 <div className={styles.weightDetails}>
                     <div className={styles.weightIndividual}>
-                        <h3>Current</h3>
                         <h2>78</h2>
+                        <h3>Current</h3>
                     </div>
 
                     <div className={styles.weightIndividual}>
-                        <h3>Goal</h3>
                         <h2>72</h2>
+                        <h3>Goal</h3>
                     </div>
 
                     <div className={styles.weightIndividual}>
-                        <h3>Last 30 days</h3>
                         <h2>-2.0</h2>
+                        <h3>Last 30 days</h3>
                     </div>
 
                     <div className={styles.weightIndividual}>
-                        <h3>Annual Average</h3>
                         <h2>77</h2>
+                        <h3>Annual Average</h3>
                     </div>
                 </div>
                 <div className={styles.weightGraph}>

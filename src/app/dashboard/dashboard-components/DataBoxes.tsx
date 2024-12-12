@@ -16,7 +16,7 @@ const DataBoxes: React.FC = () => {
                         <h2>Steps</h2>
                     </div>
                     <div className={styles.dataValue} id="steps-value">
-                        6,000
+                        6,000 <span className={styles.unit}></span>
                     </div>
                     <div className={styles.status}>
                         <div className={styles.filledStatusSteps}></div>

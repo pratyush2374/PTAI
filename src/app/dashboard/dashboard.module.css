@@ -28,8 +28,8 @@
     justify-content: center;
     align-items: center;
     flex-grow: 1;
-    gap: 30px;
     height: inherit;
+    position: relative;
 }
 
 .navbarTabs .tab {
@@ -38,7 +38,6 @@
     color: #333;
     font-weight: bold;
     transition: color 0.3s;
-    height: 100%;
 }
 
 .navbarTabs .tab:hover {
@@ -61,11 +60,80 @@
     color: #007bff;
 }
 
-#curr {
-    color: #007bff;
+.mobileMenu {
+    display: none;
 }
 
+.menuItems {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-left: 30px;
+}
 
+.menuItems a {
+    display: inline-block;
+    text-decoration: none;
+    color: #333;
+}
+
+.menuOpen {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 1);
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        background: #ffffff !important; /* Solid white background on mobile */
+        opacity: 1 !important; /* Ensure no translucency */
+        backdrop-filter: none !important; /* Remove blur effect */
+    }
+    .navbarTabs {
+        justify-content: space-between;
+    }
+
+    .mobileMenu {
+        display: block;
+        position: absolute;
+        right: 1px;
+    }
+
+    .outerMenu {
+        background-color: white;
+        width: 40%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        opacity: 1;
+    }
+
+    .menuItems {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+        margin-left: 0px;
+        background: #ffffff !important;  /* Ensure solid white background */
+        opacity: 1; /* Solid visibility */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+        border-radius: 5px; /* Optional: make it look neat */
+    }
+
+    .menuOpen {
+        display: block;
+        background-color: white; /* Solid white for the open state */
+    }
+}
 
 .parent {
     width: 90%;
@@ -75,8 +143,6 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
 }
-
-
 
 /* User info tabs  */
 
@@ -339,7 +405,7 @@
     flex-wrap: wrap;
 }
 
-.userDetails>div {
+.userDetails > div {
     text-align: center;
 }
 
@@ -355,7 +421,6 @@
     color: #6c757d;
     margin-top: 5px;
 }
-
 
 /* Today's Plan  */
 
@@ -374,9 +439,12 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: rgb(255, 255, 255);
-    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(85, 134, 255, 1) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(85, 134, 255, 1) 100%
+    );
 }
-
 
 .showEx {
     display: flex;
@@ -426,7 +494,6 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-
 .individualExercise img {
     height: 30px;
     width: 30px;
@@ -472,7 +539,6 @@
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
     text-decoration: none;
-
 }
 
 .goToExercise:hover {
@@ -485,13 +551,16 @@
     transform: translateY(1px);
 }
 
-
 /* Diet Section */
 .diet {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: rgb(255, 255, 255);
-    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(255, 44, 44, 1) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 44, 44, 1) 100%
+    );
     margin-top: 30px;
 }
 
@@ -624,7 +693,6 @@
     background-color: #004494;
     transform: translateY(1px);
 }
-
 
 /* Overall */
 
@@ -778,7 +846,6 @@
     font-size: 22px;
     align-self: flex-end;
 }
-
 
 /* Weight graph section */
 
@@ -1021,7 +1088,7 @@
 
 .footerBottom {
     margin-top: 20px;
-    border-top: 1px solid #393E46;
+    border-top: 1px solid #393e46;
     padding-top: 10px;
     width: 80%;
     max-width: 1200px;
@@ -1033,26 +1100,39 @@
     color: #000000;
 }
 
-
 /* Mobile  CSS */
 /* Mobile friendly styles */
 
 @media (max-width: 768px) {
-    .navbarTabs {
-        /* flex-direction: column; */
-        gap: 25px;
-    }
-
     .parent {
         flex-direction: column;
         margin: 80px auto 20px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: none;
     }
 
     .main {
         width: 100%;
         border-radius: 10px 10px 0 0;
+        padding: 0px;
     }
 
+    .welcomeMessage {
+        margin: 30px 15px;
+    }
+
+    .dataBox {
+        min-width: 100px;
+        height: 160px;
+    }
+
+    .dataValue {
+        font-size: 20px;
+    }
+
+    .dataBox h2 {
+        font-size: 14px;
+    }
     .right {
         width: 100%;
         border-radius: 0 0 10px 10px;
@@ -1062,10 +1142,21 @@
         width: 45%;
     }
 
+    .todaysPlan {
+        padding: 0px;
+    }
     .exerciseInner,
     .dietInner,
     .overall {
         flex-direction: column;
+    }
+
+    .exerciseInner {
+        gap: 10px;
+    }
+
+    .dietInner {
+        gap: 10px;
     }
 
     .individualExercise,
@@ -1080,6 +1171,21 @@
 
     .otherStats {
         flex-direction: column;
+    }
+
+    .allNutrient {
+        display: flex;
+        flex-direction: row;
+        padding-left: 0px;
+        padding-right: 0px;
+        gap: 5px;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .nutrient {
+        width: fit-content;
+        flex: 1;
     }
 
     .weightSection {
@@ -1149,8 +1255,57 @@
         margin: auto;
         width: 100%;
     }
-}
+    
+    .weightGraph {
+        height: 150px;
+    }
 
+    .weightDetails {
+        align-items: flex-start;
+    }
+
+    .weightIndividual{
+        align-self: flex-start;
+    }
+    .weightIndividual h3 {
+        font-size: 0.8rem;
+    }
+
+    .lowerParent {
+        padding: 1px;
+        background-color: white;
+        box-shadow: none;
+    }
+    .allStats{
+        padding: 0px;
+    }
+
+    .allStatsHeading{
+        margin-left: 30px;
+        margin-top: 30px;
+    }
+
+    .individualStats {
+        padding: 10px;
+        width : 125px
+    }
+
+    .footer {
+        margin-top: 50px;
+        padding: 40px 10px;
+    }
+
+    .footerLinks {
+        text-align: right;
+    }
+
+    .footerSocial {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+}
 
 .nextLink {
     text-decoration: none;
