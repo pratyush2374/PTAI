@@ -19,6 +19,12 @@ const UserInput: React.FC = () => {
     >([]);
     const [workoutDuration, setWorkoutDuration] = useState("");
     const [exerciseFrequency, setExerciseFrequency] = useState("");
+    const [availableEquipments, setAvailableEquipments] = useState<string[]>(
+        []
+    );
+    const [experience, setExperience] = useState("");
+    const [pace, setPace] = useState("");
+    const [goal, setGoal] = useState<string[]>([]);
 
     const { toast } = useToast();
 
@@ -34,6 +40,22 @@ const UserInput: React.FC = () => {
             return false;
         }
         return true;
+    };
+
+    const toggleEquipment = (equipment: string) => {
+        setAvailableEquipments((prev) =>
+            prev.includes(equipment)
+                ? prev.filter((item) => item !== equipment)
+                : [...prev, equipment]
+        );
+    };
+
+    const toggleGoal = (selectedGoal: string) => {
+        setGoal((prev) =>
+            prev.includes(selectedGoal)
+                ? prev.filter((goal) => goal !== selectedGoal)
+                : [...prev, selectedGoal]
+        );
     };
 
     const handleNextStep = (
@@ -55,6 +77,54 @@ const UserInput: React.FC = () => {
             }
         });
     };
+
+    const goals = [
+        "Lose Weight",
+        "Gain Weight",
+        "Build Muscle",
+        "Stay Fit",
+        "Increase Stamina",
+        "Improve Flexibility",
+        "Increase Cardiovascular Endurance",
+        "Boost Overall Strength",
+        "Improve Mobility and Joint Health",
+        "Increase Endurance",
+        "Build Core Strength",
+        "Enhance Stamina",
+    ];
+
+    const equipmentOptions = [
+        "No Equipment",
+        "Dumbell",
+        "Treadmills",
+        "Ellipticals",
+        "Rowing Machines",
+        "Stair Climbers",
+        "Weight Plates",
+        "Leg Press Machine",
+        "Chest Press Machine",
+        "Lat Pulldown Machine",
+        "Seated Row Machine",
+        "Adjustable Bench",
+        "Flat Bench",
+        "Squat Rack",
+        "Barbell",
+        "Resistance Bands",
+        "Kettlebell",
+        "Exercise Ball",
+        "Medicine Ball",
+        "Pull-Up Bar",
+        "Jump Rope",
+        "Treadmill",
+        "Stationary Bike",
+        "Rowing Machine",
+        "Elliptical Machine",
+        "Bench",
+        "Yoga Mat",
+        "Battle Ropes",
+        "Smith Machine",
+        "Cable Machine",
+    ];
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -130,7 +200,7 @@ const UserInput: React.FC = () => {
                     </div>
                 )}
 
-                {step === 3 && (
+                {step === 2 && (
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-black">
                             Fitness Preferences
@@ -236,13 +306,108 @@ const UserInput: React.FC = () => {
                         <button
                             onClick={() =>
                                 handleNextStep(
-                                    3,
+                                    2,
                                     [
                                         activityLevel,
                                         workoutDuration,
                                         exerciseFrequency,
                                     ],
                                     [preferredExerciseType]
+                                )
+                            }
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-black">
+                            Select Your Fitness Goals
+                        </h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            {goals.map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() => toggleGoal(option)}
+                                    className={`p-4 rounded-lg font-bold transition-all duration-200 ${
+                                        goal.includes(option)
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-black">
+                            Select Your Exercise Experience
+                        </h3>
+                        <div className="flex gap-4">
+                            {["Beginner", "Intermediate", "Advanced"].map(
+                                (option) => (
+                                    <button
+                                        key={option}
+                                        onClick={() => setExperience(option)}
+                                        className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                            experience === option
+                                                ? "bg-blue-500 text-white"
+                                                : "bg-gray-200 text-black hover:bg-gray-300"
+                                        }`}
+                                    >
+                                        {option}
+                                    </button>
+                                )
+                            )}
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-black">
+                            Select Your Pace
+                        </h3>
+                        <div className="flex gap-4">
+                            {["Moderate", "Slow", "Fast"].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() => setPace(option)}
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        pace === option
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-black">
+                            Select Available Equipments
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            {equipmentOptions.map((equipment) => (
+                                <button
+                                    key={equipment}
+                                    onClick={() => toggleEquipment(equipment)}
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        availableEquipments.includes(equipment)
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {equipment}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                handleNextStep(
+                                    3,
+                                    [pace, experience],
+                                    [goal, availableEquipments]
                                 )
                             }
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
