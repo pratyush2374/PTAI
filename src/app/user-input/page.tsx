@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { X } from "lucide-react";
 import Link from "next/link";
 import styles from "./userinput.module.css";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +24,13 @@ const UserInput: React.FC = () => {
     const [experience, setExperience] = useState("");
     const [pace, setPace] = useState("");
     const [goal, setGoal] = useState<string[]>([]);
+    const [macroNutrientPreferences, setMacroNutrientPreferences] = useState<
+        string[]
+    >([]);
+    const [dietaryPreferences, setDietaryPreferences] = useState<string[]>([]);
+    const [healthProblems, setHealthProblems] = useState<string[]>([]);
+    const [allergies, setAllergies] = useState<string[]>([]);
+    const [additionalInfo, setAdditionalInfo] = useState<string>("");
 
     const { toast } = useToast();
 
@@ -76,6 +82,43 @@ const UserInput: React.FC = () => {
                 return [...prev, value];
             }
         });
+    };
+
+    const handleMultiSelectMacroNutrient = (value: string) => {
+        setMacroNutrientPreferences((prev) =>
+            prev.includes(value)
+                ? prev.filter((item) => item !== value)
+                : [...prev, value]
+        );
+    };
+
+    const handleMultiSelectDietary = (value: string) => {
+        setDietaryPreferences((prev) =>
+            prev.includes(value)
+                ? prev.filter((item) => item !== value)
+                : [...prev, value]
+        );
+    };
+
+    const handleHealthProblemsSelect = (value: string) => {
+        setHealthProblems((prev) =>
+            prev.includes(value)
+                ? prev.filter((item) => item !== value)
+                : [...prev, value]
+        );
+    };
+
+    const handleAllergiesSelect = (value: string) => {
+        setAllergies((prev) =>
+            prev.includes(value)
+                ? prev.filter((item) => item !== value)
+                : [...prev, value]
+        );
+    };
+    const handleAdditionalInfoChange = (
+        event: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        setAdditionalInfo(event.target.value);
     };
 
     const goals = [
@@ -209,7 +252,7 @@ const UserInput: React.FC = () => {
                         <h3 className="text-lg font-semibold text-black">
                             Activity Level
                         </h3>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-4">
                             {[
                                 "Sedentary",
                                 "Light",
@@ -272,7 +315,7 @@ const UserInput: React.FC = () => {
                                         onClick={() =>
                                             setWorkoutDuration(option)
                                         }
-                                        className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 text-sm md:text-base ${
                                             workoutDuration === option
                                                 ? "bg-blue-500 text-white"
                                                 : "bg-gray-200 text-black hover:bg-gray-300"
@@ -346,7 +389,7 @@ const UserInput: React.FC = () => {
                         <h3 className="text-lg font-semibold text-black">
                             Select Your Exercise Experience
                         </h3>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap justify-center items-center gap-4 sm:justify-start">
                             {["Beginner", "Intermediate", "Advanced"].map(
                                 (option) => (
                                     <button
@@ -383,6 +426,19 @@ const UserInput: React.FC = () => {
                             ))}
                         </div>
 
+                        <button
+                            onClick={() =>
+                                handleNextStep(3, [pace, experience], [goal])
+                            }
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+
+                {step == 4 && (
+                    <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-black">
                             Select Available Equipments
                         </h3>
@@ -404,11 +460,7 @@ const UserInput: React.FC = () => {
 
                         <button
                             onClick={() =>
-                                handleNextStep(
-                                    3,
-                                    [pace, experience],
-                                    [goal, availableEquipments]
-                                )
+                                handleNextStep(4, [], [availableEquipments])
                             }
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                         >
@@ -417,6 +469,218 @@ const UserInput: React.FC = () => {
                     </div>
                 )}
 
+                {step === 5 && (
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-black">
+                            Macro Nutrient Preferences
+                        </h3>
+                        <div className="flex flex-wrap gap-4">
+                            {[
+                                "Balanced",
+                                "High Protein",
+                                "High Carb",
+                                "High Fat",
+                                "Low Carb",
+                                "Low Fat",
+                                "Low Sugar",
+                                "Vegan",
+                                "Vegetarian",
+                                "Gluten Free",
+                                "Dairy Free",
+                                "Low Sodium",
+                                "High Fiber",
+                                "Keto",
+                                "Paleo",
+                                "Intermittent Fasting",
+                            ].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() =>
+                                        handleMultiSelectMacroNutrient(option)
+                                    }
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        macroNutrientPreferences.includes(
+                                            option
+                                        )
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Dietary Preferences */}
+                        <h3 className="text-lg font-semibold text-black">
+                            Dietary Preferences
+                        </h3>
+                        <div className="flex flex-wrap gap-4">
+                            {[
+                                "Chicken",
+                                "Pork",
+                                "Lamb",
+                                "Fish",
+                                "Eggs",
+                                "Dairy",
+                                "Shellfish",
+                                "Tofu",
+                                "Nuts",
+                                "Seeds",
+                                "Gluten",
+                                "Soy",
+                                "Wheat",
+                                "Legumes",
+                                "Raw Food",
+                            ].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() =>
+                                        handleMultiSelectDietary(option)
+                                    }
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        dietaryPreferences.includes(option)
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                handleNextStep(
+                                    5,
+                                    [
+                                        activityLevel,
+                                        workoutDuration,
+                                        exerciseFrequency,
+                                    ],
+                                    [
+                                        preferredExerciseType,
+                                        macroNutrientPreferences,
+                                        dietaryPreferences,
+                                    ]
+                                )
+                            }
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+                {step === 6 && (
+                    <>
+                        <h3 className="text-lg font-semibold text-black mb-3">
+                            Select Health Problems
+                        </h3>
+                        <div className="flex gap-4 flex-wrap">
+                            {[
+                                "None",
+                                "Diabetes",
+                                "Hypertension",
+                                "High Cholesterol",
+                                "Heart Disease",
+                                "Obesity",
+                                "Asthma",
+                                "Arthritis",
+                                "Lactose Intolerance",
+                                "Gluten Intolerance",
+                                "Acid Reflux",
+                                "Irritable Bowel Syndrome (IBS)",
+                                "Insomnia",
+                                "Thyroid Disorders",
+                                "PCOS",
+                            ].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() =>
+                                        handleHealthProblemsSelect(option)
+                                    }
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        healthProblems.includes(option)
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
+                        <h3 className="text-lg font-semibold text-black mt-4 mb-3">
+                            Select Allergies
+                        </h3>
+                        <div className="flex gap-4 flex-wrap">
+                            {[
+                                "None",
+                                "Peanuts",
+                                "Tree Nuts",
+                                "Shellfish",
+                                "Fish",
+                                "Eggs",
+                                "Milk",
+                                "Soy",
+                                "Wheat",
+                                "Seeds",
+                                "Mustard",
+                                "Legumes",
+                                "Gluten",
+                                "Pollen",
+                                "Dust Mites",
+                                "Mold",
+                            ].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() =>
+                                        handleAllergiesSelect(option)
+                                    }
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        allergies.includes(option)
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() =>
+                                    handleNextStep(
+                                        6,
+                                        [],
+                                        [healthProblems, allergies]
+                                    )
+                                }
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </>
+                )}
+
+                {step === 7 && (
+                    <>
+                        <h3 className="text-lg font-semibold text-black">
+                            Any additional information?
+                        </h3>
+                        <textarea
+                            value={additionalInfo}
+                            onChange={handleAdditionalInfoChange}
+                            className="mt-2 p-4 border rounded-lg w-full h-32 resize-none"
+                            placeholder="Feel free to share any other details... (optional)"
+                        ></textarea>
+                        <button
+                            onClick={() => console.log("Done !")}
+                            className="mt-4 bg-blue-500 text-white p-3 px-6 rounded-lg font-bold transition-all duration-200 hover:bg-blue-600"
+                        >
+                            <Link href={"/dashboard"}>Complete Sign Up</Link>
+                        </button>
+                    </>
+                )}
                 <Toaster />
             </div>
         </div>
