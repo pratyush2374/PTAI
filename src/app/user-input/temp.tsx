@@ -3,9 +3,12 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
-import styles from "./userinput.module.css"
+import styles from "./userinput.module.css";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
-const UserInput = () => {
+const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
@@ -13,6 +16,28 @@ const UserInput = () => {
     const [pace, setPace] = useState("");
     const [diet, setDiet] = useState("");
     const [age, setAge] = useState("");
+    const [gender, setGender] = useState("");
+
+    const { toast } = useToast();
+
+    const validateStep = (fields: string[]) => {
+        const isValid = fields.every((field) => field.trim() !== "");
+        if (!isValid) {
+            toast({
+                variant: "destructive",
+                title: "Please fill all details",
+            });
+            return false;
+        }
+        return true;
+    };
+
+    // Usage in Step 1
+    const handleNextStep = () => {
+        if (validateStep([height, weight, age, gender])) {
+            setStep(2);
+        }
+    };
 
     const goals = [
         "Lose Weight",
@@ -28,7 +53,6 @@ const UserInput = () => {
 
     const handleSubmit = () => {
         console.log("Submitted:", { height, weight, goal, pace, diet });
-        // Here you would typically send this data to a server or perform further actions
     };
 
     return (
@@ -53,7 +77,6 @@ const UserInput = () => {
                             onChange={(e) => setWeight(e.target.value)}
                             className="w-full p-2 rounded bg-gray-200 text-black placeholder-gray-500"
                         />
-                        
                         <input
                             type="number"
                             placeholder="Age"
@@ -61,8 +84,28 @@ const UserInput = () => {
                             onChange={(e) => setAge(e.target.value)}
                             className="w-full p-2 rounded bg-gray-200 text-black placeholder-gray-500"
                         />
+
+                        <h3 className="text-lg font-semibold text-black">
+                            Select Your Gender
+                        </h3>
+                        <div className="flex gap-4">
+                            {["Male", "Female", "Other"].map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() => setGender(option)}
+                                    className={`p-2 px-4 rounded-lg font-bold transition-all duration-200 ${
+                                        gender === option
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-200 text-black hover:bg-gray-300"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+
                         <button
-                            onClick={() => setStep(2)}
+                            onClick={handleNextStep}
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                         >
                             Next
@@ -96,7 +139,7 @@ const UserInput = () => {
                     </div>
                 )}
 
-                {step === 3 && (
+                {step === 4 && (
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-black">
                             Choose Your Pace
@@ -166,6 +209,7 @@ const UserInput = () => {
                     </div>
                 )}
             </div>
+            <Toaster/>
         </div>
     );
 };
