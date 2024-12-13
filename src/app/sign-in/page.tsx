@@ -1,68 +1,38 @@
-"use client";
+import { Metadata } from "next";
+import SignIn from "./signIn";
 
-import Link from "next/link";
-import Image from "next/image";
-import styles from "./signin.module.css";
+export const metadata: Metadata = {
+    title: "Sign In - PTAI | Personal Trainer AI",
+    description:
+        "Sign in to your PTAI account to access personalized diet and exercise plans tailored to your fitness goals. Stay on track with AI-powered fitness insights.",
+    keywords:
+        "PTAI sign in, personal trainer AI, fitness app login, diet plans, exercise plans, personalized fitness, AI fitness app",
+    authors: [{ name: "Pratyush Sharma" }],
+    robots: "index, follow",
 
-const SignIn = () => {
-    return (
-        <>
-            <div className={styles.body}>
-                <div className={styles.container}>
-                    <div className={styles.imageSection}>
-                        <Image
-                            src="/Login Images/Login.png"
-                            alt="Login"
-                            width={500}
-                            height={500}
-                            layout="intrinsic"
-                        />
-                    </div>
-                    <div className={styles.formSection}>
-                        <h2>Login</h2>
-                        <form>
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your Email here"
-                            />
+    openGraph: {
+        title: "Sign In - PTAI | Personal Trainer AI",
+        description:
+            "Log in to your PTAI account and continue your fitness journey with AI-powered personalized plans.",
+        url: "http://localhost:3000/signin",
+        siteName: "PTAI - Personal Trainer AI",
+        images: [
+            {
+                url: "/Landing%20Images/Icon.svg",
+                width: 1200,
+                height: 630,
+                alt: "PTAI Sign In",
+            },
+        ],
+        type: "website",
+        locale: "en_US",
+    },
 
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Enter your Password here"
-                                className={styles.password}
-                            />
-
-                            <Link href="/user-input">
-                                <button type="submit">Sign In</button>
-                            </Link>
-                        </form>
-                        <p>
-                            Don't have an account?{" "}
-                            <Link href="/sign-up">Sign Up</Link>
-                        </p>
-                        <div className={styles.socialLogin}>
-                            <p>— OR —</p>
-                            <div className={styles.google}>
-                                <Image
-                                    src="/Login Images/Google Icon.svg"
-                                    alt="G icon"
-                                    width={30}
-                                    height={30}
-                                />
-                                Sign in with Google
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+    icons: {
+        icon: "/Landing%20Images/Icon.svg",
+    },
 };
 
-export default SignIn;
+export default function Page() {
+    return <SignIn />;
+}
