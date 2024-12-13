@@ -10,6 +10,12 @@ const DashboardNavbar: React.FC = () => {
         setIsMenuOpen((prev) => !prev);
     };
 
+    const menuItems = [
+        { name: "Dashboard", link: "/dashboard" },
+        { name: "Exercise", link: "/exercise" },
+        { name: "Diet", link: "/diet" },
+    ];
+
     return (
         <nav className={styles.navbar}>
             <div className={styles.navbarTabs}>
@@ -39,15 +45,11 @@ const DashboardNavbar: React.FC = () => {
                     }`}
                 >
                     <div className={styles.outerMenu}>
-                        <Link href="/dashboard" className={styles.tab}>
-                            Dashboard
-                        </Link>
-                        <Link href="/exercise" className={styles.tab}>
-                            Exercise
-                        </Link>
-                        <Link href="/diet" className={styles.tab}>
-                            Diet
-                        </Link>
+                        {menuItems.map((item) => (
+                            <Link key={item.link} href={item.link} className={styles.tab}>
+                                {item.name}
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </div>

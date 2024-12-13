@@ -1157,10 +1157,15 @@
 
     .dietInner {
         gap: 10px;
+        padding: 20px;
     }
 
     .individualExercise,
     .individualDiet,
+    .overallBox {
+        width: 80%;
+    }
+
     .overallBox {
         width: 80%;
     }
@@ -1181,6 +1186,10 @@
         gap: 5px;
         flex-direction: row;
         overflow-x: auto;
+    }
+
+    .outerOverall {
+        padding: 0px 0px;
     }
 
     .nutrient {
@@ -1235,12 +1244,14 @@
     }
 
     .allNutrient {
-        flex-direction: column;
+        align-items: center;
+        padding-left: 10px;
     }
 
     .overallBox {
         justify-content: center;
         width: 90%;
+        flex-direction: row;
     }
 
     .individualDiet {
