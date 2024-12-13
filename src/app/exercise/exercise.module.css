@@ -1,0 +1,565 @@
+.body {
+    background-color: #f4f4f9;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navbar {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.7);
+    opacity: 0.7;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    top: 0;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+}
+
+.navbarTabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    height: inherit;
+    position: relative;
+}
+
+.navbarTabs .tab {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.navbarTabs .tab:hover {
+    color: #007bff;
+}
+
+.navbar-profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+}
+
+.curr {
+    color: #007bff;
+}
+
+.mobileMenu {
+    display: none;
+}
+
+.menuItems {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-left: 30px;
+}
+
+.menuItems a {
+    display: inline-block;
+    text-decoration: none;
+    color: #333;
+}
+
+.menuOpen {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 1);
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+
+/* message */
+
+/* styles/exercise.module.css */
+/* styles/exercise.module.css */
+.container {
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 100px auto;
+    width: 70%;
+    max-width: 1200px;
+    margin-bottom: 30px;
+}
+
+.messageContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    margin: auto;
+}
+
+.leftText {
+    font-size: 1.125rem;
+    font-weight: bold;
+}
+
+.rightContent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendarIcon {
+    width: 24px;
+    height: 24px;
+}
+
+.rightText {
+    font-size: 1.125rem;
+    font-weight: bold;
+}
+
+
+
+/* day's overview */
+
+/* styles/exercise.module.css */
+.daysOverviewContainer {
+    margin: 24px 16px;
+}
+
+.heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.overviewGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.individualExercise {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    padding-left: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.exerciseDetailsMain {
+    margin-left: 18px;
+}
+
+.exerciseDetailsMain h1 {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.exerciseDetailsMain h1 span {
+    font-size: 0.875rem;
+    font-weight: normal;
+    color: #666;
+}
+
+.exerciseDetailsMain h2 {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #666;
+    margin-top: 4px;
+}
+
+
+/* all exercises  */
+/* styles/exercise.module.css */
+.headingEx {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+    margin-left: 32px;
+    margin-top: 50px;
+}
+
+.exerciseDescriptionContainer {
+    margin: 24px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.exerciseHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exerciseName {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.repsSets {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.addnl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.additionalInfo {
+    display: flex;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.infoItem {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.exerciseDetails {
+    margin-top: 16px;
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.exerciseDetails p {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.exerciseDetails p strong {
+    font-weight: 600;
+    color: #000;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* track container */
+
+.trackContainer {
+    margin: 10px auto;
+    max-width: 1000px;
+    width: 60%;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.headingEx {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+}
+
+.subHeading {
+    font-weight: 200;
+    text-align: center;
+    font-size: 15px;
+}
+
+.subHeading {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.exerciseGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.exerciseBox {
+    padding: 10px 20px;
+    font-size: 1rem;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exerciseBox:hover {
+    border-color: royalblue;
+    background-color: #e3f2ff;
+}
+
+.exerciseBox.selected {
+    border-color: royalblue;
+    background-color: royalblue;
+    color: #fff;
+}
+
+.difficultyButtons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.difficultyButton {
+    padding: 8px 20px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.difficultyButton:hover {
+    border-color: royalblue;
+    background-color: #e3f2ff;
+}
+
+.difficultyButton.selectedDifficulty {
+    border-color: royalblue;
+    background-color: royalblue;
+    color: #fff;
+}
+
+.submitButton {
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: royalblue;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.submitButton:hover {
+    background-color: #003da5;
+}
+
+
+
+@media (max-width: 768px) {
+    .navbar {
+        background: #ffffff !important;
+        /* Solid white background on mobile */
+        opacity: 1 !important;
+        /* Ensure no translucency */
+        backdrop-filter: none !important;
+        /* Remove blur effect */
+    }
+
+    .navbarTabs {
+        justify-content: space-between;
+    }
+
+    .mobileMenu {
+        display: block;
+        position: absolute;
+        right: 1px;
+    }
+
+    .outerMenu {
+        background-color: white;
+        width: 40%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        opacity: 1;
+    }
+
+    .menuItems {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+        margin-left: 0px;
+        background: #ffffff !important;
+        /* Ensure solid white background */
+        opacity: 1;
+        /* Solid visibility */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* Optional: add a subtle shadow */
+        border-radius: 5px;
+        /* Optional: make it look neat */
+    }
+
+    .menuOpen {
+        display: block;
+        background-color: white;
+        /* Solid white for the open state */
+    }
+
+    /* Container */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin-top: 100px;
+        margin-bottom: 40px;
+    }
+
+    /* Days Overview */
+    .daysOverviewContainer {
+        margin: 20px 10px;
+    }
+
+    .overviewGrid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .individualExercise {
+        justify-content: center;
+        align-items: flex-start;
+        padding: 10px 15px;
+    }
+
+    .img {
+        align-self: center;
+    }
+
+    /* All Exercises */
+    .exerciseDescriptionContainer {
+        margin: 16px 8px;
+        padding: 12px;
+    }
+
+    .exerciseHeader {
+        align-items: center;
+    }
+
+    .additionalInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .exerciseDetails {
+        padding: 8px 0;
+    }
+
+    /* Track Container */
+    .trackContainer {
+        width: 90%;
+        padding: 16px;
+    }
+
+    .formContainer {
+        gap: 16px;
+    }
+
+    .exerciseGrid {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .difficultyButtons {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .submitButton {
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+
+    /* General Text Adjustments */
+    .headingEx,
+    .subHeading,
+    .exerciseName {
+        font-size: 1.4rem;
+    }
+
+    .exerciseName {
+        margin-left: 5px;
+    }
+
+    .headingEx {
+        margin-left: 0px;
+        margin-bottom: 0px;
+    }
+
+    .repsSets,
+    .infoItem,
+    .exerciseDetails p {
+        font-size: 0.9rem;
+    }
+
+    .subHeading {
+        font-weight: 300;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    /* Flex Adjustment for smaller views */
+    .messageContainer {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .rightContent {
+        justify-content: flex-end;
+        width: fit-content;
+    }
+}
