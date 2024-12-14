@@ -33,10 +33,10 @@ export const POST = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // Create a new weight entry
-        const newWeight = new Weight({
+        const newWeight = {
             date,
             weight,
-        });
+        };
 
         // Save the new weight entry to the user's record
         user.weight.push(newWeight);
