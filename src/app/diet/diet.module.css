@@ -474,7 +474,6 @@
   margin: 0 auto;
   padding: 20px;
   background-color: #ffffff;
-  font-family: "Inter", sans-serif;
   color: #333333;
 }
 
@@ -653,6 +652,18 @@
     text-align: center;
   }
 
+  .ateButton {
+    font-size: 10px;
+  }
+
+  .mealHeader{
+    gap: 10px;
+  }
+  .mealHeader h3 {
+    font-size: 14px;
+    width: 50%;
+  }
+
   .dietDetails {
     order: 2;
     text-align: center;
@@ -676,6 +687,11 @@
   .macronutrients div {
     font-size: 1rem;
   }
+
+  .didNotEatButton {
+    font-size: 10px;
+  }
+
   .mealDetails {
     margin-top: 16px;
     border-top: 1px solid #ddd;
