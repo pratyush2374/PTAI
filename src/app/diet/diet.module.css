@@ -5,7 +5,6 @@
   margin: 0;
   font-family: "Montserrat", sans-serif;
 }
-
 .navbar {
   padding: 10px 20px;
   background: rgba(255, 255, 255, 0.7);
@@ -89,6 +88,51 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  .navbar {
+      background: #ffffff !important; /* Solid white background on mobile */
+      opacity: 1 !important; /* Ensure no translucency */
+      backdrop-filter: none !important; /* Remove blur effect */
+  }
+  .navbarTabs {
+      justify-content: space-between;
+  }
+
+  .mobileMenu {
+      display: block;
+      position: absolute;
+      right: 1px;
+  }
+
+  .outerMenu {
+      background-color: white;
+      width: 40%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      opacity: 1;
+  }
+
+  .menuItems {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      margin-left: 0px;
+      background: #ffffff !important;  /* Ensure solid white background */
+      opacity: 1; /* Solid visibility */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+      border-radius: 5px; /* Optional: make it look neat */
+  }
+
+  .menuOpen {
+      display: block;
+      background-color: white; /* Solid white for the open state */
+  }
+}
 /* message */
 
 /* styles/exercise.module.css */
@@ -568,14 +612,14 @@
   .mealSection {
     background-color: white;
     border-radius: 12px;
+    box-shadow: none;
     padding: 1px 0px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
   }
 
   .individualMeal {
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
     border: 1px solid #ddd;
     padding: 16px;
@@ -624,6 +668,7 @@
   }
   .right {
     gap: 10px;
+    margin-right: 0px;
   }
   .left {
     margin-left: 0%;
