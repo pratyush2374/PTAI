@@ -128,12 +128,10 @@ const UserInput: React.FC = () => {
         "Stay Fit",
         "Increase Stamina",
         "Improve Flexibility",
-        "Increase Cardiovascular Endurance",
         "Boost Overall Strength",
         "Improve Mobility and Joint Health",
         "Increase Endurance",
         "Build Core Strength",
-        "Enhance Stamina",
     ];
 
     const equipmentOptions = [
@@ -411,7 +409,7 @@ const UserInput: React.FC = () => {
                             Select Your Pace
                         </h3>
                         <div className="flex gap-4">
-                            {["Moderate", "Slow", "Fast"].map((option) => (
+                            {["Slow", "Moderate", "Fast"].map((option) => (
                                 <button
                                     key={option}
                                     onClick={() => setPace(option)}

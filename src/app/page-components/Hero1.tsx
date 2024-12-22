@@ -87,7 +87,7 @@ const Hero1: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <Link href="/login">
+                        <Link href="/sign-up">
                             <button className="show-plan">
                                 See Your Personalized Plan
                             </button>
