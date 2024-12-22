@@ -281,6 +281,7 @@
 .macroVal {
   color: royalblue;
 }
+
 .macronutrients {
   display: flex;
   justify-content: space-between;
@@ -334,6 +335,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -361,8 +363,7 @@
   background-color: white;
   border-radius: 12px;
   padding: 30px 50px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .mealType {
@@ -389,6 +390,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.subHeading{
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .responseButtons {
@@ -435,7 +441,7 @@
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #4a90e2;
+  background-color: #5586ff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -445,7 +451,7 @@
 }
 
 .submitButton:hover {
-  background-color: #3a7bd5;
+  background-color: #2966ff;
 }
 
 .submitButton:disabled {
@@ -459,10 +465,30 @@
   color: white;
 }
 
+.goTo {
+  display: block;
+  padding: 12px 24px;
+  background-color: #5586ff;
+  color: #fff;
+  font-size: 1rem;
+  justify-content: center;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  gap: 10px;
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 10px 15px;
   }
+
   .container {
     justify-content: center;
     align-items: center;
@@ -475,12 +501,15 @@
     max-width: 1200px;
     margin-bottom: 30px;
   }
+
   .heading {
     margin-bottom: 10px;
   }
+
   .allMeals {
     padding: 0px;
   }
+
   .mealSection {
     background-color: white;
     border-radius: 12px;
@@ -508,15 +537,18 @@
   .individualMeal:hover {
     transform: scale(1.02);
   }
+
   .mealMain {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
+
   .otherNutrients {
     margin-top: 10px;
     text-align: center;
   }
+
   .macronutrients {
     order: 3;
     display: flex;
@@ -529,9 +561,10 @@
     font-size: 10px;
   }
 
-  .mealHeader{
+  .mealHeader {
     gap: 10px;
   }
+
   .mealHeader h3 {
     font-size: 14px;
     width: 50%;
@@ -550,13 +583,16 @@
     font-weight: bold;
     text-align: left;
   }
+
   .right {
     gap: 10px;
     margin-right: 0px;
   }
+
   .left {
     margin-left: 0%;
   }
+
   .macronutrients div {
     font-size: 1rem;
   }
@@ -581,6 +617,7 @@
   .mealDetails p {
     padding: 5px 0;
   }
+
   .overall {
     display: flex;
     flex-direction: column;

@@ -2,9 +2,11 @@ import Link from "next/link";
 import styles from "../dashboard.module.css";
 import Image from "next/image";
 import DietItem from "./DietItem";
-import OverallStats from "./OverallStats";
+import { useState } from "react";
 
 const Diet: React.FC = () => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
     const dietItems = [
         {
             imageSrc: "/Dashboard Images/food8.svg",
@@ -37,32 +39,48 @@ const Diet: React.FC = () => {
     ];
 
     return (
-        <div className={styles.diet}>
-            <div className={styles.showDiet}>
-                <Image src="/Dashboard Images/diet.svg" alt="Diet" width={100} height={100} />
-                <h1 className={styles.di}>Diet</h1>
-            </div>
-
-            <div className={styles.dietInner}>
-                {/* Map over diet items to render them dynamically */}
-                {dietItems.map((item, index) => (
-                    <DietItem
-                        key={index}
-                        imageSrc={item.imageSrc}
-                        mealName={item.mealName}
-                        mealType={item.mealType}
-                        time={item.time}
-                        calories={item.calories}
+        <>
+            <div className={styles.diet}>
+                <div
+                    className={styles.showDiet}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                >
+                    <Image
+                        src="/Dashboard Images/diet.svg"
+                        alt="Diet"
+                        width={100}
+                        height={100}
                     />
-                ))}
- 
-                <OverallStats />
-            </div>
+                    <h1 className={styles.di}>
+                        Diet{" "}
+                        <span className={styles.sdet}>
+                            (Click to view details)
+                        </span>
+                    </h1>
+                </div>
 
+                <div
+                    className={`${styles.dietInner} ${
+                        isExpanded ? styles.expanded : ""
+                    }`}
+                >
+                    {/* Map over diet items to render them dynamically */}
+                    {dietItems.map((item, index) => (
+                        <DietItem
+                            key={index}
+                            imageSrc={item.imageSrc}
+                            mealName={item.mealName}
+                            mealType={item.mealType}
+                            time={item.time}
+                            calories={item.calories}
+                        />
+                    ))}
+                </div>
+            </div>
             <Link href="/diet" className={styles.nextLink}>
                 <div className={styles.goToDiet}>Go To Diet</div>
             </Link>
-        </div>
+        </>
     );
 };
 

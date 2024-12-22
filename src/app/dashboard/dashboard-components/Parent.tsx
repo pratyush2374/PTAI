@@ -9,7 +9,6 @@ const Parent: React.FC = () => {
         <>
             <div className={styles.parent}>
                 <Main />
-                <Right />
             </div>
         </>
     );

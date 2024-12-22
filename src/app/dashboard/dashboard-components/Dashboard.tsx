@@ -10,8 +10,6 @@ const Dashboard: React.FC = () => {
     <>
       <Navbar />
       <Parent />
-      <LowerParent />
-      <Footer />
     </>
   );
 }

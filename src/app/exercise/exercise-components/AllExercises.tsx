@@ -4,6 +4,7 @@
 import { useState } from "react";
 import styles from "../exercise.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Exercise {
     name: string;
@@ -156,6 +157,18 @@ const AllExercises = () => {
                     )}
                 </div>
             ))}
+
+            <Link href="/track-exercise" className="nextLink">
+                <div className={styles.goTo}>
+                    Track Exercise{" "}
+                    <Image
+                        src="/Images/redirect.png"
+                        alt="Duration"
+                        width={22}
+                        height={18}
+                    ></Image>
+                </div>
+            </Link>
         </>
     );
 };

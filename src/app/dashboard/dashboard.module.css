@@ -7,7 +7,7 @@
 }
 
 .parent {
-    width: 90%;
+    width: 80%;
     margin: 120px auto 40px;
     display: flex;
     justify-content: space-between;
@@ -22,7 +22,7 @@
 }
 
 .main {
-    width: 75%;
+    width: 100%;
     padding: 20px;
     background-color: #fff;
     display: flex;
@@ -310,20 +310,17 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: rgb(255, 255, 255);
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(85, 134, 255, 1) 100%
-    );
+    
 }
 
 .showEx {
     display: flex;
-    align-items: center;
-    padding-left: 30px;
+    align-items: flex-end;
+    padding-left: 50px;
     padding-top: 20px;
     margin-bottom: 20px;
     gap: 10px;
+    cursor: pointer;
 }
 
 .showEx img {
@@ -333,11 +330,12 @@
 
 .ex {
     font-size: 22px;
-    align-self: flex-end;
+    
 }
 
 .exerciseInner {
-    padding: 40px 20px;
+    padding: 0px 20px;
+    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -345,6 +343,7 @@
     border-radius: 10px 10px 0 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: #f8f9fa;
+    /* transition: max-height 0.5s ease-out, padding 0.5s ease-out; */
 }
 
 .individualExercise {
@@ -405,7 +404,8 @@
     font-size: 1rem;
     font-weight: bold;
     text-align: center;
-    border-radius: 0 0 5px 5px;
+    border-radius: 5px;
+    margin-top: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -427,11 +427,6 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: rgb(255, 255, 255);
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(255, 44, 44, 1) 100%
-    );
     margin-top: 30px;
 }
 
@@ -443,7 +438,7 @@
 .showDiet {
     display: flex;
     align-items: center;
-    padding-left: 30px;
+    padding-left: 50px;
     padding-top: 20px;
     margin-bottom: 20px;
     gap: 10px;
@@ -456,7 +451,6 @@
 
 .di {
     font-size: 22px;
-    align-self: flex-end;
 }
 
 .dietInner {
@@ -548,7 +542,9 @@
     font-size: 1rem;
     font-weight: bold;
     text-align: center;
-    border-radius: 0 0 5px 5px;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 50px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -971,6 +967,11 @@
     color: #000000;
 }
 
+.sdet{
+    font-size: 12px;
+    margin-left: 10px;
+}
+
 /* Mobile  CSS */
 /* Mobile friendly styles */
 
@@ -992,6 +993,16 @@
         margin: 30px 15px;
     }
 
+    .left{
+        width: 100%;
+    }
+    .parent {
+        width: 90%;
+    }
+    .dataBoxes{
+        width: 100%;
+    }
+
     .dataBox {
         min-width: 100px;
         height: 160px;
@@ -1011,6 +1022,17 @@
 
     .dataBox {
         width: 45%;
+    }
+    .showEx{
+        justify-content: center;
+        padding-left: 0px;
+    }
+    .showEx img {
+        width: 30px;
+        height: 30px;
+    }
+    .showEx h1 {
+        font-size: 1.2rem;
     }
 
     .todaysPlan {
@@ -1187,8 +1209,41 @@
         flex-direction: column;
         margin-top: 10px;
     }
+    
+    .showDiet{
+        padding-left: 0px;
+        justify-content: center;
+    }
+
+    .unit {
+        font-size: 18px;
+    }
 }
 
 .nextLink {
     text-decoration: none;
+}
+
+
+.exerciseInner {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.13s ease-out;
+}
+
+.exerciseInner.expanded {
+    max-height: 500px;
+    padding: 40px 20px;
+}
+
+.dietInner {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 20px; /* Remove vertical padding to avoid showing content when collapsed */
+    transition: max-height 0.15s ease-out, padding 0.5s ease-out; /* Animate both max-height and padding */
+}
+
+.dietInner.expanded {
+    max-height: 800px; /* Adjust this value based on content */
+    padding: 40px 20px; /* Add the padding back when expanded */
 }

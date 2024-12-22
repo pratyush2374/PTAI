@@ -7,8 +7,7 @@ const LowerParent: React.FC = () => {
         <>
             <div className={styles.lowerParent}>
                 <div className={styles.otherStats}>
-                    <Graph />
-                    <AllStats />
+
                 </div>
             </div>
         </>

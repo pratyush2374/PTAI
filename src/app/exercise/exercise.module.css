@@ -114,15 +114,13 @@
     margin-top: 4px;
 }
 
-
-/* all exercises  */
-/* styles/exercise.module.css */
 .headingEx {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 16px;
-    margin-left: 32px;
+    margin: auto;
     margin-top: 50px;
+    text-align: center;
 }
 
 .exerciseDescriptionContainer {
@@ -139,6 +137,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 90%;
+    margin: auto;
 }
 
 .exerciseName {
@@ -180,6 +180,10 @@
     padding-top: 12px;
     animation: fadeIn 0.3s ease-in-out;
 }
+.subHeading{
+    margin: auto;
+    text-align: center;
+}
 
 .exerciseDetails p {
     font-size: 0.875rem;
@@ -191,6 +195,25 @@
 .exerciseDetails p strong {
     font-weight: 600;
     color: #000;
+}
+
+.goTo{
+    display: block;
+    padding: 12px 24px;
+    background-color: #5586ff;
+    color: #fff;
+    font-size: 1rem;
+    justify-content: center;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    gap: 10px;
 }
 
 @keyframes fadeIn {
@@ -216,6 +239,8 @@
         padding: 10px;
         margin-top: 100px;
         margin-bottom: 40px;
+        border: none;
+        box-shadow: none;
     }
 
     /* Days Overview */
@@ -246,12 +271,18 @@
 
     .exerciseHeader {
         align-items: center;
+        width: 100%;
     }
 
     .additionalInfo {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+    }
+
+    .exerciseName {
+        font-size: 1.2rem;
+        font-weight: bold;
     }
 
     .exerciseDetails {
@@ -269,6 +300,7 @@
         font-weight: 300;
         text-align: center;
         font-size: 15px;
+        
     }
 
     /* Flex Adjustment for smaller views */

@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image"; // Importing the Image component
 import IndividualMeal from "./IndividualMeal";
 import styles from "../diet.module.css";
+import Link from "next/link";
 
 interface MealDetails {
     weight: string;
@@ -134,28 +135,43 @@ const AllMeals: React.FC = () => {
             },
         ],
     };
-    
 
     return (
-        <div className={styles.allMeals}>
-            <div className={styles.mealHeading}>
-                <Image
-                    src="/Dashboard Images/food1.svg"
-                    alt="Meals"
-                    width={45} 
-                    height={45}
-                />
-                <h1 className={styles.heading}>Meals</h1>
-            </div>
-            {Object.keys(mealsData).map((mealType) => (
-                <div key={mealType} className={styles.mealSection}>
-                    <h2 className={styles.mealType}>{mealType}</h2>
-                    {mealsData[mealType].map((meal, index) => (
-                        <IndividualMeal key={index} meal={meal} />
-                    ))}
+        <>
+            <div className={styles.allMeals}>
+                <div className={styles.mealHeading}>
+                    <Image
+                        src="/Dashboard Images/food1.svg"
+                        alt="Meals"
+                        width={45}
+                        height={45}
+                    />
+                    <h1 className={styles.heading}>Meals</h1>
+                    
                 </div>
-            ))}
-        </div>
+                <h3 className={styles.subHeading}>Click to view details</h3>
+                {Object.keys(mealsData).map((mealType) => (
+                    <div key={mealType} className={styles.mealSection}>
+                        <h2 className={styles.mealType}>{mealType}</h2>
+                        {mealsData[mealType].map((meal, index) => (
+                            <IndividualMeal key={index} meal={meal} />
+                        ))}
+                    </div>
+                ))}
+            </div>
+
+            <Link href="/track-diet" className="nextLink">
+                <div className={styles.goTo}>
+                    Track Diet{" "}
+                    <Image
+                        src="/Images/redirect.png"
+                        alt="Duration"
+                        width={22}
+                        height={18}
+                    ></Image>
+                </div>
+            </Link>
+        </>
     );
 };
 
