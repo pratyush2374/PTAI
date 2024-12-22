@@ -1,22 +1,19 @@
 import AllExercises from "./AllExercises";
 import DayOverview from "./DayOverview";
-import ExerciseNavbar from "./ExerciseNavbar";
+import Navbar from "@/app/(common-components)/Navbar";
 import Message from "./Message";
 import styles from "../exercise.module.css";
-import TrackExercises from "./TrackExercises";
-import { Toaster } from "@/components/ui/toaster";
+
 
 const Exercise: React.FC = () => {
     return (
         <>
-            <ExerciseNavbar />
+            <Navbar />
             <div className={styles.container}>
                 <Message />
                 <DayOverview />
                 <AllExercises />
             </div>
-            <TrackExercises />
-            <Toaster />
         </>
     );
 };

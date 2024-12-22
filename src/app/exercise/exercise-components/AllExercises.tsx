@@ -95,7 +95,7 @@ const AllExercises = () => {
     return (
         <>
             <h1 className={styles.headingEx}>Exercises</h1>
-            <h3 className={styles.subHeading}>Click to view detiails</h3>
+            <h3 className={styles.subHeading}>Click to view details</h3>
             {exercisesData.map((exercise, index) => (
                 <div
                     key={index}

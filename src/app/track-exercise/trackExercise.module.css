@@ -1,0 +1,144 @@
+.trackContainer {
+    margin: 100px auto;
+    max-width: 1000px;
+    width: 60%;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.headingEx {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.subHeading {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: bold;
+    text-align: center;
+}
+
+.exerciseList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.exerciseItem {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.exerciseName {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    flex: 1;
+    margin-left: 10px;
+}
+
+.difficultyButtonsContainer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.difficultyButton {
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.difficultyButton:hover {
+    border-color: royalblue;
+    background-color: #e3f2ff;
+}
+
+.difficultyButton.selectedDifficulty {
+    border-color: royalblue;
+    background-color: royalblue;
+    color: #fff;
+}
+
+.submitButton {
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: royalblue;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #003da5;
+}
+
+@media (max-width: 768px) {
+    .trackContainer {
+        width: 90%;
+        padding: 16px;
+        box-shadow: none;
+        width: 90%;
+
+    }
+
+    .formContainer {
+        gap: 16px;
+    }
+
+    .exerciseItem {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .exerciseName {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    .difficultyButtonsContainer {
+        flex-direction: row;
+        justify-content: center;
+        gap: 5px;
+        align-items: stretch;
+    }
+
+    .difficultyButton {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        align-items: center; /* Centers text vertically */
+        justify-content: center; /* Centers text horizontally */
+    }
+
+    .submitButton {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+}
