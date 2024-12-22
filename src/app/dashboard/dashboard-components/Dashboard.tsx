@@ -1,6 +1,6 @@
 "use client";
 
-import DashboardNavbar from "./DashboardNavbar";
+import Navbar from "@/app/(common-components)/Navbar"
 import Parent from "./Parent";
 import LowerParent from "./LowerParent";
 import Footer from "./Footer";
@@ -8,7 +8,7 @@ import Footer from "./Footer";
 const Dashboard: React.FC = () => {
   return (
     <>
-      <DashboardNavbar />
+      <Navbar />
       <Parent />
       <LowerParent />
       <Footer />

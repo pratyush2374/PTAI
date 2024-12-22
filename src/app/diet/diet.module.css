@@ -5,134 +5,7 @@
   margin: 0;
   font-family: "Montserrat", sans-serif;
 }
-.navbar {
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.7);
-  opacity: 0.7;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  width: 100%;
-  z-index: 100;
-  top: 0;
-}
 
-.logo {
-  width: 40px;
-  height: 40px;
-}
-
-.navbarTabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-  height: inherit;
-  position: relative;
-}
-
-.navbarTabs .tab {
-  margin: 0 15px;
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.navbarTabs .tab:hover {
-  color: #007bff;
-}
-
-.navbar-profile {
-  display: flex;
-  align-items: center;
-}
-
-.profile-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-}
-
-.curr {
-  color: #007bff;
-}
-
-.mobileMenu {
-  display: none;
-}
-
-.menuItems {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-left: 30px;
-}
-
-.menuItems a {
-  display: inline-block;
-  text-decoration: none;
-  color: #333;
-}
-
-.menuOpen {
-  display: block;
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 1);
-  border-radius: 5px;
-  width: 100%;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .navbar {
-      background: #ffffff !important; /* Solid white background on mobile */
-      opacity: 1 !important; /* Ensure no translucency */
-      backdrop-filter: none !important; /* Remove blur effect */
-  }
-  .navbarTabs {
-      justify-content: space-between;
-  }
-
-  .mobileMenu {
-      display: block;
-      position: absolute;
-      right: 1px;
-  }
-
-  .outerMenu {
-      background-color: white;
-      width: 40%;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      opacity: 1;
-  }
-
-  .menuItems {
-      width: 100%;
-      display: none;
-      flex-direction: column;
-      gap: 20px;
-      margin-left: 0px;
-      background: #ffffff !important;  /* Ensure solid white background */
-      opacity: 1; /* Solid visibility */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
-      border-radius: 5px; /* Optional: make it look neat */
-  }
-
-  .menuOpen {
-      display: block;
-      background-color: white; /* Solid white for the open state */
-  }
-}
 /* message */
 
 /* styles/exercise.module.css */
@@ -357,7 +230,7 @@
   font-size: 1.5rem;
   margin-bottom: 16px;
   text-transform: capitalize;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 1px solid #ddd;
   padding-bottom: 8px;
 }
 
@@ -471,7 +344,7 @@
 
 .dietTracker {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 60px auto;
   padding: 20px;
   background-color: #ffffff;
   color: #333333;
@@ -494,7 +367,7 @@
 
 .mealType {
   color: #34495e;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -594,9 +467,9 @@
     justify-content: center;
     align-items: center;
     padding: 16px;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     margin: 100px auto;
     width: 95%;
     max-width: 1200px;
@@ -620,7 +493,7 @@
   .individualMeal {
     width: 100%;
     margin: 0 auto;
-    border: 1px solid #ddd;
+    border: none;
     padding: 16px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -692,12 +565,17 @@
     font-size: 10px;
   }
 
+  .didNotEatForm {
+    font-size: 0.8rem;
+  }
+
   .mealDetails {
     margin-top: 16px;
     border-top: 1px solid #ddd;
     padding-top: 12px;
-    margin-left: 0px;
+    margin-left: 5px;
     animation: fadeIn 0.3s ease-in-out;
+    font-size: 0.8rem;
   }
 
   .mealDetails p {
@@ -716,6 +594,7 @@
     width: 90%;
     gap: 20%;
     margin-bottom: 20px;
+    margin-left: 10px;
   }
 
   .allNutrient {

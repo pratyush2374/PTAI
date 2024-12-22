@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./component.module.css";
 
-const ExerciseNavbar: React.FC = () => {
+const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -65,4 +65,4 @@ const ExerciseNavbar: React.FC = () => {
     );
 };
 
-export default ExerciseNavbar;
+export default Navbar;

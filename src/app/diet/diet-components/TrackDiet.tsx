@@ -249,13 +249,12 @@ const TrackDiet: React.FC = () => {
                                     <label
                                         htmlFor={`input-${mealType}-${index}`}
                                     >
-                                        What did you eat instead?
+                                        What did you eat instead? (If any) - Describe eg - 250g of rice
                                     </label>
                                     <input
                                         type="text"
                                         id={`input-${mealType}-${index}`}
                                         placeholder="Enter the food you ate"
-                                        
                                         onChange={(e) =>
                                             handleAlternateFood(
                                                 mealType,
