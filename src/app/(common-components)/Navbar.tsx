@@ -18,18 +18,23 @@ const Navbar: React.FC = () => {
         { name: "Diet", link: "/diet" },
         { name: "Track Exercise", link: "/track-exercise" },
         { name: "Track Diet", link: "/track-diet" },
+        { name: "Health", link: "/health-tracker" },
+        { name: "Account Settings", link: "/account-settings" },
+        { name: "Sign Out", link: "/sign-out" },
     ];
 
     return (
         <nav className={styles.navbar}>
             <div className={styles.navbarTabs}>
-                <Image
-                    src="/Dashboard Images/Icon Black.svg"
-                    alt="App Icon"
-                    className={styles.logo}
-                    width={40}
-                    height={40}
-                />
+                <Link href="/">
+                    <Image
+                        src="/Dashboard Images/Icon Black.svg"
+                        alt="App Icon"
+                        className={styles.logo}
+                        width={40}
+                        height={40}
+                    />
+                </Link>
                 <div className={styles.mobileMenu} onClick={toggleMenu}>
                     <Image
                         src={

@@ -1,6 +1,4 @@
 import styles from "../dashboard.module.css";
-import Link from "next/link";
-import Image from "next/image";
 import WelcomeMessage from "./WelcomeMessage";
 import DataBoxes from "./DataBoxes";
 import TodaysPlan from "./TodaysPlan";

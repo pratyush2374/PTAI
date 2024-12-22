@@ -1,5 +1,4 @@
 import styles from "../dashboard.module.css";
-import Link from "next/link";
 import Exercise from "./Exercise";
 import Diet from "./Diet";
 

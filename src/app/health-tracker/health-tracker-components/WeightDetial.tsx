@@ -1,4 +1,4 @@
-import styles from "../dashboard.module.css";
+import styles from "../healthTracker.module.css";
 
 interface WeightDetailProps {
     value: string | number;
