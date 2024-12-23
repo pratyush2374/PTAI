@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import styles from "./userinput.module.css";
 import { useToast } from "@/hooks/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 
 const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -679,7 +678,7 @@ const UserInput: React.FC = () => {
                         </button>
                     </>
                 )}
-                <Toaster />
+                
             </div>
         </div>
     );

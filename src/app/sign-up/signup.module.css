@@ -74,7 +74,7 @@
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #f4f4f9;
+    background-color: #2990ff;
     color: #333;
     font-size: 16px;
     cursor: pointer;
@@ -82,7 +82,7 @@
 }
 
 .formSection button:hover {
-    background-color: #007bff;
+    background-color: #015fc4;
 }
 
 .formSection p {
@@ -128,6 +128,14 @@
 
 .google:hover {
     background-color: #dcdcdc;
+}
+
+.otpSection{
+    margin-top: 20px;
+}
+
+.otpSection input {
+    font-size: 14px;
 }
 
 @media (max-width: 768px) {

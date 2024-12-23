@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import SignUp from "./signUp";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "Sign Up - PTAI | Personal Trainer AI",
@@ -34,5 +35,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    return <SignUp />;
+    return (
+        <>
+            <Toaster />
+            <SignUp />
+        </>
+    );
 }

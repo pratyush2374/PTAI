@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import UserInput from "./userInput";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "User Input - PTAI | Personal Trainer AI",
@@ -34,5 +35,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    return <UserInput />;
+    return (
+        <>
+            <UserInput />;
+            <Toaster />
+        </>
+    );
 }

@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     try {
         // Parse the incoming JSON request body
         const { fullName, email } = await req.json();
-
+        console.log(fullName, email);
         // Validate the input
         if (!fullName || !email) {
             return NextResponse.json(
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
         // Respond with success
         return NextResponse.json(
-            { message: "Verification email sent successfully" },
+            { message: "Verification email sent successfully", verificationCode },
             { status: 200 }
         );
     } catch (error) {
