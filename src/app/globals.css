@@ -284,53 +284,6 @@ body {
 
 /* ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-/* Fitness goals  */
-.fitness-goals {
-  margin-top: 30px;
-  padding: 20px;
-  text-align: center;
-  color: #fffaf2;
-  background-color: #222831;
-  border-radius: 15px;
-}
-
-.fitness-goals h2 {
-  font-size: 36px;
-  margin-bottom: 40px;
-  color: #fff;
-}
-
-.goals-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  width: 80%;
-  margin: auto;
-}
-
-.goal-item {
-  background-color: #fff;
-  color: #222831;
-  border-radius: 10px;
-  padding: 15px 20px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-  flex: 1 1 calc(33.33% - 20px);
-  box-sizing: border-box;
-  text-align: center;
-  max-width: calc(33.33% - 20px);
-  font-weight: 500;
-}
-
-.goal-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #98caff;
-  color: #393E46;
-  font-weight: 600;
-}
 
 .show-plan {
   background-color: #007bff;
@@ -341,13 +294,19 @@ body {
   font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  margin-top: 50px;
-  margin-bottom: 30px;
+  height: 80px;
   font-weight: 500;
+  width: 100%;
+  margin: auto;
+}
+
+.slink{
+  margin: 50px auto 80px;
+  width: 50%;
 }
 
 .show-plan:hover {
-  background-color: #393E46;
+  background-color: #0465ce;
   color: #fff;
   transform: scale(1.05);
   font-weight: 600;
@@ -824,6 +783,10 @@ body {
     align-items: center;
     flex-direction: column;
     margin-top: 30px;
+  }
+
+  .slink{
+    width: 100%;
   }
 }
 

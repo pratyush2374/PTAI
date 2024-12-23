@@ -6,7 +6,7 @@ import Features from "./Features";
 import Footer from "./Footer";
 import Header from "./Header";
 import Hero1 from "./Hero1";
-import Introduction from "./Introduction";
+import { Toaster } from "@/components/ui/toaster";
 
 function LandingPage() {
     const [isClient, setIsClient] = useState(false);
@@ -24,6 +24,7 @@ function LandingPage() {
             <AboutUs />
             <ContactUs />
             <Footer />
+            <Toaster />
         </>
     );
 }
