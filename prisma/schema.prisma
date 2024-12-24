@@ -15,10 +15,12 @@ model User {
   password         String
   googleId         String?           @unique
   profilePic       String?
+  dob              DateTime
   age              Int
   gender           Gender
   height           Float
   weight           Weight[]
+  additionalInfo   String
   preferences      UserPreferences?
   healthAndDietary HealthAndDietary?
   dietPlan         DailyDiet?
@@ -44,7 +46,7 @@ model Weight {
   id     String   @id @default(auto()) @map("_id") @db.ObjectId
   date   DateTime
   weight Float
-  user   User     @relation(fields: [userId], references: [id])
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String   @unique @db.ObjectId
 }
 
@@ -59,7 +61,7 @@ model UserPreferences {
   fitnessGoals             String[]
   pace                     String
   availableEquipments      String[]
-  user                     User     @relation(fields: [userId], references: [id])
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                   String   @unique @db.ObjectId
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
@@ -70,7 +72,7 @@ model HealthAndDietary {
   dietaryPreferences String[]
   healthProblems     String[]
   allergies          String[]
-  user               User     @relation(fields: [userId], references: [id])
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String   @unique @db.ObjectId
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -108,7 +110,7 @@ model DailyDiet {
   snacksId     String?     @unique @db.ObjectId
   dinner       Diet?       @relation(fields: [dinnerId], references: [id], name: "dinner")
   dinnerId     String?     @unique @db.ObjectId
-  user         User        @relation(fields: [userId], references: [id])
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String      @unique @db.ObjectId
   WeeklyDiet   WeeklyDiet? @relation(fields: [weeklyDietId], references: [id])
   weeklyDietId String?     @db.ObjectId
@@ -119,7 +121,7 @@ model WeeklyDiet {
   weekStart  DateTime
   weekEnd    DateTime
   dailyPlans DailyDiet[]
-  user       User        @relation(fields: [userId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String      @db.ObjectId
 }
 
@@ -148,7 +150,7 @@ model DailyExercise {
   id               String          @id @default(auto()) @map("_id") @db.ObjectId
   date             DateTime
   exercises        Exercise[]
-  user             User            @relation(fields: [userId], references: [id])
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String          @unique @db.ObjectId
   weeklyExercise   WeeklyExercise? @relation(fields: [weeklyExerciseId], references: [id])
   weeklyExerciseId String?         @db.ObjectId
@@ -159,7 +161,7 @@ model WeeklyExercise {
   weekStart  DateTime
   weekEnd    DateTime
   dailyPlans DailyExercise[]
-  user       User            @relation(fields: [userId], references: [id])
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String          @db.ObjectId
 }
 
@@ -178,7 +180,7 @@ model DailyStats {
   goalAchievement   Int?
   totalMealsLogged  Int?
   minutesWorkedOut  Int?
-  user              User         @relation(fields: [userId], references: [id])
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String       @unique @db.ObjectId
   weeklyStats       WeeklyStats? @relation(fields: [weeklyStatsId], references: [id])
   weeklyStatsId     String?      @db.ObjectId
@@ -189,7 +191,7 @@ model WeeklyStats {
   id             String        @id @default(auto()) @map("_id") @db.ObjectId
   userId         String        @db.ObjectId
   weeklyData     DailyStats[]
-  user           User          @relation(fields: [userId], references: [id])
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   monthlyStats   MonthlyStats? @relation(fields: [monthlyStatsId], references: [id])
   monthlyStatsId String?       @db.ObjectId
 }
@@ -198,7 +200,7 @@ model MonthlyStats {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   userId        String        @db.ObjectId
   weeklyData    WeeklyStats[]
-  user          User          @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   yearlyStats   YearlyStats?  @relation(fields: [yearlyStatsId], references: [id])
   yearlyStatsId String?       @db.ObjectId
 }
@@ -207,7 +209,7 @@ model YearlyStats {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
   userId      String         @db.ObjectId
   monthlyData MonthlyStats[]
-  user        User           @relation(fields: [userId], references: [id])
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model OverallStats {
@@ -217,6 +219,6 @@ model OverallStats {
   achievements            String[]
   totalWeightLossOrGained Float
   averageWeight           Float
-  user                    User     @relation(fields: [userId], references: [id])
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                  String   @unique @db.ObjectId
 }
