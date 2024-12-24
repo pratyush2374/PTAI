@@ -1,6 +1,7 @@
 import { Metadata } from "next";
-import UserInput from "./userInput";
+import UserInput from "./user-input-components/userInput";
 import { Toaster } from "@/components/ui/toaster";
+
 
 export const metadata: Metadata = {
     title: "User Input - PTAI | Personal Trainer AI",

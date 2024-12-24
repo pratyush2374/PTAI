@@ -1,11 +1,15 @@
 import sendEmail from "@/lib/emailSender";
+import prisma from "@/lib/prismaClient";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
-        // Parse the incoming JSON request body
+
         const { fullName, email } = await req.json();
-        console.log(fullName, email);
+
+
+        console.log("Request received:", fullName, email);
+
         // Validate the input
         if (!fullName || !email) {
             return NextResponse.json(
@@ -14,20 +18,48 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        // Email validation using regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { message: "Invalid email format" },
+                { status: 400 }
+            );
+        }
+
+        // Check if the email already exists in the database
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (existingUser) {
+            return NextResponse.json(
+                { message: "User already exists" },
+                { status: 409 } // Use 409 Conflict for duplicate
+            );
+        }
+
+        // Generate a verification code
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-        // Call the sendEmail function to send the email
-        await sendEmail(fullName, email, verificationCode);
+        // Send the email with the verification code
+        try {
+            await sendEmail(fullName, email, verificationCode);
+        } catch (emailError) {
+            console.error("Error sending email:", emailError);
+            return NextResponse.json(
+                { message: "Failed to send email. Please try again later." },
+                { status: 500 }
+            );
+        }
 
-        // Respond with success
+        // Respond with success, but omit sending the verificationCode in response
         return NextResponse.json(
-            { message: "Verification email sent successfully", verificationCode },
+            { message: "Verification email sent successfully", verificationCode},
             { status: 200 }
         );
     } catch (error) {
-        console.error("Error sending email:", error);
-
-        // Handle errors by sending a response
+        console.error("Internal Server Error:", error);
         return NextResponse.json(
             { message: "Internal Server Error" },
             { status: 500 }

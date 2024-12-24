@@ -7,8 +7,7 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import styles from "./signup.module.css";
 import axios from "axios";
-import { Toaster } from "@/components/ui/toaster";
-import { Toast } from "@/components/ui/toast";
+import bcryptjs from "bcryptjs";
 
 type FormData = {
     fullName: string;
@@ -38,6 +37,7 @@ const SignUp: React.FC = () => {
     const [otpSent, setOtpSent] = useState(false);
     const [verifyCode, setVerifyCode] = useState(0);
     const [sent, setSent] = useState(false);
+    const [userData, setUserData] = useState({})
 
     const onSubmit = async (data: FormData) => {
         const { fullName, email, password } = data;
@@ -62,11 +62,16 @@ const SignUp: React.FC = () => {
                 setSent(false);
                 return toast({
                     title: "Error",
-                    description: "Couldnt send code :(",
+                    description: `Couldnt send code :( ,${response.data.message}`,
                     variant: "destructive",
                 });
             } else {
                 setVerifyCode(response.data.verificationCode);
+                setUserData({
+                    fullName : data.fullName,
+                    email : data.email, 
+                    password : bcryptjs.hashSync(data.password, 7)
+                });
                 toast({
                     title: "Success",
                     description: `OTP has been sent to your email!`,
@@ -101,6 +106,8 @@ const SignUp: React.FC = () => {
                     variant: "destructive",
                 });
             } else {
+                const userStr = JSON.stringify(userData);
+                sessionStorage.setItem("user", userStr);
                 toast({
                     title: "Success",
                     description: "Email verified successfully! Redirecting...",
