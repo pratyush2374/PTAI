@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
 
         if (existingUser) {
             return NextResponse.json(
-                { message: "User already exists" },
-                { status: 409 } // Use 409 Conflict for duplicate
+                { message: "User already exists, try signing in" },
+                { status: 401 } 
             );
         }
 

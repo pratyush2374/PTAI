@@ -1,5 +1,6 @@
 import prisma from "@/lib/prismaClient";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
         // Ensure height and weight are stored as numbers
         const parsedHeight = parseFloat(height);
         const parsedWeight = parseFloat(weight);
- 
+        const hashedPassword = await bcrypt.hash(password, 11);
 
         // Ensure gender is stored in uppercase
         const formattedGender = gender.toUpperCase();
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
                 fullName,
                 userName: username,
                 email,
-                password,
+                password : hashedPassword,
                 googleId : Date.now() + username,
                 dob: new Date(dob),
                 age,

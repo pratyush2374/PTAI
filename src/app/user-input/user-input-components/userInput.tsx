@@ -1,7 +1,7 @@
 // UserInput.tsx (Main Component)
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
@@ -9,8 +9,11 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
 import Step7 from "./Step7";
-import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+import crypto from "crypto";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -38,27 +41,98 @@ const UserInput: React.FC = () => {
     const [allergies, setAllergies] = useState<string[]>([]);
     const [additionalInfo, setAdditionalInfo] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [userSessionData, setUserSessionData] = useState<{
+        fullName: string;
+        email: string;
+        password: string;
+    }>();
+    const [userPassword, setUserPassword] = useState<string>("");
 
     const { toast } = useToast();
+    const router = useRouter();
+
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem("user") as string);
+        setUserSessionData(user);
+
+        if (!user || !user.fullName || !user.email || !user.password) {
+            toast({
+                variant: "destructive",
+                title: "Some error occured while fetching user details 1",
+                description: "Please try again",
+            });
+            router.push("/sign-up");
+            return;
+        }
+    }, []);
+
+    const decryptPassword = (encryptedPassword: string): string => {
+        const AES_SECRET = process.env.NEXT_PUBLIC_AES_SECRET as string;
+
+        if (!AES_SECRET) {
+            throw new Error(
+                "NEXT_PUBLIC_AES_SECRET is not defined in the environment variables."
+            );
+        }
+
+        const decipher = crypto.createDecipheriv(
+            "aes-256-ctr",
+            Buffer.from(AES_SECRET, "utf8"),
+            Buffer.alloc(16, 0)
+        );
+
+        const decryptedPassword =
+            decipher.update(encryptedPassword, "hex", "utf8") +
+            decipher.final("utf8");
+
+        return decryptedPassword;
+    };
+
+    const signInUserWithNextAuth = async (email: string, password: string) => {
+        //Signing user with next auth
+        const res = await signIn("credentials", {
+            redirect: false,
+            email,
+            password,
+        });
+
+        if (res?.error) {
+            setError(res.error);
+            console.log(res.error);
+        } else if (res?.ok) {
+            sessionStorage.removeItem("user");
+            router.push("/dashboard");
+        }
+    };
 
     const submitData = async () => {
         try {
             setIsSubmitting(true);
-            const user = JSON.parse(sessionStorage.getItem("user") as string);
-            if (!user || !user.fullName || !user.email || !user.password) {
+
+            if (
+                !userSessionData ||
+                !userSessionData.fullName ||
+                !userSessionData.email ||
+                !userSessionData.password
+            ) {
                 toast({
                     variant: "destructive",
                     title: "Some error occured while fetching user details 1",
                     description: "Please try again",
                 });
-                setIsSubmitting(false);
+                router.push("/sign-up");
                 return;
             }
 
+            const passwordDecrypted = decryptPassword(userSessionData.password);
+            setUserPassword(passwordDecrypted);
+            console.log(passwordDecrypted);
+
             const response = await axios.post("/api/sign-up", {
-                fullName: user.fullName,
-                email: user.email,
-                password: user.password,
+                fullName: userSessionData.fullName,
+                email: userSessionData.email,
+                password: passwordDecrypted,
                 height,
                 weight,
                 dob,
@@ -92,8 +166,11 @@ const UserInput: React.FC = () => {
                     variant: "default",
                     title: "Data submitted successfully, Redirecting...",
                 });
-                sessionStorage.removeItem("user");
-                window.location.href = "/dashboard";
+
+                const email = userSessionData.email;
+                const password = userPassword;
+
+                await signInUserWithNextAuth(email, password);
             }
         } catch (error) {
             setIsSubmitting(false);
@@ -232,7 +309,7 @@ const UserInput: React.FC = () => {
                     <Step7
                         additionalInfo={additionalInfo}
                         setAdditionalInfo={setAdditionalInfo}
-                        isSubmitting = {isSubmitting}
+                        isSubmitting={isSubmitting}
                         onSubmit={submitData}
                     />
                 )}

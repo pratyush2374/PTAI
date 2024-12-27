@@ -7,7 +7,9 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import styles from "./signup.module.css";
 import axios from "axios";
-import bcryptjs from "bcryptjs";
+import crypto from "crypto";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type FormData = {
     fullName: string;
@@ -26,6 +28,7 @@ const SignUp: React.FC = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
+
     //For 2nd section
     const {
         register: registerCode,
@@ -37,8 +40,22 @@ const SignUp: React.FC = () => {
     const [otpSent, setOtpSent] = useState(false);
     const [verifyCode, setVerifyCode] = useState(0);
     const [sent, setSent] = useState(false);
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState({});
 
+    //Encrypting password
+    const encryptPassword = (password: string) => {
+        const AES_SECRET = process.env.NEXT_PUBLIC_AES_SECRET as string;
+        const cipher = crypto.createCipheriv(
+            "aes-256-ctr",
+            Buffer.from(AES_SECRET),
+            Buffer.alloc(16, 0)
+        );
+        const encryptedPassword =
+            cipher.update(password, "utf8", "hex") + cipher.final("hex");
+        return encryptedPassword;
+    };
+
+    // Step one of sign up
     const onSubmit = async (data: FormData) => {
         const { fullName, email, password } = data;
         setSent(true);
@@ -57,7 +74,6 @@ const SignUp: React.FC = () => {
                 email,
             });
 
-            console.log(response.data);
             if (response.status !== 200) {
                 setSent(false);
                 return toast({
@@ -67,11 +83,15 @@ const SignUp: React.FC = () => {
                 });
             } else {
                 setVerifyCode(response.data.verificationCode);
+
+                const encryptedPassword = encryptPassword(data.password);
+
                 setUserData({
-                    fullName : data.fullName,
-                    email : data.email, 
-                    password : bcryptjs.hashSync(data.password, 7)
+                    fullName: data.fullName,
+                    email: data.email,
+                    password: encryptedPassword,
                 });
+
                 toast({
                     title: "Success",
                     description: `OTP has been sent to your email!`,
@@ -80,16 +100,39 @@ const SignUp: React.FC = () => {
                 setOtpSent(true);
                 setSent(false);
             }
-        } catch (error) {
+        } catch (error: any) {
             setSent(false);
-            toast({
-                title: "Error",
-                description: "Something went wrong. Please try again.",
-                variant: "destructive",
-            });
+
+            // Check if the error is from axios and contains a response
+            if (error.response) {
+                // If error response exists, it means it came from the backend
+                if (error.response.status === 401) {
+                    toast({
+                        title: "Error",
+                        description:
+                            error.response.data.message ||
+                            "User already exists, try signing in",
+                        variant: "destructive",
+                    });
+                } else {
+                    toast({
+                        title: "Error",
+                        description: "Something went wrong. Please try again.",
+                        variant: "destructive",
+                    });
+                }
+            } else {
+                // If error response does not exist, general network or axios error
+                toast({
+                    title: "Error",
+                    description: "Something went wrong. Please try again.",
+                    variant: "destructive",
+                });
+            }
         }
     };
 
+    // Step two of sign up
     const handleVerify = async (data: verifyCodeData) => {
         const { verificationCode } = data;
         if (!verificationCode) {
@@ -119,11 +162,19 @@ const SignUp: React.FC = () => {
     };
 
     const onError = () => {
-        toast({
-            title: "Error !",
-            description: "Enter all fields",
-            variant: "destructive",
-        });
+        if (errors.password?.type === "minLength") {
+            toast({
+                title: "Error!",
+                description: "Password must be at least 8 characters long.",
+                variant: "destructive",
+            });
+        } else {
+            toast({
+                title: "Error!",
+                description: "Enter all fields",
+                variant: "destructive",
+            });
+        }
     };
 
     return (
@@ -161,7 +212,7 @@ const SignUp: React.FC = () => {
                             <input
                                 type="password"
                                 id="password"
-                                {...register("password", { required: true })}
+                                {...register("password", { required: true , minLength: 5 })}
                                 placeholder="Enter your Password here"
                                 className={styles.password}
                             />
