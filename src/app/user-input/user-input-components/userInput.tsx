@@ -47,7 +47,6 @@ const UserInput: React.FC = () => {
         email: string;
         password: string;
     }>();
-    const [userPassword, setUserPassword] = useState<string>("");
 
     const { toast } = useToast();
     const router = useRouter();
@@ -126,7 +125,6 @@ const UserInput: React.FC = () => {
             }
 
             const passwordDecrypted = decryptPassword(userSessionData.password);
-            setUserPassword(passwordDecrypted);
             console.log(passwordDecrypted);
 
             const response = await axios.post("/api/sign-up", {
@@ -168,9 +166,7 @@ const UserInput: React.FC = () => {
                 });
 
                 const email = userSessionData.email;
-                const password = userPassword;
-
-                await signInUserWithNextAuth(email, password);
+                await signInUserWithNextAuth(email, passwordDecrypted);
             }
         } catch (error) {
             setIsSubmitting(false);
