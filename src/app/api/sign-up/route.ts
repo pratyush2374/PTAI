@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
             fullName,
             email,
             password,
+            googleId,
             height,
             weight,
             dob,
@@ -51,14 +52,21 @@ export async function POST(req: NextRequest) {
         // Ensure gender is stored in uppercase
         const formattedGender = gender.toUpperCase();
 
+        let googleIdToInsertInDB;
+        if (googleId !== "") {
+            googleIdToInsertInDB = googleId;
+        } else {
+            googleIdToInsertInDB = Date.now() + username;
+        }
+
         // Create a new user with the provided details
         const newUser = await prisma.user.create({
             data: {
                 fullName,
                 userName: username,
                 email,
-                password : hashedPassword,
-                googleId : Date.now() + username,
+                password: hashedPassword,
+                googleId: googleIdToInsertInDB,
                 dob: new Date(dob),
                 age,
                 gender: formattedGender,
@@ -100,7 +108,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.log(`Error creating user: ${error}`);
         return NextResponse.json(
-            { message: "Internal Server Error" , error},
+            { message: "Internal Server Error", error },
             { status: 500 }
         );
     }

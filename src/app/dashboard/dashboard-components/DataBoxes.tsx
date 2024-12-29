@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styles from "../dashboard.module.css";
 import Image from "next/image";
 
@@ -8,11 +9,16 @@ interface DataBoxProps {
     value: string | number;
     unit: string;
     statusClass: string;
+    onClick: (id: string, title: string, value: string | number, unit: string) => void;
 }
 
-const DataBox: React.FC<DataBoxProps> = ({ id, icon, title, value, unit, statusClass }) => {
+const DataBox: React.FC<DataBoxProps> = ({ id, icon, title, value, unit, statusClass, onClick }) => {
     return (
-        <div className={styles.dataBox} id={id}>
+        <div
+            className={styles.dataBox}
+            id={id}
+            onClick={() => onClick(id, title, value, unit)}
+        >
             <div className={styles.boxName}>
                 <Image src={icon} alt={title} width={24} height={24} />
                 <h2>{title}</h2>
@@ -28,8 +34,34 @@ const DataBox: React.FC<DataBoxProps> = ({ id, icon, title, value, unit, statusC
     );
 };
 
+const ExpandedBox: React.FC<{
+    title: string;
+    value: string | number;
+    unit: string;
+    onClose: () => void;
+}> = ({ title, value, unit, onClose }) => {
+    return (
+        <div className={styles.expandedBoxContainer}>
+            <div className={styles.expandedBox}>
+                <div className={styles.closeButton} onClick={onClose}>
+                    <Image src="/Dashboard Images/close.svg" alt="Close" width={24} height={24} />
+                </div>
+                <h1>{title}</h1>
+                <p>
+                    {value} {unit}
+                </p>
+            </div>
+        </div>
+    );
+};
+
 const DataBoxes: React.FC = () => {
-    // Define the data for each box
+    const [expandedBox, setExpandedBox] = useState<{
+        title: string;
+        value: string | number;
+        unit: string;
+    } | null>(null);
+
     const dataBoxes = [
         {
             id: "steps-box",
@@ -65,19 +97,38 @@ const DataBoxes: React.FC = () => {
         },
     ];
 
+    const handleBoxClick = (id: string, title: string, value: string | number, unit: string) => {
+        setExpandedBox({ title, value, unit });
+    };
+
+    const handleClose = () => {
+        setExpandedBox(null);
+    };
+
     return (
-        <div className={styles.dataBoxes}>
-            {dataBoxes.map((box) => (
-                <DataBox
-                    key={box.id}
-                    id={box.id}
-                    icon={box.icon}
-                    title={box.title}
-                    value={box.value}
-                    unit={box.unit}
-                    statusClass={box.statusClass}
+        <div>
+            <div className={styles.dataBoxes}>
+                {dataBoxes.map((box) => (
+                    <DataBox
+                        key={box.id}
+                        id={box.id}
+                        icon={box.icon}
+                        title={box.title}
+                        value={box.value}
+                        unit={box.unit}
+                        statusClass={box.statusClass}
+                        onClick={handleBoxClick}
+                    />
+                ))}
+            </div>
+            {expandedBox && (
+                <ExpandedBox
+                    title={expandedBox.title}
+                    value={expandedBox.value}
+                    unit={expandedBox.unit}
+                    onClose={handleClose}
                 />
-            ))}
+            )}
         </div>
     );
 };

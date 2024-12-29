@@ -33,6 +33,20 @@ const SignIn = () => {
         }
     };
 
+    const googleSignUp = async () => {
+        try {
+            const result = await signIn("google", {callbackUrl : "/dashboard"});
+            console.log(result);
+        } catch (error) {
+            // return toast({
+            //     title: "Error",
+            //     description: `Google Sign up error ${error}`,
+            //     variant: "destructive",
+            // });
+            console.log(error);
+        }
+    };
+
     const onError = (errors: any) => {
         console.log(errors);
     };
@@ -83,7 +97,7 @@ const SignIn = () => {
                         </p>
                         <div className={styles.socialLogin}>
                             <p>— OR —</p>
-                            <div className={styles.google}>
+                            <div className={styles.google} onClick={() => signIn("google")}>
                                 <Image
                                     src="/Login Images/Google Icon.svg"
                                     alt="G icon"

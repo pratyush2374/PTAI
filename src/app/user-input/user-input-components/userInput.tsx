@@ -13,7 +13,10 @@ import axios from "axios";
 import crypto from "crypto";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { decodeToken } from "@/lib/jwt";
+import jwt from "jsonwebtoken";
 
 const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -47,22 +50,35 @@ const UserInput: React.FC = () => {
         email: string;
         password: string;
     }>();
+    const [userDataFromGoogle, setUserDataFromGoogle] = useState<any>(null);
 
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
-        const user = JSON.parse(sessionStorage.getItem("user") as string);
-        setUserSessionData(user);
+        const userFromCred = JSON.parse(
+            sessionStorage.getItem("user") as string
+        );
+        setUserSessionData(userFromCred);
 
-        if (!user || !user.fullName || !user.email || !user.password) {
+        // Getting data from URL
+        const token = searchParams.get("token");
+        let userFromGoogle;
+        if (token) {
+            userFromGoogle = decodeToken(token.toString());
+            setUserDataFromGoogle(userFromGoogle);
+            console.log(userFromGoogle);
+        }
+
+        // If no data is available from either source, redirect to /sign-up
+        if (!userFromCred && !userFromGoogle) {
             toast({
                 variant: "destructive",
-                title: "Some error occured while fetching user details 1",
+                title: "Some error occurred while fetching user details",
                 description: "Please try again",
             });
             router.push("/sign-up");
-            return;
         }
     }, []);
 
@@ -109,28 +125,28 @@ const UserInput: React.FC = () => {
         try {
             setIsSubmitting(true);
 
-            if (
-                !userSessionData ||
-                !userSessionData.fullName ||
-                !userSessionData.email ||
-                !userSessionData.password
-            ) {
+            if (!userSessionData && !userDataFromGoogle) {
                 toast({
                     variant: "destructive",
-                    title: "Some error occured while fetching user details 1",
+                    title: "Some error occured while fetching user details",
                     description: "Please try again",
                 });
                 router.push("/sign-up");
                 return;
             }
 
-            const passwordDecrypted = decryptPassword(userSessionData.password);
+            const passwordDecrypted = decryptPassword(
+                userSessionData!.password
+            );
             console.log(passwordDecrypted);
 
             const response = await axios.post("/api/sign-up", {
-                fullName: userSessionData.fullName,
-                email: userSessionData.email,
-                password: passwordDecrypted,
+                fullName: userSessionData?.fullName || userDataFromGoogle?.name,
+                email: userSessionData?.email || userDataFromGoogle.email,
+                password:
+                    passwordDecrypted ||
+                    process.env.NEXT_PUBLIC_DEFAULT_PASSWORD,
+                googleId: userDataFromGoogle.googleId || "",
                 height,
                 weight,
                 dob,
@@ -165,8 +181,12 @@ const UserInput: React.FC = () => {
                     title: "Data submitted successfully, Redirecting...",
                 });
 
-                const email = userSessionData.email;
-                await signInUserWithNextAuth(email, passwordDecrypted);
+                if (userSessionData) {
+                    const email = userSessionData.email;
+                    await signInUserWithNextAuth(email, passwordDecrypted);
+                }else {
+                    
+                }
             }
         } catch (error) {
             setIsSubmitting(false);

@@ -212,7 +212,10 @@ const SignUp: React.FC = () => {
                             <input
                                 type="password"
                                 id="password"
-                                {...register("password", { required: true , minLength: 5 })}
+                                {...register("password", {
+                                    required: true,
+                                    minLength: 5,
+                                })}
                                 placeholder="Enter your Password here"
                                 className={styles.password}
                             />
@@ -250,7 +253,10 @@ const SignUp: React.FC = () => {
 
                         <div className={styles.socialLogin}>
                             <p>— OR —</p>
-                            <div className={styles.google}>
+                            <div
+                                className={styles.google}
+                                onClick={() => signIn("google")}
+                            >
                                 <Image
                                     src="/Login Images/Google Icon.svg"
                                     alt="G icon"
