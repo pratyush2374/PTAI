@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import styles from "./signup.module.css";
 import axios from "axios";
 import crypto from "crypto";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 type FormData = {
@@ -42,6 +42,13 @@ const SignUp: React.FC = () => {
     const [sent, setSent] = useState(false);
     const [userData, setUserData] = useState({});
 
+    const session = useSession();
+    const router = useRouter();
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            router.push("/user-input");
+        }
+    }, [session.status]);
     //Encrypting password
     const encryptPassword = (password: string) => {
         const AES_SECRET = process.env.NEXT_PUBLIC_AES_SECRET as string;

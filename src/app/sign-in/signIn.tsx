@@ -12,7 +12,7 @@ const SignIn = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm();
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -30,20 +30,6 @@ const SignIn = () => {
             setError(res.error);
         } else if (res?.ok) {
             router.push("/dashboard");
-        }
-    };
-
-    const googleSignUp = async () => {
-        try {
-            const result = await signIn("google", {callbackUrl : "/dashboard"});
-            console.log(result);
-        } catch (error) {
-            // return toast({
-            //     title: "Error",
-            //     description: `Google Sign up error ${error}`,
-            //     variant: "destructive",
-            // });
-            console.log(error);
         }
     };
 
@@ -89,7 +75,9 @@ const SignIn = () => {
 
                             {error && <p className={styles.error}>{error}</p>}
 
-                            <button type="submit">Sign In</button>
+                            <button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Signing in ..." : "Sign In"}
+                            </button>
                         </form>
                         <p>
                             Don't have an account?{" "}
@@ -97,7 +85,10 @@ const SignIn = () => {
                         </p>
                         <div className={styles.socialLogin}>
                             <p>— OR —</p>
-                            <div className={styles.google} onClick={() => signIn("google")}>
+                            <div
+                                className={styles.google}
+                                onClick={() => signIn("google")}
+                            >
                                 <Image
                                     src="/Login Images/Google Icon.svg"
                                     alt="G icon"

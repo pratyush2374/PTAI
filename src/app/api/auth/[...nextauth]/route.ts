@@ -18,7 +18,7 @@ const handler = NextAuth({
             },
             async authorize(credentials: any): Promise<any> {
                 const { email, password } = credentials;
-                const hashedPassword = await bcrypt.hash(password, 11);
+
                 const user = await prisma.user.findUnique({
                     where: {
                         email,
@@ -29,7 +29,14 @@ const handler = NextAuth({
                     throw new Error("User not found");
                 }
 
-                if (user.password !== hashedPassword) {
+                // Compare the hashed password in the database with the provided password
+                const isPasswordValid = await bcrypt.compare(
+                    password,
+                    user.password
+                );
+
+                // If the password does not match, return error
+                if (!isPasswordValid) {
                     throw new Error("Incorrect password");
                 }
 
@@ -45,46 +52,45 @@ const handler = NextAuth({
         strategy: "jwt",
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, account, profile }) {
             if (user) {
-                token.sub = user.id;
+                token.id = user.id;
                 token.name = user.name;
                 token.email = user.email;
+
+                if (account?.provider == "google") {
+                    token.googleId = profile?.sub;
+                    token.image = profile?.image;
+                }
             }
             return token;
         },
 
         async session({ session, token }) {
             if (token && session.user) {
+                session.user.id = token.id;
                 session.user.name = token.name;
                 session.user.email = token.email;
+                session.user.googleId = token.googleId;
+                session.user.image = token.image;
             }
             return session;
         },
 
         async signIn({ profile, credentials }) {
-            const email = (credentials?.email as string) || profile?.email;
+            const email = profile?.email;
 
-            if (!email) {
-                return "/error";
+            if (email) {
+                const userFoundInDB = await prisma.user.findUnique({
+                    where: { email },
+                });
+                if (userFoundInDB) {
+                    return "/dashboard";
+                }
+                return true;
             }
-            const userFoundInDB = await prisma.user.findUnique({
-                where: { email },
-            });
-            if (userFoundInDB) {
-                return "/dashboard";
-            } else {
-                const tokenifyData = {
-                    name: profile?.name,
-                    email,
-                    googleId: profile?.sub,
-                    image: profile?.image,
-                };
-                const token = generateToken(tokenifyData);
-                return `/user-input?token=${encodeURIComponent(token)}`;
-            }
+            return true;
         },
-        // async redirect()
     },
 });
 

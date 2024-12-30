@@ -52,12 +52,7 @@ export async function POST(req: NextRequest) {
         // Ensure gender is stored in uppercase
         const formattedGender = gender.toUpperCase();
 
-        let googleIdToInsertInDB;
-        if (googleId !== "") {
-            googleIdToInsertInDB = googleId;
-        } else {
-            googleIdToInsertInDB = Date.now() + username;
-        }
+        const googleIdToInsertInDB = googleId?.trim() || null;
 
         // Create a new user with the provided details
         const newUser = await prisma.user.create({

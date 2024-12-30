@@ -14,9 +14,6 @@ import crypto from "crypto";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { decodeToken } from "@/lib/jwt";
-import jwt from "jsonwebtoken";
 
 const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -54,7 +51,7 @@ const UserInput: React.FC = () => {
 
     const { toast } = useToast();
     const router = useRouter();
-    const searchParams = useSearchParams();
+    const session = useSession();
 
     useEffect(() => {
         const userFromCred = JSON.parse(
@@ -62,17 +59,12 @@ const UserInput: React.FC = () => {
         );
         setUserSessionData(userFromCred);
 
-        // Getting data from URL
-        const token = searchParams.get("token");
-        let userFromGoogle;
-        if (token) {
-            userFromGoogle = decodeToken(token.toString());
-            setUserDataFromGoogle(userFromGoogle);
-            console.log(userFromGoogle);
-        }
+        // Getting data from next auth session
+        const userFromGoogle = session.data?.user;
+        setUserDataFromGoogle(userFromGoogle);
+        console.log(userFromGoogle);
 
-        // If no data is available from either source, redirect to /sign-up
-        if (!userFromCred && !userFromGoogle) {
+        if (!userFromCred && userFromGoogle == undefined) {
             toast({
                 variant: "destructive",
                 title: "Some error occurred while fetching user details",
@@ -134,19 +126,23 @@ const UserInput: React.FC = () => {
                 router.push("/sign-up");
                 return;
             }
-
-            const passwordDecrypted = decryptPassword(
-                userSessionData!.password
-            );
-            console.log(passwordDecrypted);
+            let passwordDecrypted;
+            if (userSessionData?.password) {
+                passwordDecrypted = decryptPassword(userSessionData!.password);
+                console.log(passwordDecrypted);
+            }
 
             const response = await axios.post("/api/sign-up", {
-                fullName: userSessionData?.fullName || userDataFromGoogle?.name,
-                email: userSessionData?.email || userDataFromGoogle.email,
+                fullName:
+                    userSessionData?.fullName.trim() ||
+                    userDataFromGoogle?.name,
+                email: userSessionData?.email || userDataFromGoogle?.email,
                 password:
                     passwordDecrypted ||
-                    process.env.NEXT_PUBLIC_DEFAULT_PASSWORD,
-                googleId: userDataFromGoogle.googleId || "",
+                    process.env.NEXT_PUBLIC_DEFAULT_PASSWORD!,
+                ...(userDataFromGoogle?.googleId && {
+                    googleId: userDataFromGoogle.googleId,
+                }),
                 height,
                 weight,
                 dob,
@@ -183,9 +179,10 @@ const UserInput: React.FC = () => {
 
                 if (userSessionData) {
                     const email = userSessionData.email;
-                    await signInUserWithNextAuth(email, passwordDecrypted);
-                }else {
-                    
+                    console.log(email + " " + passwordDecrypted);
+                    await signInUserWithNextAuth(email, passwordDecrypted!);
+                } else {
+                    router.push("/dashboard");
                 }
             }
         } catch (error) {
@@ -195,6 +192,7 @@ const UserInput: React.FC = () => {
                 title: "Some Error Occured 3",
                 description: "Please try again",
             });
+            console.log(error);
             sessionStorage.removeItem("user");
         } finally {
             setIsSubmitting(false);

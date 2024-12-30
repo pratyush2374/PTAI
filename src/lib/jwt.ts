@@ -10,7 +10,7 @@ const generateToken = (payload: object): string => {
 // Decode a JWT
 const decodeToken = (token: string): JwtPayload | null => {
     const decoded = jwt.decode(token);
-    return decoded as JwtPayload | null; // Ensure it's cast to JwtPayload or null
+    return decoded as JwtPayload | null; 
 };
 
 export { generateToken, decodeToken };
