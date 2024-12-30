@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
             email,
             password,
             googleId,
+            refreshToken,
             height,
             weight,
             dob,
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
         const formattedGender = gender.toUpperCase();
 
         const googleIdToInsertInDB = googleId?.trim() || null;
+        const refreshTokenToInsertInDB = refreshToken?.trim() || null;
 
         // Create a new user with the provided details
         const newUser = await prisma.user.create({
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest) {
                 email,
                 password: hashedPassword,
                 googleId: googleIdToInsertInDB,
+                refreshToken: refreshTokenToInsertInDB,
                 dob: new Date(dob),
                 age,
                 gender: formattedGender,

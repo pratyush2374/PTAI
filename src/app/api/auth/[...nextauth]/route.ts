@@ -46,10 +46,19 @@ const handler = NextAuth({
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                    scope: "openid email profile https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.blood_glucose.read https://www.googleapis.com/auth/fitness.blood_pressure.read https://www.googleapis.com/auth/fitness.heart_rate.read https://www.googleapis.com/auth/fitness.location.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read",
+                },
+            },
         }),
     ],
     session: {
         strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     callbacks: {
         async jwt({ token, user, account, profile }) {
@@ -59,6 +68,8 @@ const handler = NextAuth({
                 token.email = user.email;
 
                 if (account?.provider == "google") {
+                    token.accessToken = account?.access_token;
+                    token.refreshToken = account?.refresh_token;
                     token.googleId = profile?.sub;
                     token.image = profile?.image;
                 }
@@ -73,6 +84,8 @@ const handler = NextAuth({
                 session.user.email = token.email;
                 session.user.googleId = token.googleId;
                 session.user.image = token.image;
+                session.user.accessToken = token?.accessToken;
+                session.user.refreshToken = token?.refreshToken;
             }
             return session;
         },

@@ -15,6 +15,7 @@ model User {
   password         String
   googleId         String?           @unique
   profilePic       String?
+  refreshToken     String?
   dob              DateTime
   age              Int
   gender           Gender

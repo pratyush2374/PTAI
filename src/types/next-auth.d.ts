@@ -8,6 +8,8 @@ declare module "next-auth" {
         email: string;
         googleId?: string;
         image?: string;
+        accessToken?: string;
+        refreshToken?: string;
     }
 
     interface Session {
@@ -17,6 +19,8 @@ declare module "next-auth" {
             email: string;
             googleId?: string;
             image?: string;
+            accessToken?: string;
+            refreshToken?: string;
         } & DefaultSession["user"];
     }
 }
@@ -28,5 +32,7 @@ declare module "next-auth/jwt" {
         email: string;
         googleId?: string;
         image?: string;
+        accessToken?: string;
+        refreshToken?: string;
     }
 }

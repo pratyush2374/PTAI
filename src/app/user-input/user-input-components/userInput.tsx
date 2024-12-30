@@ -143,6 +143,7 @@ const UserInput: React.FC = () => {
                 ...(userDataFromGoogle?.googleId && {
                     googleId: userDataFromGoogle.googleId,
                 }),
+                ...(userDataFromGoogle?.refreshToken && {refreshToken: userDataFromGoogle.refreshToken}),
                 height,
                 weight,
                 dob,
