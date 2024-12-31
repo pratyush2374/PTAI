@@ -67,6 +67,20 @@ const handler = NextAuth({
                 token.name = user.name;
                 token.email = user.email;
 
+                //Checking if the user is in DB
+                const isNewUser = await prisma.user.findUnique({
+                    where: {
+                        email: user.email,
+                    },
+                });
+
+                //If the user is new, set isNewUser to false else true
+                if (isNewUser) {
+                    token.isNewUser = false;
+                }else {
+                    token.isNewUser = true;
+                }
+
                 if (account?.provider == "google") {
                     token.accessToken = account?.access_token;
                     token.refreshToken = account?.refresh_token;
@@ -82,27 +96,13 @@ const handler = NextAuth({
                 session.user.id = token.id;
                 session.user.name = token.name;
                 session.user.email = token.email;
+                session.user.isNewUser = token.isNewUser;
                 session.user.googleId = token.googleId;
                 session.user.image = token.image;
                 session.user.accessToken = token?.accessToken;
                 session.user.refreshToken = token?.refreshToken;
             }
             return session;
-        },
-
-        async signIn({ profile, credentials }) {
-            const email = profile?.email;
-
-            if (email) {
-                const userFoundInDB = await prisma.user.findUnique({
-                    where: { email },
-                });
-                if (userFoundInDB) {
-                    return "/dashboard";
-                }
-                return true;
-            }
-            return true;
         },
     },
 });

@@ -8,6 +8,7 @@ declare module "next-auth" {
         email: string;
         googleId?: string;
         image?: string;
+        isNewUser : boolean
         accessToken?: string;
         refreshToken?: string;
     }
@@ -19,6 +20,7 @@ declare module "next-auth" {
             email: string;
             googleId?: string;
             image?: string;
+            isNewUser : boolean
             accessToken?: string;
             refreshToken?: string;
         } & DefaultSession["user"];
@@ -32,6 +34,7 @@ declare module "next-auth/jwt" {
         email: string;
         googleId?: string;
         image?: string;
+        isNewUser : boolean
         accessToken?: string;
         refreshToken?: string;
     }

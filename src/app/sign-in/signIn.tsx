@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form"; // Import FieldValues and SubmitHandler
 import Link from "next/link";
@@ -17,7 +17,19 @@ const SignIn = () => {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    // Ensure onSubmit uses SubmitHandler with FieldValues
+    const session = useSession();
+
+    useEffect(() => {
+        console.log(session);
+        if (session.status === "authenticated") {
+            if (session.data.user.isNewUser === true) {
+                router.push("/user-input");
+            } else {
+                router.push("/dashboard");
+            }
+        }
+    }, [session.status]);
+
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         const { email, password } = data as { email: string; password: string }; // Typecasting
         const res = await signIn("credentials", {
