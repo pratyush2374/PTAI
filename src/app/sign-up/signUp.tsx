@@ -41,14 +41,31 @@ const SignUp: React.FC = () => {
     const [verifyCode, setVerifyCode] = useState(0);
     const [sent, setSent] = useState(false);
     const [userData, setUserData] = useState({});
+    const [resendTimer, setResendTimer] = useState(0);
+    const [isResendDisabled, setIsResendDisabled] = useState(false);
 
     const session = useSession();
     const router = useRouter();
+
     useEffect(() => {
-        if (session.status === "authenticated") {
+        if (session.data?.user.isNewUser === true) {
             router.push("/user-input");
         }
     }, [session.status]);
+
+    // Timer effect for resend cooldown
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (resendTimer > 0) {
+            interval = setInterval(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        } else {
+            setIsResendDisabled(false);
+        }
+        return () => clearInterval(interval);
+    }, [resendTimer]);
+
     //Encrypting password
     const encryptPassword = (password: string) => {
         const AES_SECRET = process.env.NEXT_PUBLIC_AES_SECRET as string;
@@ -62,63 +79,38 @@ const SignUp: React.FC = () => {
         return encryptedPassword;
     };
 
-    // Step one of sign up
-    const onSubmit = async (data: FormData) => {
-        const { fullName, email, password } = data;
+    // Function to handle OTP sending
+    const handleSendOTP = async (userData: { fullName: string; email: string }) => {
         setSent(true);
-
-        if (!fullName || !email || !password) {
-            return toast({
-                title: "Error",
-                description: "All fields are required!",
-                variant: "destructive",
-            });
-        }
-
         try {
-            const response = await axios.post("/api/send-verification-mail", {
-                fullName,
-                email,
-            });
+            const response = await axios.post("/api/send-verification-mail", userData);
 
             if (response.status !== 200) {
                 setSent(false);
                 return toast({
                     title: "Error",
-                    description: `Couldnt send code :( ,${response.data.message}`,
+                    description: `Couldn't send code: ${response.data.message}`,
                     variant: "destructive",
                 });
-            } else {
-                setVerifyCode(response.data.verificationCode);
-
-                const encryptedPassword = encryptPassword(data.password);
-
-                setUserData({
-                    fullName: data.fullName,
-                    email: data.email,
-                    password: encryptedPassword,
-                });
-
-                toast({
-                    title: "Success",
-                    description: `OTP has been sent to your email!`,
-                    variant: "default",
-                });
-                setOtpSent(true);
-                setSent(false);
             }
+
+            setVerifyCode(response.data.verificationCode);
+            toast({
+                title: "Success",
+                description: "OTP has been sent to your email!",
+                variant: "default",
+            });
+            setOtpSent(true);
+            setSent(false);
+            setResendTimer(15);
+            setIsResendDisabled(true);
         } catch (error: any) {
             setSent(false);
-
-            // Check if the error is from axios and contains a response
             if (error.response) {
-                // If error response exists, it means it came from the backend
                 if (error.response.status === 401) {
                     toast({
                         title: "Error",
-                        description:
-                            error.response.data.message ||
-                            "User already exists, try signing in",
+                        description: error.response.data.message || "User already exists, try signing in",
                         variant: "destructive",
                     });
                 } else {
@@ -129,7 +121,6 @@ const SignUp: React.FC = () => {
                     });
                 }
             } else {
-                // If error response does not exist, general network or axios error
                 toast({
                     title: "Error",
                     description: "Something went wrong. Please try again.",
@@ -137,6 +128,39 @@ const SignUp: React.FC = () => {
                 });
             }
         }
+    };
+
+    // Step one of sign up
+    const onSubmit = async (data: FormData) => {
+        const { fullName, email, password } = data;
+
+        if (!fullName || !email || !password) {
+            return toast({
+                title: "Error",
+                description: "All fields are required!",
+                variant: "destructive",
+            });
+        }
+
+        const encryptedPassword = encryptPassword(password);
+        setUserData({
+            fullName,
+            email,
+            password: encryptedPassword,
+        });
+
+        await handleSendOTP({ fullName, email });
+    };
+
+    // Handle resend OTP
+    const handleResendOTP = async () => {
+        if (isResendDisabled) return;
+
+        const userDataObj = userData as { fullName: string; email: string };
+        await handleSendOTP({
+            fullName: userDataObj.fullName,
+            email: userDataObj.email,
+        });
     };
 
     // Step two of sign up
@@ -233,22 +257,38 @@ const SignUp: React.FC = () => {
 
                         {otpSent && (
                             <form
-                                onSubmit={handleSubmitCode(
-                                    handleVerify,
-                                    onError
-                                )}
+                                onSubmit={handleSubmitCode(handleVerify, onError)}
                             >
                                 <div className={styles.otpSection}>
                                     <label htmlFor="otp">Enter OTP</label>
                                     <input
                                         type="number"
+                                        className={styles.otpInput}
                                         id="otp"
                                         {...registerCode("verificationCode", {
                                             required: true,
                                         })}
                                         placeholder="Enter the OTP sent to your email"
                                     />
-                                    <button>Verify</button>
+                                    <div className={styles.resend}>
+                                        <p>Didn't receive:{" "}</p>
+                                        <button
+                                            type="button"
+                                            onClick={handleResendOTP}
+                                            disabled={isResendDisabled}
+                                            style={{
+                                                cursor: isResendDisabled ? "not-allowed" : "pointer",
+                                                opacity: isResendDisabled ? 0.5 : 1,
+                                                border: "none",
+                                                background: "none",
+                                                color: "#0066ff",
+                                                textDecoration: "underline",
+                                            }}
+                                        >
+                                            Resend {resendTimer > 0 ? `(${resendTimer}s)` : ""}
+                                        </button>
+                                    </div>
+                                    <button type="submit">Verify</button>
                                 </div>
                             </form>
                         )}

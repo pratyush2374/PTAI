@@ -138,6 +138,25 @@
     font-size: 14px;
 }
 
+.otpInput {
+    margin-bottom: 2px !important;
+}
+
+.resend {
+    display: flex;
+    justify-content: space-between;
+}
+
+.resend p {
+    margin-top: 0;
+    align-self: center;
+}
+
+.resend button {
+    width: 40%;
+    text-align: right;
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
