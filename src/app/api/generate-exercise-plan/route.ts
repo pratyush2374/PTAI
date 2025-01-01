@@ -1,106 +1,132 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { getToken } from "next-auth/jwt";
-// import connectToDB from "@/lib/dbConnection";
-// import User from "@/models/user.model";
-// import Exercise from "@/models/exercise.model";
-// import DailyExercise from "@/models/dailyExercise.model";
-// import generateExercisePlan from "@/core/generateExercisePlan";
-// import { IExercise } from "@/models/exercise.model";
-// import { ExercisePlanResult } from "@/core/generateExercisePlan";
-// import { UserData } from "@/core/generateExercisePlan";
+import { NextRequest, NextResponse } from "next/server";
+import generateExercisePlan from "@/core/generateExercisePlan";
+import prisma from "@/lib/prismaClient";
 
-// export async function POST(req: NextRequest) {
-//     try {
-//         // Connect to database
-//         await connectToDB();
+export async function POST(req: NextRequest) {
+    try {
+        const { email } = await req.json();
 
-//         // Authenticate user
-//         const token = await getToken({ req });
-//         if (!token) {
-//             return NextResponse.json(
-//                 { error: "Unauthorized" },
-//                 { status: 401 }
-//             );
-//         }
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            },
+            include: {
+                preferences: true,
+                healthAndDietary: true,
+                weight: true,
+                // WeeklyExercise : {
+                //     select : {dailyPlans : true},
+                //     include : {
+                //         dailyPlans : true
+                //     }
+                // }
+            },
+        });
 
-//         // Find user and populate necessary references
-//         const user = await User.findById(token.sub)
-//             .populate("preferences")
-//             .populate("healthAndDietary")
-//             .lean(); // Use lean for performance
+        if (!user) {
+            return NextResponse.json(
+                { message: "User not found" },
+                { status: 404 }
+            );
+        }
 
-//         if (!user) {
-//             return NextResponse.json(
-//                 { error: "User not found" },
-//                 { status: 404 }
-//             );
-//         }
+        console.log(user);
 
-//         // Remove unwanted populated fields
-//         const {
-//             dietId,
-//             exerciseId,
-//             userStats,
-//             fullName,
-//             userName,
-//             email,
-//             password,
-//             googleId,
-//             profilePic,
-//             ...userForExercisePlan
-//         } = user;
+        const userData = {
+            age: user?.age || 0,
+            height: user?.height || 0,
+            weight: user?.weight[user.weight.length - 1]?.weight || 65,
+            gender: user?.gender || "male",
+            activityLevel: user?.preferences?.activityLevel || "sedentary",
+            preferredExerciseType:
+                user?.preferences?.preferredExerciseType || [],
+            exerciseExperience:
+                user?.preferences?.exerciseExperience || "intermediate",
+            workoutDuration: user?.preferences?.workoutDuration || "30-45",
+            exerciseFrequency: user?.preferences?.exerciseFrequency || "4-5",
+            fitnessGoals: user?.preferences?.fitnessGoals || [],
+            pace: user?.preferences?.pace || "medium",
+            availableEquipments: user?.preferences?.availableEquipments || [],
+            healthProblems: user?.healthAndDietary?.healthProblems || [],
+            previous7DaysExerciseFocusAreas: ["legs", "core"],
+        };
 
-//         // Generate exercise plan
-//         const exercisePlanResult: ExercisePlanResult =
-//             await generateExercisePlan(userForExercisePlan as any);
+        const responseDataReceivedFromGenerateExercisePlan =
+            await generateExercisePlan(userData);
 
-//         // Store exercises from the generated plan
-//         const exercises: any = await Promise.all(
-//             exercisePlanResult.exercises.map(async (exercise: IExercise) => {
-//                 const exerciseDoc = new Exercise({
-//                     exerciseName: exercise.exerciseName,
-//                     exerciseType: exercise.exerciseType,
-//                     primaryMuscleTarget: exercise.primaryMuscleTarget,
-//                     secondaryMuscleTarget: exercise.secondaryMuscleTarget,
-//                     exerciseDuration: exercise.exerciseDuration,
-//                     equipmentRequired: exercise.equipmentRequired,
-//                     calorieBurn: exercise.calorieBurn,
-//                     beginnerSets: exercise.beginnerSets,
-//                     beginnerReps: exercise.beginnerReps,
-//                     intermediateSets: exercise.intermediateSets,
-//                     intermediateReps: exercise.intermediateReps,
-//                     expertSets: exercise.expertSets,
-//                     expertReps: exercise.expertReps,
-//                     restTime: exercise.restTime,
-//                     adviseWhenDoingExercise: exercise.adviseWhenDoingExercise,
-//                 });
-//                 return await exerciseDoc.save();
-//             })
-//         );
+        //Creating daily exercise plan
+        const dailyExercise = await prisma.dailyExercise.create({
+            data: {
+                date: new Date(),
+                focusArea:
+                    responseDataReceivedFromGenerateExercisePlan.focusArea,
+                equipmentRequired:
+                    responseDataReceivedFromGenerateExercisePlan.equipmentRequired,
+                exerciseType:
+                    responseDataReceivedFromGenerateExercisePlan.exerciseType,
+                duration:
+                    responseDataReceivedFromGenerateExercisePlan.approxDurationToCompleteinMinutes,
+                totalExercises:
+                    responseDataReceivedFromGenerateExercisePlan.totalExercises,
+                calorieBurn:
+                    responseDataReceivedFromGenerateExercisePlan.totalApproxCaloriesBurn,
+                difficultyLevel:
+                    responseDataReceivedFromGenerateExercisePlan.difficultyLevel,
+                userId: user.id,
+            },
+        });
 
-//         // Create daily exercise entry
-//         const dailyExercise = new DailyExercise({
-//             userId: user._id,
-//             date: new Date(),
-//             exercises: exercises.map((exercise: any) => exercise._id),
-//         });
+        console.log(dailyExercise);
 
-//         await dailyExercise.save();
+        // Creating individual exercises ans storing in DB
+        const exercises = await prisma.exercise.createMany({
+            data: responseDataReceivedFromGenerateExercisePlan.exercises.map(
+                (exercise: any) => ({
+                    exerciseName: exercise.exerciseName,
+                    exerciseType: exercise.exerciseType,
+                    primaryMuscleTarget: exercise.primaryMuscleTarget,
+                    secondaryMuscleTarget: exercise.secondaryMuscleTarget,
+                    exerciseDuration: exercise.exerciseDuration,
+                    equipmentRequired: exercise.equipmentRequired,
+                    calorieBurn: exercise.calorieBurn,
+                    sets: exercise.sets,
+                    reps: exercise.reps,
+                    restTime: exercise.restTime,
+                    adviseWhenDoingExercise: exercise.adviseWhenDoingExercise,
+                    exerciseId: dailyExercise.id,
+                })
+            ),
+        });
 
-//         return NextResponse.json({
-//             message: "Exercise plan generated successfully",
-//             exercisePlan: exercisePlanResult,
-//             dailyExerciseId: dailyExercise._id,
-//         });
-//     } catch (error) {
-//         console.error("Exercise plan generation error:", error);
-//         return NextResponse.json(
-//             {
-//                 error: "Failed to generate exercise plan",
-//                 details:
-//                     error instanceof Error ? error.message : "Unknown error",
-//             },
-//             { status: 500 }
-//         );
-//     }
-// }
+        // const weeklyExercise = await prisma.weeklyExercise.create({
+        //     data: {
+        //         userId: user.id,
+        //         weekStart: new Date(),
+        //         weekEnd: new Date(),
+        //         dailyPlans: {
+        //             connect: [{ id: dailyExercise.id }],
+        //         },
+        //     },
+        // });
+
+        console.log(exercises);
+
+        return NextResponse.json(
+            {
+                data: responseDataReceivedFromGenerateExercisePlan,
+                message: "Exercise plan generated successfully",
+            },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error(`Error generating exercise plan: ${error}`);
+        return NextResponse.json(
+            {
+                error: "Failed to generate exercise plan",
+                details:
+                    error instanceof Error ? error.message : "Unknown error",
+            },
+            { status: 500 }
+        );
+    }
+}

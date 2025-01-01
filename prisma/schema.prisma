@@ -13,7 +13,7 @@ model User {
   userName         String            @unique
   email            String            @unique
   password         String
-  googleId         String?           @unique
+  googleId         String?
   profilePic       String?
   refreshToken     String?
   dob              DateTime
@@ -101,20 +101,26 @@ model Diet {
 }
 
 model DailyDiet {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  date         DateTime
-  breakfast    Diet?       @relation(fields: [breakfastId], references: [id], name: "breakfast")
-  breakfastId  String?     @unique @db.ObjectId
-  lunch        Diet?       @relation(fields: [lunchId], references: [id], name: "lunch")
-  lunchId      String?     @unique @db.ObjectId
-  snacks       Diet?       @relation(fields: [snacksId], references: [id], name: "snack")
-  snacksId     String?     @unique @db.ObjectId
-  dinner       Diet?       @relation(fields: [dinnerId], references: [id], name: "dinner")
-  dinnerId     String?     @unique @db.ObjectId
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String      @unique @db.ObjectId
-  WeeklyDiet   WeeklyDiet? @relation(fields: [weeklyDietId], references: [id])
-  weeklyDietId String?     @db.ObjectId
+  id                            String      @id @default(auto()) @map("_id") @db.ObjectId
+  date                          DateTime
+  totalCalories                 String?
+  protein                       Float?
+  carbs                         Float?
+  fats                          Float?
+  hydrationGlasses              Int?
+  otherMicronutrientInformation String?
+  breakfast                     Diet?       @relation(fields: [breakfastId], references: [id], name: "breakfast")
+  breakfastId                   String?     @unique @db.ObjectId
+  lunch                         Diet?       @relation(fields: [lunchId], references: [id], name: "lunch")
+  lunchId                       String?     @unique @db.ObjectId
+  snacks                        Diet?       @relation(fields: [snacksId], references: [id], name: "snack")
+  snacksId                      String?     @unique @db.ObjectId
+  dinner                        Diet?       @relation(fields: [dinnerId], references: [id], name: "dinner")
+  dinnerId                      String?     @unique @db.ObjectId
+  user                          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                        String      @unique @db.ObjectId
+  WeeklyDiet                    WeeklyDiet? @relation(fields: [weeklyDietId], references: [id])
+  weeklyDietId                  String?     @db.ObjectId
 }
 
 model WeeklyDiet {
@@ -133,14 +139,10 @@ model Exercise {
   primaryMuscleTarget     String
   secondaryMuscleTarget   String?
   exerciseDuration        Int
-  equipmentRequired       Boolean
+  equipmentRequired       String
   calorieBurn             Int
-  beginnerSets            Int
-  beginnerReps            Int
-  intermediateSets        Int
-  intermediateReps        Int
-  expertSets              Int
-  expertReps              Int
+  sets                    Int
+  reps                    Int
   restTime                Int
   adviseWhenDoingExercise String         @db.String
   exercise                DailyExercise? @relation(fields: [exerciseId], references: [id])
@@ -148,13 +150,20 @@ model Exercise {
 }
 
 model DailyExercise {
-  id               String          @id @default(auto()) @map("_id") @db.ObjectId
-  date             DateTime
-  exercises        Exercise[]
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String          @unique @db.ObjectId
-  weeklyExercise   WeeklyExercise? @relation(fields: [weeklyExerciseId], references: [id])
-  weeklyExerciseId String?         @db.ObjectId
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  date              DateTime
+  focusArea         String?
+  equipmentRequired String[]
+  exerciseType      String[]
+  duration          Int?
+  totalExercises    Int?
+  calorieBurn       Int?
+  difficultyLevel   String?
+  exercises         Exercise[]
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String          @unique @db.ObjectId
+  weeklyExercise    WeeklyExercise? @relation(fields: [weeklyExerciseId], references: [id])
+  weeklyExerciseId  String?         @db.ObjectId
 }
 
 model WeeklyExercise {

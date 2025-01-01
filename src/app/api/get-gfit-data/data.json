@@ -1,0 +1,77 @@
+{
+    "success": true,
+    "data": [],
+    "raw": {
+        "bucket": [
+            {
+                "startTimeMillis": "1735669800000",
+                "endTimeMillis": "1735735165353",
+                "dataset": [
+                    {
+                        "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated",
+                        "point": [
+                            {
+                                "startTimeNanos": "1735669800000000000",
+                                "endTimeNanos": "1735733133269375903",
+                                "dataTypeName": "com.google.step_count.delta",
+                                "originDataSourceId": "raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input",
+                                "value": [
+                                    {
+                                        "intVal": 6854,
+                                        "mapVal": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataSourceId": "derived:com.google.calories.expended:com.google.android.gms:aggregated",
+                        "point": [
+                            {
+                                "startTimeNanos": "1735669800000000000",
+                                "endTimeNanos": "1735733133269375903",
+                                "dataTypeName": "com.google.calories.expended",
+                                "originDataSourceId": "derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended",
+                                "value": [
+                                    {
+                                        "fpVal": 1504.7424274052225,
+                                        "mapVal": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataSourceId": "derived:com.google.sleep.segment:com.google.android.gms:merged",
+                        "point": []
+                    },
+                    {
+                        "dataSourceId": "derived:com.google.heart_rate.summary:com.google.android.gms:aggregated",
+                        "point": [
+                            {
+                                "startTimeNanos": "1735673940000000000",
+                                "endTimeNanos": "1735673940000000000",
+                                "dataTypeName": "com.google.heart_rate.summary",
+                                "originDataSourceId": "raw:com.google.heart_rate.bpm:com.google.android.apps.fitness:user_input",
+                                "value": [
+                                    {
+                                        "fpVal": 80,
+                                        "mapVal": []
+                                    },
+                                    {
+                                        "fpVal": 80,
+                                        "mapVal": []
+                                    },
+                                    {
+                                        "fpVal": 80,
+                                        "mapVal": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

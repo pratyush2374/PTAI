@@ -3,46 +3,11 @@ import axios, { AxiosError } from "axios";
 import prisma from "@/lib/prismaClient";
 import { z } from "zod";
 
-// Type definitions
-interface StepValue {
-    intVal: number;
-}
-
-interface FitnessDataPoint {
-    startTimeMillis: string;
-    endTimeMillis: string;
-    value: StepValue[];
-}
-
-interface FitnessDataset {
-    dataSourceId: string;
-    point: FitnessDataPoint[];
-}
-
-interface FitnessBucket {
-    startTimeMillis: string;
-    endTimeMillis: string;
-    dataset: FitnessDataset[];
-}
-
-interface FitnessResponse {
-    data: {
-        bucket: FitnessBucket[];
-    };
-}
-
 interface GoogleTokenResponse {
     access_token: string;
     expires_in: number;
     scope: string;
     token_type: string;
-}
-
-interface ProcessedStepData {
-    startTime: Date;
-    endTime: Date;
-    steps: number;
-    hasData: boolean;
 }
 
 // Constants
@@ -54,6 +19,8 @@ const DAY_IN_MS = 86400000;
 // Input validation schema
 const requestSchema = z.object({
     email: z.string().email("Invalid email format"),
+    accessToken: z.string().optional(),
+    accessTokenExpiry: z.number().optional(),
 });
 
 async function getGoogleAccessToken(refreshToken: string): Promise<string> {
@@ -81,7 +48,7 @@ async function getGoogleAccessToken(refreshToken: string): Promise<string> {
 async function fetchFitnessData(
     accessToken: string,
     startTime: number
-): Promise<FitnessResponse> {
+): Promise<any> {
     const requestBody = {
         aggregateBy: [
             { dataTypeName: "com.google.step_count.delta" }, // Steps
@@ -95,7 +62,7 @@ async function fetchFitnessData(
     };
 
     try {
-        const response = await axios.post<FitnessResponse>(
+        const response = await axios.post<any>(
             GOOGLE_FITNESS_API,
             requestBody,
             {
@@ -113,41 +80,30 @@ async function fetchFitnessData(
     }
 }
 
-function processStepsData(response: FitnessResponse): ProcessedStepData[] {
-    if (!response?.data?.bucket) {
+function processData(response: any): any {
+    if (!response?.bucket) {
         console.warn("Unexpected response structure:", response);
         return [];
     }
 
-    return response.data.bucket.map((bucket) => {
-        if (!bucket.dataset || bucket.dataset.length === 0) {
-            return {
-                startTime: new Date(parseInt(bucket.startTimeMillis)),
-                endTime: new Date(parseInt(bucket.endTimeMillis)),
-                steps: 0,
-                hasData: false,
-            };
-        }
+    const steps = response.bucket[0]?.dataset[0]?.point[0]?.value[0]?.intVal;
+    const calories = response.bucket[0]?.dataset[1]?.point[0]?.value[0]?.fpVal;
+    const sleepData =
+        response.bucket[0]?.dataset[2]?.point[0]?.value[0]?.intVal;
+    const heartRateArray = response.bucket[0]?.dataset[3]?.point[0]?.value;
+    const averageHeartRate =
+        heartRateArray.reduce((sum: any, obj: any) => sum + obj?.fpVal, 0) /
+        heartRateArray.length;
 
-        const dataset = bucket.dataset[0];
-        let totalSteps = 0;
+    const dataToSend = {
+        steps,
+        calories,
+        sleepData,
+        // heartRateArray, Didnt feel to include this 
+        averageHeartRate,
+    };
 
-        if (dataset.point && dataset.point.length > 0) {
-            totalSteps = dataset.point.reduce((sum, point) => {
-                if (point.value && point.value.length > 0) {
-                    return sum + (point.value[0]?.intVal || 0);
-                }
-                return sum;
-            }, 0);
-        }
-
-        return {
-            startTime: new Date(parseInt(bucket.startTimeMillis)),
-            endTime: new Date(parseInt(bucket.endTimeMillis)),
-            steps: totalSteps,
-            hasData: dataset.point.length > 0,
-        };
-    });
+    return dataToSend;
 }
 
 function getStartOfDay(): number {
@@ -168,7 +124,8 @@ export async function POST(req: NextRequest) {
     try {
         // Validate request body
         const body = await req.json();
-        const { email } = requestSchema.parse(body);
+        const { email, accessToken, accessTokenExpiry } =
+            requestSchema.parse(body);
 
         // Find user
         const user = await prisma.user.findUnique({
@@ -183,23 +140,50 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Get new access token
-        const accessToken = await getGoogleAccessToken(user.refreshToken);
+        let fitnessResponse;
+        if (accessTokenExpiry! > Date.now()) {
+            const startTime = getStartOfDay();
+            fitnessResponse = await fetchFitnessData(
+                accessToken as string,
+                startTime
+            );
+            // Process the response
+            const processedData = processData(fitnessResponse);
+            return NextResponse.json(
+                {
+                    success: true,
+                    data: processedData,
+                    accessToken,
+                    accessTokenExpiry,
+                },
+                { status: 200 }
+            );
+        } else {
+            // Get new access token
+            const accessTokenReceivedFromGoogle = await getGoogleAccessToken(
+                user.refreshToken
+            );
+            const accessTokenExpiryNew = new Date().getTime() + 3600 * 1000;
 
-        const startTime = getStartOfDay();
-        const fitnessResponse = await fetchFitnessData(accessToken, startTime);
+            const startTime = getStartOfDay();
+            fitnessResponse = await fetchFitnessData(
+                accessTokenReceivedFromGoogle,
+                startTime
+            );
 
-        // Process the response
-        const processedData = processStepsData(fitnessResponse);
+            // Process the response
+            const processedData = processData(fitnessResponse);
 
-        return NextResponse.json(
-            {
-                success: true,
-                data: processedData,
-                raw: fitnessResponse, // Include raw data for debugging
-            },
-            { status: 200 }
-        );
+            return NextResponse.json(
+                {
+                    success: true,
+                    data: processedData,
+                    accessTokenReceivedFromGoogle,
+                    accessTokenExpiryNew,
+                },
+                { status: 200 }
+            );
+        }
     } catch (error) {
         console.error("Error in POST handler:", error);
 

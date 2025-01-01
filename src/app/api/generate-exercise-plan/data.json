@@ -1,0 +1,46 @@
+{
+    "data": {
+        "focusArea": "Cardiovascular Endurance",
+        "approxDurationToCompleteinMinutes": 20,
+        "equipmentRequired": "none",
+        "exerciseType": "Cardio",
+        "totalExercises": 2,
+        "totalApproxCaloriesBurn": 200,
+        "exercises": [
+            {
+                "exerciseName": "Brisk Walking",
+                "exerciseType": "Cardio",
+                "primaryMuscleTarget": "Legs",
+                "secondaryMuscleTarget": "Cardiovascular System",
+                "exerciseDuration": 10,
+                "equipmentRequired": "none",
+                "calorieBurn": 100,
+                "beginnerSets": 1,
+                "beginnerReps": "10 minutes",
+                "intermediateSets": 1,
+                "intermediateReps": "15 minutes",
+                "expertSets": 1,
+                "expertReps": "20 minutes",
+                "restTime": 0,
+                "adviseWhenDoingExercise": "Maintain a moderate pace. Listen to your body and stop if you feel any discomfort."
+            },
+            {
+                "exerciseName": "Jumping Jacks",
+                "exerciseType": "Cardio",
+                "primaryMuscleTarget": "Full Body",
+                "secondaryMuscleTarget": "Cardiovascular System",
+                "exerciseDuration": 10,
+                "equipmentRequired": "none",
+                "calorieBurn": 100,
+                "beginnerSets": 2,
+                "beginnerReps": 30,
+                "intermediateSets": 3,
+                "intermediateReps": 45,
+                "expertSets": 4,
+                "expertReps": 60,
+                "restTime": 30,
+                "adviseWhenDoingExercise": "Focus on proper form to avoid injury.  Take breaks as needed."
+            }
+        ]
+    }
+}

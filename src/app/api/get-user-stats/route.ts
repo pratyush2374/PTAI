@@ -13,8 +13,12 @@ export async function POST(req: NextRequest) {
         }
 
         const email = token.email;
-        
+
         const response = await axios.post("/api/get-gfit-data", { email });
+
+        if(response.status == 200) {
+            
+        }
 
     } catch (error) {
         console.error(error);
