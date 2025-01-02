@@ -37,7 +37,7 @@ const Diet: React.FC<any> = ({ dataForDiet }) => {
                     {dataForDiet.map((item : any, index:any) => (
                         <DietItem
                             key={index}
-                            imageSrc={`/Dashboard Images/diet.svg`} 
+                            imageSrc={`/Dashboard Images/food8.svg`} 
                             mealName={item.name}
                             mealType={item.type}
                             calories={`${item.calories} cal`} 
