@@ -5,11 +5,10 @@ interface DietItemProps {
     imageSrc: string;
     mealName: string;
     mealType: string;
-    time: string;
     calories: string;
 }
 
-const DietItem: React.FC<DietItemProps> = ({ imageSrc, mealName, mealType, time, calories }) => {
+const DietItem: React.FC<DietItemProps> = ({ imageSrc, mealName, mealType, calories }) => {
     return (
         <div className={styles.individualDiet}>
             <div className={styles.dietLeft}>
@@ -20,10 +19,6 @@ const DietItem: React.FC<DietItemProps> = ({ imageSrc, mealName, mealType, time,
                 </div>
             </div>
             <div className={styles.moreDietDetails}>
-                <div className={styles.innerDietDetails}>
-                    <h2>{time}</h2>
-                    <h3>Time</h3>
-                </div>
                 <div className={styles.innerDietDetails}>
                     <h2>{calories}</h2>
                     <h3>Calories</h3>

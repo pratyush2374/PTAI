@@ -4,39 +4,8 @@ import Image from "next/image";
 import DietItem from "./DietItem";
 import { useState } from "react";
 
-const Diet: React.FC = () => {
+const Diet: React.FC<any> = ({ dataForDiet }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-
-    const dietItems = [
-        {
-            imageSrc: "/Dashboard Images/food8.svg",
-            mealName: "Poha with Vegetables",
-            mealType: "Breakfast",
-            time: "8:00 AM",
-            calories: "~200 cal",
-        },
-        {
-            imageSrc: "/Dashboard Images/food1.svg",
-            mealName: "Dal Tadka, Brown Rice, Mixed Vegetable Sabzi",
-            mealType: "Lunch",
-            time: "12:30 PM",
-            calories: "~450 cal",
-        },
-        {
-            imageSrc: "/Dashboard Images/food2.svg",
-            mealName: "Paneer Tikka, Roti, Salad",
-            mealType: "Dinner",
-            time: "7:00 PM",
-            calories: "~400 cal",
-        },
-        {
-            imageSrc: "/Dashboard Images/food3.svg",
-            mealName: "Sprout Chaat",
-            mealType: "Snacks",
-            time: "4:00 PM",
-            calories: "~150 cal",
-        },
-    ];
 
     return (
         <>
@@ -62,17 +31,16 @@ const Diet: React.FC = () => {
                 <div
                     className={`${styles.dietInner} ${
                         isExpanded ? styles.expanded : ""
-                    }`}
+                    }`} 
                 >
                     {/* Map over diet items to render them dynamically */}
-                    {dietItems.map((item, index) => (
+                    {dataForDiet.map((item : any, index:any) => (
                         <DietItem
                             key={index}
-                            imageSrc={item.imageSrc}
-                            mealName={item.mealName}
-                            mealType={item.mealType}
-                            time={item.time}
-                            calories={item.calories}
+                            imageSrc={`/Dashboard Images/diet.svg`} 
+                            mealName={item.name}
+                            mealType={item.type}
+                            calories={`${item.calories} cal`} 
                         />
                     ))}
                 </div>

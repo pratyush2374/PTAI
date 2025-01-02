@@ -5,11 +5,12 @@ import axios from "axios";
 export async function POST(req: NextRequest) {
     try {
         const token = await getToken({ req });
-        // if (!token?.email) {
-        //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        // }
+        if (!token?.email) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
-        const email = "kr.pratyushsharma2374@gmail.com";
+        // const email = "kr.pratyushsharma2374@gmail.com";
+        const email = token.email;
 
         // Make API calls concurrent
         const [gfitData, exercisePlan, dietPlan] = await Promise.allSettled([

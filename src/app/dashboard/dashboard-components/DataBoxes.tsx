@@ -9,10 +9,23 @@ interface DataBoxProps {
     value: string | number;
     unit: string;
     statusClass: string;
-    onClick: (id: string, title: string, value: string | number, unit: string) => void;
+    onClick: (
+        id: string,
+        title: string,
+        value: string | number,
+        unit: string
+    ) => void;
 }
 
-const DataBox: React.FC<DataBoxProps> = ({ id, icon, title, value, unit, statusClass, onClick }) => {
+const DataBox: React.FC<DataBoxProps> = ({
+    id,
+    icon,
+    title,
+    value,
+    unit,
+    statusClass,
+    onClick,
+}) => {
     return (
         <div
             className={styles.dataBox}
@@ -44,7 +57,12 @@ const ExpandedBox: React.FC<{
         <div className={styles.expandedBoxContainer}>
             <div className={styles.expandedBox}>
                 <div className={styles.closeButton} onClick={onClose}>
-                    <Image src="/Dashboard Images/close.svg" alt="Close" width={24} height={24} />
+                    <Image
+                        src="/Dashboard Images/close.svg"
+                        alt="Close"
+                        width={24}
+                        height={24}
+                    />
                 </div>
                 <h1>{title}</h1>
                 <p>
@@ -55,7 +73,7 @@ const ExpandedBox: React.FC<{
     );
 };
 
-const DataBoxes: React.FC = () => {
+const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
     const [expandedBox, setExpandedBox] = useState<{
         title: string;
         value: string | number;
@@ -67,7 +85,7 @@ const DataBoxes: React.FC = () => {
             id: "steps-box",
             icon: "/Dashboard Images/steps shoe.svg",
             title: "Steps",
-            value: 6000,
+            value: dataForDataBoxes.steps || "No data",
             unit: "",
             statusClass: "filledStatusSteps",
         },
@@ -75,29 +93,34 @@ const DataBoxes: React.FC = () => {
             id: "calories-box",
             icon: "/Dashboard Images/fire color.svg",
             title: "Calories",
-            value: 2000,
+            value: dataForDataBoxes.calories || "No data",
             unit: "cal",
             statusClass: "filledStatusCalories",
-        },
-        {
-            id: "water-box",
-            icon: "/Dashboard Images/water color.svg",
-            title: "Water",
-            value: 2.5,
-            unit: "lit",
-            statusClass: "filledStatusWater",
         },
         {
             id: "sleep-box",
             icon: "/Dashboard Images/sleep color.svg",
             title: "Sleep",
-            value: 7.8,
+            value: dataForDataBoxes.sleepData || "No data",
             unit: "hrs",
             statusClass: "filledStatusSleep",
         },
+        {
+            id: "heart-box",
+            icon: "/Dashboard Images/heart.png",
+            title: "Heart Rate",
+            value: dataForDataBoxes.averageHeartRate || "No data",
+            unit: "bpm",
+            statusClass: "filledStatusHeartRate",
+        },
     ];
 
-    const handleBoxClick = (id: string, title: string, value: string | number, unit: string) => {
+    const handleBoxClick = (
+        id: string,
+        title: string,
+        value: string | number,
+        unit: string
+    ) => {
         setExpandedBox({ title, value, unit });
     };
 

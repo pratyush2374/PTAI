@@ -4,36 +4,36 @@ import Link from "next/link";
 import ExerciseDetail from "./ExerciseDetail";
 import { useState } from "react";
 
-const Exercise: React.FC = () => {
+const Exercise: React.FC<any> = ({ dataForExercise }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const exerciseData = [
         {
             icon: "/Dashboard Images/focus.svg",
-            title: "Chest",
-            value: "Focus Area",
+            title: "Focus Area",
+            value: dataForExercise.focusArea,
         },
         {
             icon: "/Dashboard Images/duration.svg",
             title: "Duration",
-            value: 42,
+            value: dataForExercise.approxDurationToCompleteinMinutes,
             unit: "mins",
         },
         {
             icon: "/Dashboard Images/exercise.svg",
             title: "Exercises",
-            value: 16,
+            value: dataForExercise.totalExercises,
         },
         {
             icon: "/Dashboard Images/fire.svg",
             title: "Calories",
-            value: "~426",
+            value: dataForExercise.totalApproxCaloriesBurn,
             unit: "cal",
         },
         {
             icon: "/Dashboard Images/difficulty.svg",
             title: "Level",
-            value: "Intermediate",
+            value: dataForExercise.difficultyLevel,
         },
     ];
 

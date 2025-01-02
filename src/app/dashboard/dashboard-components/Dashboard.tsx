@@ -6,12 +6,6 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 const Dashboard: React.FC = () => {
-    const session = useSession();
-
-    useEffect(() => {
-        console.log(session);
-    }, []);
-
     return (
         <>
             <Navbar />
