@@ -1,0 +1,183 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Container for everything */
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  /* Profile Card */
+  .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .profile-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .profile-info h2 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  .profile-info p {
+    margin: 5px 0 0;
+    color: #555;
+  }
+  
+  /* Personal Details */
+  .personal-details {
+    width: 100%;
+    max-width: 800px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .personal-details .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .personal-details .header h3 {
+    margin: 0;
+  }
+  
+  .personal-details .header button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .personal-details .fields {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+  }
+  
+  .personal-details label {
+    font-weight: bold;
+  }
+  
+  .personal-details input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  /* Activity Details */
+  .activity-details,
+  .dietary-preferences,
+  .health-problems {
+    width: 100%;
+    max-width: 800px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .activity-details h3,
+  .dietary-preferences h3,
+  .health-problems h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .option-btn {
+    padding: 8px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background: #fff;
+    color: #007bff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .option-btn:hover {
+    background: #007bff;
+    color: #fff;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .profile-card {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .personal-details .fields {
+      grid-template-columns: 1fr;
+    }
+  }
+  .container {
+    max-width: 90vw;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .edit-mode-toggle {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .edit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .edit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .details-section {
+    margin-top: 20px;
+  }
+  
