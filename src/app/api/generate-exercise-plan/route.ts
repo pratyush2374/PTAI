@@ -7,19 +7,25 @@ export async function POST(req: NextRequest) {
         const { email } = await req.json();
 
         const user = await prisma.user.findUnique({
-            where: {
-                email,
-            },
+            where: { email },
             include: {
                 preferences: true,
                 healthAndDietary: true,
-                weight: true,
-                // WeeklyExercise : {
-                //     select : {dailyPlans : true},
-                //     include : {
-                //         dailyPlans : true
-                //     }
-                // }
+                weights: {
+                    orderBy: { date: "desc" },
+                    take: 1,
+                },
+                stats: {
+                    include: {
+                        daily: {
+                            include: {
+                                exercises: true,
+                            },
+                            orderBy: { date: "desc" },
+                            take: 7,
+                        },
+                    },
+                },
             },
         });
 
@@ -32,89 +38,67 @@ export async function POST(req: NextRequest) {
 
         console.log(user);
 
+        const previous7DaysExerciseFocusAreas =
+            user.stats?.daily
+                .flatMap((day) =>
+                    day.exercises.map((exercise) => exercise.primaryMuscle)
+                )
+                .filter((muscle): muscle is string => !!muscle) || [];
+
+        console.log(previous7DaysExerciseFocusAreas);
+
         const userData = {
-            age: user?.age || 0,
-            height: user?.height || 0,
-            weight: user?.weight[user.weight.length - 1]?.weight || 65,
-            gender: user?.gender || "male",
-            activityLevel: user?.preferences?.activityLevel || "sedentary",
+            age: user.age,
+            height: user.height,
+            weight: user.weights[0]?.weight || 65,
+            gender: user.gender.toLowerCase(),
+            activityLevel: user.preferences?.activityLevel || "sedentary",
             preferredExerciseType:
-                user?.preferences?.preferredExerciseType || [],
+                user.preferences?.preferredExerciseType || [],
             exerciseExperience:
-                user?.preferences?.exerciseExperience || "intermediate",
-            workoutDuration: user?.preferences?.workoutDuration || "30-45",
-            exerciseFrequency: user?.preferences?.exerciseFrequency || "4-5",
-            fitnessGoals: user?.preferences?.fitnessGoals || [],
-            pace: user?.preferences?.pace || "medium",
-            availableEquipments: user?.preferences?.availableEquipments || [],
-            healthProblems: user?.healthAndDietary?.healthProblems || [],
-            previous7DaysExerciseFocusAreas: ["legs", "core"],
+                user.preferences?.exerciseExperience || "intermediate",
+            workoutDuration: user.preferences?.workoutDuration || "30-45",
+            exerciseFrequency: user.preferences?.exerciseFrequency || "4-5",
+            fitnessGoals: user.preferences?.fitnessGoals || [],
+            pace: user.preferences?.pace || "medium",
+            availableEquipments: user.preferences?.availableEquipments || [],
+            healthProblems: user.healthAndDietary?.healthProblems || [],
+            previous7DaysExerciseFocusAreas,
         };
 
-        const responseDataReceivedFromGenerateExercisePlan =
-            await generateExercisePlan(userData);
+        const plan = await generateExercisePlan(userData);
+        console.log(plan);
 
-        //Creating daily exercise plan
-        const dailyExercise = await prisma.dailyExercise.create({
+        const dailyStat = await prisma.dailyStat.create({
             data: {
-                date: new Date(),
-                focusArea:
-                    responseDataReceivedFromGenerateExercisePlan.focusArea,
-                equipmentRequired:
-                    responseDataReceivedFromGenerateExercisePlan.equipmentRequired,
-                exerciseType:
-                    responseDataReceivedFromGenerateExercisePlan.exerciseType,
-                duration:
-                    responseDataReceivedFromGenerateExercisePlan.approxDurationToCompleteinMinutes,
-                totalExercises:
-                    responseDataReceivedFromGenerateExercisePlan.totalExercises,
-                calorieBurn:
-                    responseDataReceivedFromGenerateExercisePlan.totalApproxCaloriesBurn,
-                difficultyLevel:
-                    responseDataReceivedFromGenerateExercisePlan.difficultyLevel,
-                userId: user.id,
+                stats: {
+                    connect: { userId: user.id },
+                },
+                minutesWorkedOut: plan.approxDurationToCompleteinMinutes,
+                caloriesBurnt: plan.totalApproxCaloriesBurn,
+                exercises: {
+                    create: plan.exercises.map((exercise: any) => ({
+                        exerciseName: exercise.exerciseName,
+                        exerciseType: exercise.exerciseType,
+                        primaryMuscle: exercise.primaryMuscleTarget,
+                        secondaryMuscle: exercise.secondaryMuscleTarget,
+                        duration: exercise.exerciseDuration,
+                        equipment: exercise.equipmentRequired,
+                        calorieBurn: exercise.calorieBurn,
+                        sets: exercise.sets,
+                        reps: exercise.reps,
+                        restTime: exercise.restTime,
+                        advice: exercise.adviseWhenDoingExercise,
+                    })),
+                },
             },
         });
 
-        console.log(dailyExercise);
-
-        // Creating individual exercises ans storing in DB
-        const exercises = await prisma.exercise.createMany({
-            data: responseDataReceivedFromGenerateExercisePlan.exercises.map(
-                (exercise: any) => ({
-                    exerciseName: exercise.exerciseName,
-                    exerciseType: exercise.exerciseType,
-                    primaryMuscleTarget: exercise.primaryMuscleTarget,
-                    secondaryMuscleTarget: exercise.secondaryMuscleTarget,
-                    exerciseDuration: exercise.exerciseDuration,
-                    equipmentRequired: exercise.equipmentRequired,
-                    calorieBurn: exercise.calorieBurn,
-                    sets: exercise.sets,
-                    reps: exercise.reps,
-                    restTime: exercise.restTime,
-                    adviseWhenDoingExercise: exercise.adviseWhenDoingExercise,
-                    exerciseId: dailyExercise.id,
-                })
-            ),
-        });
-
-        // const weeklyExercise = await prisma.weeklyExercise.create({
-        //     data: {
-        //         userId: user.id,
-        //         weekStart: new Date(),
-        //         weekEnd: new Date(),
-        //         dailyPlans: {
-        //             connect: [{ id: dailyExercise.id }],
-        //         },
-        //     },
-        // });
-
-        console.log(exercises);
-
         return NextResponse.json(
             {
-                data: responseDataReceivedFromGenerateExercisePlan,
-                message: "Exercise plan generated successfully",
+                data: plan,
+                dailyStatId: dailyStat.id,
+                message: "Exercise plan generated and stored successfully",
             },
             { status: 200 }
         );

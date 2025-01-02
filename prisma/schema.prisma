@@ -20,21 +20,13 @@ model User {
   age              Int
   gender           Gender
   height           Float
-  weight           Weight[]
+  weights          Weight[]
   additionalInfo   String
   preferences      UserPreferences?
   healthAndDietary HealthAndDietary?
-  dietPlan         DailyDiet?
-  exercisePlan     DailyExercise?
-  dailyStats       DailyStats?
+  stats            Stats?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  WeeklyDiet       WeeklyDiet[]
-  WeeklyExercise   WeeklyExercise[]
-  WeeklyStats      WeeklyStats[]
-  MonthlyStats     MonthlyStats[]
-  YearlyStats      YearlyStats[]
-  OverallStats     OverallStats?
 }
 
 enum Gender {
@@ -48,7 +40,7 @@ model Weight {
   date   DateTime
   weight Float
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String   @unique @db.ObjectId
+  userId String   @db.ObjectId
 }
 
 model UserPreferences {
@@ -75,160 +67,85 @@ model HealthAndDietary {
   allergies          String[]
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String   @unique @db.ObjectId
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
 }
 
-model Diet {
-  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  category            String[]
-  weight              Float
-  calories            Int
-  protein             Float
-  carbs               Float
-  fats                Float
-  fibre               Float
-  otherMacroNutrients String
-  keyIngredients      String[]
-  commonAllergens     String?
-  cookingTime         Int
-  recipe              String     @db.String //isko dekhna 
-  breakfastDailyDiet  DailyDiet? @relation("breakfast")
-  lunchDailyDiet      DailyDiet? @relation("lunch")
-  snackDailyDiet      DailyDiet? @relation("snack")
-  dinnerDailyDiet     DailyDiet? @relation("dinner")
+model Stats {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  daily             DailyStat[]
+  currentStreak     Int
+  highestStreak     Int
+  achievements      String[]
+  totalWeightChange Float
+  averageWeight     Float
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String      @unique @db.ObjectId
 }
 
-model DailyDiet {
-  id                            String      @id @default(auto()) @map("_id") @db.ObjectId
-  date                          DateTime
-  totalCalories                 String?
-  protein                       Float?
-  carbs                         Float?
-  fats                          Float?
-  hydrationGlasses              Int?
-  otherMicronutrientInformation String?
-  breakfast                     Diet?       @relation(fields: [breakfastId], references: [id], name: "breakfast")
-  breakfastId                   String?     @unique @db.ObjectId
-  lunch                         Diet?       @relation(fields: [lunchId], references: [id], name: "lunch")
-  lunchId                       String?     @unique @db.ObjectId
-  snacks                        Diet?       @relation(fields: [snacksId], references: [id], name: "snack")
-  snacksId                      String?     @unique @db.ObjectId
-  dinner                        Diet?       @relation(fields: [dinnerId], references: [id], name: "dinner")
-  dinnerId                      String?     @unique @db.ObjectId
-  user                          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                        String      @unique @db.ObjectId
-  WeeklyDiet                    WeeklyDiet? @relation(fields: [weeklyDietId], references: [id])
-  weeklyDietId                  String?     @db.ObjectId
-}
+model DailyStat {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  date    DateTime @default(now())
+  stats   Stats    @relation(fields: [statsId], references: [id])
+  statsId String   @db.ObjectId
 
-model WeeklyDiet {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  weekStart  DateTime
-  weekEnd    DateTime
-  dailyPlans DailyDiet[]
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String      @db.ObjectId
+  // Exercise stats
+  minutesWorkedOut Int?
+  caloriesBurnt    Int?
+  exercises        Exercise[]
+
+  // Diet stats
+  caloriesGained Int?
+  meals          Meal[]
+  waterIntake    Int?
+
+  // Health stats
+  stepCount        Int?
+  currentWeight    Float?
+  distanceWalked   Float  @default(0)
+  distanceRunned   Float  @default(0)
+  totalHoursSlept  Float?
+  averageHeartRate Int?
 }
 
 model Exercise {
-  id                      String         @id @default(auto()) @map("_id") @db.ObjectId
-  exerciseName            String
-  exerciseType            String[]
-  primaryMuscleTarget     String
-  secondaryMuscleTarget   String?
-  exerciseDuration        Int
-  equipmentRequired       String
-  calorieBurn             Int
-  sets                    Int
-  reps                    Int
-  restTime                Int
-  adviseWhenDoingExercise String         @db.String
-  exercise                DailyExercise? @relation(fields: [exerciseId], references: [id])
-  exerciseId              String?        @db.ObjectId
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  exerciseName    String
+  exerciseType    String[]
+  primaryMuscle   String
+  secondaryMuscle String?
+  duration        Int
+  equipment       String
+  calorieBurn     Int
+  sets            Int
+  reps            Int
+  restTime        Int
+  advice          String    @db.String
+  dailyStat       DailyStat @relation(fields: [dailyStatId], references: [id])
+  dailyStatId     String    @db.ObjectId
 }
 
-model DailyExercise {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  date              DateTime
-  focusArea         String?
-  equipmentRequired String[]
-  exerciseType      String[]
-  duration          Int?
-  totalExercises    Int?
-  calorieBurn       Int?
-  difficultyLevel   String?
-  exercises         Exercise[]
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            String          @unique @db.ObjectId
-  weeklyExercise    WeeklyExercise? @relation(fields: [weeklyExerciseId], references: [id])
-  weeklyExerciseId  String?         @db.ObjectId
+model Meal {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  type           MealType
+  name           String
+  category       String[]
+  weight         Float
+  calories       Int
+  protein        Float
+  carbs          Float
+  fats           Float
+  fibre          Float
+  otherNutrients String
+  ingredients    String[]
+  allergens      String?
+  cookingTime    Int
+  recipe         String    @db.String
+  dailyStat      DailyStat @relation(fields: [dailyStatId], references: [id])
+  dailyStatId    String    @db.ObjectId
 }
 
-model WeeklyExercise {
-  id         String          @id @default(auto()) @map("_id") @db.ObjectId
-  weekStart  DateTime
-  weekEnd    DateTime
-  dailyPlans DailyExercise[]
-  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String          @db.ObjectId
-}
-
-model DailyStats {
-  id                String       @id @default(auto()) @map("_id") @db.ObjectId
-  stepCount         Int?
-  caloriesBurnt     Int?
-  caloriesGained    Int?
-  exerciseCompleted Int?
-  waterIntake       Int?
-  currentWeight     Float?
-  distanceWalked    Float        @default(0)
-  distanceRunned    Float        @default(0)
-  totalHoursSlept   Float?
-  averageHeartRate  Int?
-  goalAchievement   Int?
-  totalMealsLogged  Int?
-  minutesWorkedOut  Int?
-  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            String       @unique @db.ObjectId
-  weeklyStats       WeeklyStats? @relation(fields: [weeklyStatsId], references: [id])
-  weeklyStatsId     String?      @db.ObjectId
-  date              DateTime     @default(now())
-}
-
-model WeeklyStats {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String        @db.ObjectId
-  weeklyData     DailyStats[]
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  monthlyStats   MonthlyStats? @relation(fields: [monthlyStatsId], references: [id])
-  monthlyStatsId String?       @db.ObjectId
-}
-
-model MonthlyStats {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String        @db.ObjectId
-  weeklyData    WeeklyStats[]
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  yearlyStats   YearlyStats?  @relation(fields: [yearlyStatsId], references: [id])
-  yearlyStatsId String?       @db.ObjectId
-}
-
-model YearlyStats {
-  id          String         @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String         @db.ObjectId
-  monthlyData MonthlyStats[]
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model OverallStats {
-  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
-  currentStreak           Int
-  highestStreak           Int
-  achievements            String[]
-  totalWeightLossOrGained Float
-  averageWeight           Float
-  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                  String   @unique @db.ObjectId
+enum MealType {
+  BREAKFAST
+  LUNCH
+  SNACK
+  DINNER
 }

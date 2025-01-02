@@ -91,16 +91,24 @@ function processData(response: any): any {
     const sleepData =
         response.bucket[0]?.dataset[2]?.point[0]?.value[0]?.intVal;
     const heartRateArray = response.bucket[0]?.dataset[3]?.point[0]?.value;
-    const averageHeartRate =
-        heartRateArray.reduce((sum: any, obj: any) => sum + obj?.fpVal, 0) /
-        heartRateArray.length;
+    let averageHeartRate: number | null = null;
+
+    if (Array.isArray(heartRateArray) && heartRateArray.length > 0) {
+        averageHeartRate =
+            heartRateArray.reduce(
+                (sum: number, obj: any) => sum + (obj?.fpVal || 0),
+                0
+            ) / heartRateArray.length;
+    } else {
+        console.log("heartRateArray is not a valid array or is empty.");
+    }
 
     const dataToSend = {
         steps,
         calories,
         sleepData,
-        // heartRateArray, Didnt feel to include this 
         averageHeartRate,
+        // heartRateArray, Didn't feel to include this
     };
 
     return dataToSend;

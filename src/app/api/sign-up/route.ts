@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
                 age,
                 gender: formattedGender,
                 height: parsedHeight,
-                weight: {
+                weights: {
                     create: {
                         date: new Date(),
                         weight: parsedWeight,

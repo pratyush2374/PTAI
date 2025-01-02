@@ -1,73 +1,82 @@
-import { spawn } from 'child_process';
-import path from 'path';
-import { IUserPreferences } from '@/models/userPreferences.model';
-import { IHealthAndDietary } from '@/models/healthAndDietary.model';
-import { IWeight } from '@/models/user.model';
-import { IDiet } from '@/models/diet.model';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export interface UserData {
-  age: number;
-  gender: string;
-  height: number;
-  weight: IWeight[]
-  preferences: IUserPreferences;
-  healthAndDietary: IHealthAndDietary
-}
+const generateDietPlan = async (userData: any) => {
+    try {
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-export interface DietPlanResult {
-  meals: {
-    breakfast: IDiet; 
-    lunch: IDiet;     
-    snacks: IDiet;    
-    dinner: IDiet;    
+        const prompt = `
+        Given the following user data:
+        
+        - Age: ${userData.age}
+        - Height: ${userData.height} cm
+        - Weight: ${userData.weight} kg
+        - Gender: ${userData.gender}
+        - Activity Level: ${userData.activityLevel}
+        - Macronutrient Preferences: ${userData.macronutrientPreferences.join(", ")}
+        - Dietary Preferences: ${userData.dietaryPreferences.join(", ")}
+        - Allergies: ${userData.allergies.join(", ")}
+        - Health Problems: ${userData.healthProblems.join(", ")}
+        - Fitness Goals: ${userData.fitnessGoals.join(", ")}
+        - Previous 7 Days Meals: ${userData.previous7DaysMeals.join(", ")}
+        
+        Generate a strict JSON response following this exact format for a daily meal plan. The response MUST be valid JSON with no markdown formatting:
+        Give indian meals and cuisine preferably
+        {
+            "totalCalories": "integer",
+            "proteinGrams": "integer",
+            "carbsGrams": "integer",
+            "fatsGrams": "integer",
+            "fibreGrams": "integer",
+            "waterIntake": "integer (in ml)",
+            "numberOfMeals": "integer",
+            "specialConsiderations": "string",
+            "meals": [
+                {
+                    "type": "BREAKFAST | LUNCH | SNACK | DINNER",
+                    "name": "string",
+                    "category": "array of strings",
+                    "weight": "float (in grams)",
+                    "calories": "integer",
+                    "protein": "float",
+                    "carbs": "float",
+                    "fats": "float",
+                    "fibre": "float",
+                    "otherNutrients": "string (comma-separated key nutrients)",
+                    "ingredients": "array of strings",
+                    "allergens": "string (or null if none)",
+                    "cookingTime": "integer (in minutes)",
+                    "recipe": "string (detailed step-by-step instructions)"
+                }
+                ...more meals based on numberOfMeals
+            ]
+        }
+
+        IMPORTANT RULES:
+        1. All number fields must be specific values (calories, nutrients, etc.)
+        2. Meals must be balanced and spread throughout the day
+        3. The response must be pure JSON with no markdown
+        4. Consider user's allergies and dietary preferences strictly
+        5. Provide detailed, actionable recipes
+        6. Respect the user's macronutrient preferences
+        7. Account for health problems in meal selection
+        `;
+
+        const result = await model.generateContent(prompt);
+        if (!result?.response?.text) {
+            throw new Error("No response received from the AI model.");
+        }
+
+        const jsonMatch = result.response.text().match(/```json([\s\S]+?)```/);
+        if (!jsonMatch) {
+            throw new Error("Failed to parse JSON from response.");
+        }
+
+        return JSON.parse(jsonMatch[1]);
+    } catch (error: any) {
+        console.error("Error in generateDietPlan:", error.message || error);
+        throw new Error("Failed to generate diet plan. Please try again.");
+    }
 };
-}
-
-async function generateDietPlan(userData: UserData): Promise<DietPlanResult> {
-
-  return new Promise((resolve, reject) => {
-    // Path to Python script
-    const pythonScriptPath = path.join(process.cwd(), 'python', 'generate_exercise_plan.py');
-
-    // Spawn Python child process
-    const python = spawn('python', [
-      "./generateExercisePlan.py",
-      JSON.stringify(userData)
-    ]);
-
-    let outputData = '';
-    let errorData = '';
-
-    // Collect output data
-    python.stdout.on('data', (data) => {
-      outputData += data.toString();
-    });
-
-    // Collect error data
-    python.stderr.on('data', (data) => {
-      errorData += data.toString();
-    });
-
-    // Handle process close
-    python.on('close', (code) => {
-      if (code !== 0) {
-        reject(new Error(`Python script failed with code ${code}: ${errorData}`));
-        return;
-      }
-
-      try {
-        const result: DietPlanResult = JSON.parse(outputData);
-        resolve(result as DietPlanResult);
-      } catch (parseError) {
-        reject(new Error(`Failed to parse exercise plan: ${parseError}`));
-      }
-    });
-
-    // Handle process error
-    python.on('error', (err) => {
-      reject(err);
-    });
-  });
-}
 
 export default generateDietPlan;

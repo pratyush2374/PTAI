@@ -1,95 +1,111 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { getToken } from "next-auth/jwt";
-// import connectToDB from "@/lib/dbConnection";
-// import User from "@/models/user.model";
-// import Diet from "@/models/diet.model";
-// import DailyDiet from "@/models/dailyDiet.model";
-// import generateDietPlan from "@/core/generateDietPlan";
+import { NextRequest, NextResponse } from "next/server";
+import generateDietPlan from "@/core/generateDietPlan";
+import prisma from "@/lib/prismaClient";
+import { Prisma, MealType } from "@prisma/client";
 
-// export async function POST(req: NextRequest) {
-//     try {
-//         // Connect to database
-//         await connectToDB();
+export async function POST(req: NextRequest) {
+    try {
+        const { email } = await req.json();
 
-//         // Authenticate user
-//         const token = await getToken({ req });
-//         if (!token) {
-//             return NextResponse.json(
-//                 { error: "Unauthorized" },
-//                 { status: 401 }
-//             );
-//         }
+        const user = await prisma.user.findUnique({
+            where: { email },
+            include: {
+                preferences: true,
+                healthAndDietary: true,
+                weights: {
+                    orderBy: { date: "desc" },
+                    take: 1,
+                },
+                stats: {
+                    include: {
+                        daily: {
+                            include: {
+                                meals: true,
+                            },
+                            orderBy: { date: "desc" },
+                            take: 7,
+                        },
+                    },
+                },
+            },
+        });
 
-//         // Find user and populate necessary references
-//         const user = await User.findById(token.sub)
-//             .populate("preferences")
-//             .populate("healthAndDietary")
-//             .lean(); // Use lean for performance
+        if (!user) {
+            return NextResponse.json(
+                { message: "User not found" },
+                { status: 404 }
+            );
+        }
 
-//         if (!user) {
-//             return NextResponse.json(
-//                 { error: "User not found" },
-//                 { status: 404 }
-//             );
-//         }
+        const previous7DaysMeals = 
+            user.stats?.daily
+                .flatMap((day) => 
+                    day.meals.map((meal) => meal.type)
+                ) || [];
 
-//         // Remove unwanted populated fields
-//         const {
-//             dietId,
-//             exerciseId,
-//             userStats,
-//             fullName,
-//             userName,
-//             email,
-//             password,
-//             googleId,
-//             profilePic,
-//             ...userForDietPlan
-//         } = user;
+        const userData = {
+            age: user.age,
+            height: user.height,
+            weight: user.weights[0]?.weight || 65,
+            gender: user.gender.toLowerCase(),
+            activityLevel: user.preferences?.activityLevel || "sedentary",
+            macronutrientPreferences: user.preferences?.macronutrientPreferences || [],
+            dietaryPreferences: user.healthAndDietary?.dietaryPreferences || [],
+            allergies: user.healthAndDietary?.allergies || [],
+            healthProblems: user.healthAndDietary?.healthProblems || [],
+            fitnessGoals: user.preferences?.fitnessGoals || [],
+            previous7DaysMeals,
+        };
 
-//         // Generate diet plan
-//         const dietPlanResult = await generateDietPlan(userForDietPlan as any);
+        console.log(`User data ${userData}`);
 
-//         // Store diets from the generated plan
-//         const savedMeals = await Promise.all([
-//             new Diet({
-//                 ...dietPlanResult.meals.breakfast,
-//             }).save(),
-//             new Diet({
-//                 ...dietPlanResult.meals.lunch,
-//             }).save(),
-//             new Diet({
-//                 ...dietPlanResult.meals.snacks,
-//             }).save(),
-//             new Diet({
-//                 ...dietPlanResult.meals.dinner,
-//             }).save(),
-//         ]);
+        const plan = await generateDietPlan(userData);
 
-//         // Create daily diet entry
-//         const dailyDiet = new DailyDiet({
-//             userId: user._id,
-//             date: new Date(),
-//             dietPlanResult,
-//         });
+        console.log(plan);
 
-//         await dailyDiet.save();
+        const dailyStat = await prisma.dailyStat.create({
+            data: {
+                stats: {
+                    connect: { userId: user.id },
+                },
+                caloriesGained: plan.totalCalories,
+                meals: {
+                    create: plan.meals.map((meal: any) => ({
+                        type: meal.type,
+                        name: meal.name,
+                        category: meal.category,
+                        weight: meal.weight,
+                        calories: meal.calories,
+                        protein: meal.protein,
+                        carbs: meal.carbs,
+                        fats: meal.fats,
+                        fibre: meal.fibre,
+                        otherNutrients: meal.otherNutrients,
+                        ingredients: meal.ingredients,
+                        allergens: meal.allergens,
+                        cookingTime: meal.cookingTime,
+                        recipe: meal.recipe,
+                    })),
+                },
+            },
+        });
 
-//         return NextResponse.json({
-//             message: "Diet plan generated successfully",
-//             dietPlan: dietPlanResult,
-//             dailyDietId: dailyDiet._id,
-//             savedMealIds: savedMeals.map((meal) => meal._id),
-//         });
-//     } catch (error) {
-//         console.error("Diet plan generation error:", error);
-//         return NextResponse.json(
-//             {
-//                 error: "Failed to generate diet plan",
-//                 details:
-//                     error instanceof Error ? error.message : "Unknown error",
-//             },
-//             { status: 500 }
-//         );
-//     }
-// }
+        return NextResponse.json(
+            {
+                data: plan,
+                dailyStatId: dailyStat.id,
+                message: "Diet plan generated and stored successfully",
+            },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error(`Error generating diet plan: ${error}`);
+        return NextResponse.json(
+            {
+                error: "Failed to generate diet plan",
+                details: error instanceof Error ? error.message : "Unknown error",
+            },
+            { status: 500 }
+        );
+    }
+}
