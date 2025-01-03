@@ -26,6 +26,9 @@ const DataBox: React.FC<DataBoxProps> = ({
     statusClass,
     onClick,
 }) => {
+    // Only show unit if value is a number and not zero
+    const shouldShowUnit = typeof value === 'number' && value !== 0 || (typeof value === 'string' && value !== "--");
+    
     return (
         <div
             className={styles.dataBox}
@@ -37,7 +40,7 @@ const DataBox: React.FC<DataBoxProps> = ({
                 <h2>{title}</h2>
             </div>
             <div className={styles.dataValue} id={`${id}-value`}>
-                {value} <span className={styles.unit}>{unit}</span>
+                {value}{shouldShowUnit && <span className={styles.unit}>{unit}</span>}
             </div>
             <div className={styles.status}>
                 <div className={styles[statusClass]}></div>
@@ -53,6 +56,9 @@ const ExpandedBox: React.FC<{
     unit: string;
     onClose: () => void;
 }> = ({ title, value, unit, onClose }) => {
+    // Only show unit if value is a number and not zero
+    const shouldShowUnit = typeof value === 'number' && value !== 0 || (typeof value === 'string' && value !== "--");
+
     return (
         <div className={styles.expandedBoxContainer}>
             <div className={styles.expandedBox}>
@@ -66,7 +72,7 @@ const ExpandedBox: React.FC<{
                 </div>
                 <h1>{title}</h1>
                 <p>
-                    {value} {unit}
+                    {value} {shouldShowUnit && unit}
                 </p>
             </div>
         </div>
@@ -85,7 +91,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             id: "steps-box",
             icon: "/Dashboard Images/steps shoe.svg",
             title: "Steps",
-            value: dataForDataBoxes.steps || "No data",
+            value: dataForDataBoxes.steps || "--",
             unit: "",
             statusClass: "filledStatusSteps",
         },
@@ -93,24 +99,24 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             id: "calories-box",
             icon: "/Dashboard Images/fire color.svg",
             title: "Calories",
-            value: dataForDataBoxes.calories || "No data",
-            unit: "cal",
+            value: dataForDataBoxes.calories || "--",
+            unit: " cal",
             statusClass: "filledStatusCalories",
         },
         {
             id: "sleep-box",
             icon: "/Dashboard Images/sleep color.svg",
             title: "Sleep",
-            value: dataForDataBoxes.sleepData || "No data",
-            unit: "hrs",
+            value: dataForDataBoxes.sleepData || "--",
+            unit: " hrs",
             statusClass: "filledStatusSleep",
         },
         {
             id: "heart-box",
             icon: "/Dashboard Images/heart.png",
             title: "Heart Rate",
-            value: dataForDataBoxes.averageHeartRate || "No data",
-            unit: "bpm",
+            value: dataForDataBoxes.averageHeartRate || "--",
+            unit: " bpm",
             statusClass: "filledStatusHeartRate",
         },
     ];
@@ -152,6 +158,9 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
                     onClose={handleClose}
                 />
             )}
+            <div className={styles.refresh}>
+                Refresh G - fit data
+            </div>
         </div>
     );
 };

@@ -34,7 +34,7 @@ const Diet: React.FC<any> = ({ dataForDiet }) => {
                     }`} 
                 >
                     {/* Map over diet items to render them dynamically */}
-                    {dataForDiet.map((item : any, index:any) => (
+                    {dataForDiet.meals.map((item : any, index:any) => (
                         <DietItem
                             key={index}
                             imageSrc={`/Dashboard Images/food8.svg`} 

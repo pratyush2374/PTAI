@@ -1,0 +1,45 @@
+{
+    "success": true,
+    "dailyStatsFromDBNewOneForConsistency": {
+        "id": "6777a81ac635263c05506fed",
+        "email": "kr.pratyushsharma2374@gmail.com",
+        "date": "2025-01-03T09:04:14.350Z",
+        "statsId": "67778a89a375286b8c56fcbc",
+        "minutesWorkedOut": 50,
+        "caloriesToBurn": 600,
+        "caloriesBurnt": 824,
+        "focusArea": "Full Body Strength and Cardio",
+        "approxDurationToCompleteinMinutes": 50,
+        "equipmentRequired": [
+            "Dumbbell",
+            "Barbell",
+            "Weight Plates",
+            "Adjustable Bench",
+            "Treadmill"
+        ],
+        "exerciseType": [
+            "Cardio",
+            "Strength",
+            "Weightlifting"
+        ],
+        "totalExercises": 6,
+        "difficultyLevel": "Advanced",
+        "caloriesGained": null,
+        "caloriesToGain": 1800,
+        "proteinGrams": 150,
+        "carbsGrams": 150,
+        "fatsGrams": 40,
+        "fibreGrams": 30,
+        "numberOfMeals": 5,
+        "specialConsiderations": "Focus on high protein, high fiber, low fat vegetarian meals.  Intermittent fasting window should be considered.  Portion sizes may need adjustment based on individual needs.",
+        "waterIntake": null,
+        "stepCount": 1210,
+        "currentWeight": null,
+        "distanceWalked": 0,
+        "distanceRunned": 0,
+        "totalHoursSlept": null,
+        "averageHeartRate": null
+    },
+    "statsId": "6777a81ac635263c05506fed",
+    "timestamp": "2025-01-03T09:04:26.881Z"
+}

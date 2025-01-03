@@ -1,0 +1,10 @@
+{
+    "success": true,
+    "data": {
+        "steps": 1283,
+        "calories": 1393.4911628658845,
+        "averageHeartRate": null
+    },
+    "accessTokenReceivedFromGoogle": "ya29.a0ARW5m74RVJd5sDcUvnSqmn6-CHR1cm-0ErPjKYq7R6Bt5bdSq53_VXcB5mqLeYaHQ3G3_PQoejZu94h8BbSsEaQfpTAc0XBryZGOGN0qddTT575RuSeJJRVEiBsgxx4ymzDU0b2f-0JuqW8Wr5xWxYopXHv8ajxswVgjX79atgaCgYKASASARASFQHGX2Mil0_rd_ciqmrrm7447BftBg0177",
+    "accessTokenExpiryNew": 1735917740627
+}

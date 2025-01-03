@@ -488,6 +488,23 @@
     margin-right: 10px;
 }
 
+.refresh {
+    display: block;
+    padding: 12px 24px;
+    background-color: #5586ff;
+    color: #fff;
+    width: 30%;
+    margin: auto;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+}
+
 .dietDetails {
     display: flex;
     flex-direction: column;
@@ -1149,6 +1166,10 @@
 
     .unit {
         font-size: 18px;
+    }
+    .refresh{
+        width: 80%;
+        margin-bottom: 40px;
     }
 }
 

@@ -6,8 +6,15 @@ import prisma from "@/lib/prismaClient";
 export async function POST(req: NextRequest) {
     try {
         const token = await getToken({ req });
-        const email = token?.email || "kr.pratyushsharma2374@gmail.com";
+        const email = token?.email;
 
+        if(!token) {
+            return NextResponse.json(
+                { error: "Unauthorized: Please log in" },
+                { status: 401 }
+            );
+        }
+        
         // Fetch user data
         const user = await prisma.user.findUnique({
             where: { email },
@@ -31,9 +38,11 @@ export async function POST(req: NextRequest) {
             console.log("Fetching existing daily stats");
             const dailyStats = await prisma.dailyStat.findMany({
                 where: { email },
-                include: { exercises: true, meals: true },
+                include : {
+                    meals : true,
+                },
                 orderBy: { date: "desc" },
-                take: 1,
+                take: 1,    
             });
 
             console.log(dailyStats);
@@ -143,9 +152,16 @@ export async function POST(req: NextRequest) {
             data: { lastPlanGeneratedOn: today },
         });
 
+        const dailyStatsFromDBNewOneForConsistency = await prisma.dailyStat.findFirst({
+            where : {id : dailyStat.id},
+            include : {
+                meals : true,
+            }
+        })
         return NextResponse.json({
             success: true,
-            dailyStat,
+            dailyStatsFromDBNewOneForConsistency,
+            statsId : dailyStat.id,
             timestamp: new Date().toISOString(),
         });
     } catch (error: any) {

@@ -7,98 +7,261 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
+interface DailyStat {
+    stepCount: number;
+    caloriesBurnt: number;
+    totalHoursSlept: number | null;
+    averageHeartRate: number | null;
+    focusArea: string;
+    approxDurationToCompleteinMinutes: number;
+    totalExercises: number;
+    difficultyLevel: string;
+    numberOfMeals: number;
+    proteinGrams: number;
+    carbsGrams: number;
+    fatsGrams: number;
+    fibreGrams: number;
+    specialConsiderations: string;
+    meals: any[];
+}
+
+interface ApiResponse {
+    success: boolean;
+    dailyStats: DailyStat[];
+    timestamp: string;
+}
+
+interface ProcessedData {
+    dataBoxes: {
+        steps: number;
+        calories: number;
+        sleepData: number | string;
+        averageHeartRate: number;
+    };
+    exercise: {
+        focusArea: string;
+        approxDurationToCompleteinMinutes: number;
+        totalExercises: number;
+        totalApproxCaloriesBurn: number;
+        difficultyLevel: string;
+    };
+    diet: {
+        numberOfMeals: number;
+        nutrition: {
+            protein: number;
+            carbs: number;
+            fats: number;
+            fibre: number;
+        };
+        specialConsiderations: string;
+        meals: any[];
+    };
+}
+
 const Main: React.FC = () => {
     const { data: session } = useSession();
-    const [gfitData, setGFitData] = useState<any>(null);
-    const [exercisePlan, setExercisePlan] = useState<any>(null);
-    const [dietPlan, setDietPlan] = useState<any>(null);
+    const [processedData, setProcessedData] = useState<ProcessedData | null>(
+        null
+    );
     const [generating, setGenerating] = useState<boolean>(true);
     const { toast } = useToast();
 
-    const fetchData = async () => {
-        // Check if data exists and is still valid in localStorage
-        const cachedGFitData = localStorage.getItem("gfitData");
-        const cachedExercisePlan = localStorage.getItem("exercisePlan");
-        const cachedDietPlan = localStorage.getItem("dietPlan");
-        const cachedTime = localStorage.getItem("dataFetchTime");
-
-        if (cachedTime) {
-            const timeElapsed = Date.now() - parseInt(cachedTime);
-            if (timeElapsed < 10 * 60 * 1000 && cachedGFitData && cachedExercisePlan && cachedDietPlan) {
-                // If data is still valid (within 10 minutes)
-                setGFitData(JSON.parse(cachedGFitData));
-                setExercisePlan(JSON.parse(cachedExercisePlan));
-                setDietPlan(JSON.parse(cachedDietPlan));
-                setGenerating(false);
-                return;
-            } else {
-                // If data has expired, fetch new data from /get-db-user-stats
-                try {
-                    const response = await axios.post("/api/get-db-user-stats");
-                    if (response.status === 200) {
-                        const { gfitData, exercisePlan, dietPlan } = response.data;
-
-                        if (gfitData?.data?.data) setGFitData(gfitData);
-                        if (exercisePlan?.data?.data) setExercisePlan(exercisePlan);
-                        if (dietPlan?.data?.data) setDietPlan(dietPlan);
-
-                        // Cache the fetched data with current time
-                        localStorage.setItem("gfitData", JSON.stringify(gfitData));
-                        localStorage.setItem("exercisePlan", JSON.stringify(exercisePlan));
-                        localStorage.setItem("dietPlan", JSON.stringify(dietPlan));
-                        localStorage.setItem("dataFetchTime", Date.now().toString()); // Store current time
-
-                        toast({
-                            title: "Success",
-                            description: "Plan generated successfully",
-                            variant: "default",
-                        });
-                    } else {
-                        throw new Error("Failed to fetch new data");
-                    }
-                } catch (error: any) {
-                    console.error("Error fetching user stats:", error);
-                    toast({
-                        title: "Error",
-                        description: error.response?.data?.message || "Error in fetching new data",
-                        variant: "destructive",
-                    });
-                } finally {
-                    setGenerating(false);
-                }
-                return;
+    const processUserStats = (response: ApiResponse): ProcessedData | null => {
+        try {
+            if (
+                !response?.success ||
+                !Array.isArray(response?.dailyStats) ||
+                response.dailyStats.length === 0
+            ) {
+                console.error("Invalid data structure received:", response);
+                return null;
             }
-        }
 
-        // If there's no cache or no expiry, fetch the data from the regular API
+            const daily = response.dailyStats[0];
+
+            return {
+                dataBoxes: {
+                    steps:
+                        typeof daily.stepCount === "number"
+                            ? daily.stepCount
+                            : 0,
+                    calories:
+                        typeof daily.caloriesBurnt === "number"
+                            ? daily.caloriesBurnt
+                            : 0,
+                    sleepData: daily.totalHoursSlept ?? "--",
+                    averageHeartRate:
+                        typeof daily.averageHeartRate === "number"
+                            ? daily.averageHeartRate
+                            : 0,
+                },
+                exercise: {
+                    focusArea: daily.focusArea || "N/A",
+                    approxDurationToCompleteinMinutes:
+                        typeof daily.approxDurationToCompleteinMinutes ===
+                        "number"
+                            ? daily.approxDurationToCompleteinMinutes
+                            : 0,
+                    totalExercises:
+                        typeof daily.totalExercises === "number"
+                            ? daily.totalExercises
+                            : 0,
+                    totalApproxCaloriesBurn:
+                        typeof daily.caloriesBurnt === "number"
+                            ? daily.caloriesBurnt
+                            : 0,
+                    difficultyLevel: daily.difficultyLevel || "N/A",
+                },
+                diet: {
+                    numberOfMeals:
+                        typeof daily.numberOfMeals === "number"
+                            ? daily.numberOfMeals
+                            : 0,
+                    nutrition: {
+                        protein:
+                            typeof daily.proteinGrams === "number"
+                                ? daily.proteinGrams
+                                : 0,
+                        carbs:
+                            typeof daily.carbsGrams === "number"
+                                ? daily.carbsGrams
+                                : 0,
+                        fats:
+                            typeof daily.fatsGrams === "number"
+                                ? daily.fatsGrams
+                                : 0,
+                        fibre:
+                            typeof daily.fibreGrams === "number"
+                                ? daily.fibreGrams
+                                : 0,
+                    },
+                    specialConsiderations: daily.specialConsiderations || "",
+                    meals: Array.isArray(daily.meals) ? daily.meals : [],
+                },
+            };
+        } catch (error) {
+            console.error("Error processing user stats:", error);
+            return null;
+        }
+    };
+
+    const isGFitDataValid = (timestamp: string): boolean => {
+        const timeElapsed = Date.now() - parseInt(timestamp);
+        return timeElapsed < 10 * 60 * 1000; // 10 minutes
+    };
+
+    const isOtherDataValid = (timestamp: string): boolean => {
+        const today = new Date();
+        const endOfDay = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+            23,
+            59,
+            59
+        ).getTime();
+        return parseInt(timestamp) <= endOfDay;
+    };
+
+    const fetchGFitData = async () => {
+        try {
+            const response = await axios.post("/api/update-gfit-data");
+            if (response.status === 200) {
+                localStorage.setItem("gFitData", JSON.stringify(response.data));
+                localStorage.setItem("gFitFetchTime", Date.now().toString());
+                return response.data;
+            }
+            throw new Error("Failed to fetch GFit data");
+        } catch (error) {
+            console.error("Error fetching GFit data:", error);
+            throw error;
+        }
+    };
+
+    const fetchExerciseAndDietData = async () => {
         try {
             const response = await axios.post("/api/get-user-stats");
             if (response.status === 200) {
-                const { gfitData, exercisePlan, dietPlan } = response.data;
+                localStorage.setItem(
+                    "exerciseData",
+                    JSON.stringify(response.data)
+                );
+                localStorage.setItem("dietData", JSON.stringify(response.data));
+                localStorage.setItem(
+                    "otherDataFetchTime",
+                    Date.now().toString()
+                );
+                return response.data;
+            }
+            throw new Error("Failed to fetch exercise and diet data");
+        } catch (error) {
+            console.error("Error fetching exercise and diet data:", error);
+            throw error;
+        }
+    };
 
-                if (gfitData?.data?.data) setGFitData(gfitData);
-                if (exercisePlan?.data?.data) setExercisePlan(exercisePlan);
-                if (dietPlan?.data?.data) setDietPlan(dietPlan);
+    const fetchData = async () => {
+        try {
+            let gFitData = null;
+            let otherData = null;
 
-                // Cache the fetched data with current time
-                localStorage.setItem("gfitData", JSON.stringify(gfitData));
-                localStorage.setItem("exercisePlan", JSON.stringify(exercisePlan));
-                localStorage.setItem("dietPlan", JSON.stringify(dietPlan));
-                localStorage.setItem("dataFetchTime", Date.now().toString()); // Store current time
+            // Check GFit data cache
+            const cachedGFitTime = localStorage.getItem("gFitFetchTime");
+            const cachedGFitData = localStorage.getItem("gFitData");
 
+            if (
+                cachedGFitTime &&
+                cachedGFitData &&
+                isGFitDataValid(cachedGFitTime)
+            ) {
+                gFitData = JSON.parse(cachedGFitData);
+            } else {
+                gFitData = await fetchGFitData();
+            }
+
+            // Check exercise and diet data cache
+            const cachedOtherTime = localStorage.getItem("otherDataFetchTime");
+            const cachedExerciseData = localStorage.getItem("exerciseData");
+            const cachedDietData = localStorage.getItem("dietData");
+
+            if (
+                cachedOtherTime &&
+                cachedExerciseData &&
+                cachedDietData &&
+                isOtherDataValid(cachedOtherTime)
+            ) {
+                otherData = JSON.parse(cachedExerciseData); // They contain the same data
+            } else {
+                otherData = await fetchExerciseAndDietData();
+            }
+
+            // Combine and process the data
+            const combinedData = {
+                success: true,
+                dailyStats: [
+                    {
+                        ...gFitData.dailyStats[0],
+                        ...otherData.dailyStats[0],
+                    },
+                ],
+                timestamp: Date.now().toString(),
+            };
+
+            const processed = processUserStats(combinedData);
+            if (processed) {
+                setProcessedData(processed);
                 toast({
                     title: "Success",
-                    description: "Plan generated successfully",
+                    description: "Stats loaded successfully",
                     variant: "default",
                 });
-            } else {
-                throw new Error("Failed to generate plan");
             }
         } catch (error: any) {
-            console.error("Error fetching user stats:", error);
+            console.error("Error fetching data:", error);
             toast({
                 title: "Error",
-                description: error.response?.data?.message || "Error in generating plan",
+                description:
+                    error.response?.data?.message || "Error in fetching stats",
                 variant: "destructive",
             });
         } finally {
@@ -110,46 +273,22 @@ const Main: React.FC = () => {
         fetchData();
     }, []);
 
-    // Prepare data for rendering components
-    const dataForDataBoxes = {
-        steps: gfitData?.data?.data?.steps || 0,
-        calories: Math.floor(gfitData?.data?.data?.calories) || 0,
-        sleepData: gfitData?.data?.data?.sleepData || "No data",
-        averageHeartRate: gfitData?.data?.data?.averageHeartRate || 0,
-    };
-
-    const dataForExercise = {
-        focusArea: exercisePlan?.data?.data?.focusArea || "N/A",
-        approxDurationToCompleteinMinutes: exercisePlan?.data?.data?.approxDurationToCompleteinMinutes || 0,
-        totalExercises: exercisePlan?.data?.data?.totalExercises || 0,
-        totalApproxCaloriesBurn: exercisePlan?.data?.data?.totalApproxCaloriesBurn || 0,
-        difficultyLevel: exercisePlan?.data?.data?.difficultyLevel || "N/A",
-    };
-
-    const dataForDiet = dietPlan?.data?.data?.meals?.map((meal: any) => ({
-        type: meal.type || "Unknown",
-        name: meal.name || "Unnamed",
-        calories: meal.calories || 0,
-    })) || [];
-
-    // Log data to console
-    console.log(`dataForDiet: ${JSON.stringify(dataForDiet)}`);
-    console.log(`dataForDataBoxes: ${JSON.stringify(dataForDataBoxes)}`);
-    console.log(`dataForExercise: ${JSON.stringify(dataForExercise)}`);
-
     return (
         <div className={styles.main}>
             <div className={styles.left}>
-                {generating ? (
+                {generating || !processedData ? (
                     <div className={styles.generating}>
-                        <h1>Generating your plan...</h1>
+                        <h1>Loading your stats...</h1>
                         <div className={styles.loader}></div>
                     </div>
                 ) : (
                     <>
                         <WelcomeMessage />
-                        <DataBoxes dataForDataBoxes={dataForDataBoxes} />
-                        <TodaysPlan dataForExercise={dataForExercise} dataForDiet={dataForDiet} />
+                        <DataBoxes dataForDataBoxes={processedData.dataBoxes} />
+                        <TodaysPlan
+                            dataForExercise={processedData.exercise}
+                            dataForDiet={processedData.diet}
+                        />
                     </>
                 )}
             </div>
