@@ -69,35 +69,9 @@ export async function POST(req: NextRequest) {
         const plan = await generateExercisePlan(userData);
         console.log(plan);
 
-        const dailyStat = await prisma.dailyStat.create({
-            data: {
-                stats: {
-                    connect: { userId: user.id },
-                },
-                minutesWorkedOut: plan.approxDurationToCompleteinMinutes,
-                caloriesBurnt: plan.totalApproxCaloriesBurn,
-                exercises: {
-                    create: plan.exercises.map((exercise: any) => ({
-                        exerciseName: exercise.exerciseName,
-                        exerciseType: exercise.exerciseType,
-                        primaryMuscle: exercise.primaryMuscleTarget,
-                        secondaryMuscle: exercise.secondaryMuscleTarget,
-                        duration: exercise.exerciseDuration,
-                        equipment: exercise.equipmentRequired,
-                        calorieBurn: exercise.calorieBurn,
-                        sets: exercise.sets,
-                        reps: exercise.reps,
-                        restTime: exercise.restTime,
-                        advice: exercise.adviseWhenDoingExercise,
-                    })),
-                },
-            },
-        });
-
         return NextResponse.json(
             {
                 data: plan,
-                dailyStatId: dailyStat.id,
                 message: "Exercise plan generated and stored successfully",
             },
             { status: 200 }

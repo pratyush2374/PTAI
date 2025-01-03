@@ -47,7 +47,7 @@ const generateExercisePlan = async (userData: any) => {
                     "primaryMuscleTarget": "string",
                     "secondaryMuscleTarget": "string",
                     "exerciseDuration": "integer",
-                    "equipmentRequired": "string (write 'none' if no equipment is required)",
+                    "equipmentRequired": "array of strings (give empty array if no equipment is required)",
                     "calorieBurn": "integer",
                     "sets": "integer",
                     "reps": "string", (reps means how many times you have to do the exercise per set )

@@ -96,6 +96,14 @@ export async function POST(req: NextRequest) {
                         allergies,
                     },
                 },
+                stats : {
+                    create: {
+                        currentStreak : 1,
+                        highestStreak : 1,
+                        totalWeightChange : Number(weight),
+                        averageWeight : Number(weight)
+                    }
+                }
             },
         });
 

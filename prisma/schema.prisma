@@ -8,25 +8,26 @@ generator client {
 }
 
 model User {
-  id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  fullName         String
-  userName         String            @unique
-  email            String            @unique
-  password         String
-  googleId         String?
-  profilePic       String?
-  refreshToken     String?
-  dob              DateTime
-  age              Int
-  gender           Gender
-  height           Float
-  weights          Weight[]
-  additionalInfo   String
-  preferences      UserPreferences?
-  healthAndDietary HealthAndDietary?
-  stats            Stats?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  id                  String            @id @default(auto()) @map("_id") @db.ObjectId
+  fullName            String
+  userName            String            @unique
+  email               String            @unique
+  password            String
+  googleId            String?
+  profilePic          String?
+  refreshToken        String?
+  dob                 DateTime
+  age                 Int
+  gender              Gender
+  height              Float
+  weights             Weight[]
+  additionalInfo      String
+  lastPlanGeneratedOn DateTime?
+  preferences         UserPreferences?
+  healthAndDietary    HealthAndDietary?
+  stats               Stats?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 }
 
 enum Gender {
@@ -83,19 +84,34 @@ model Stats {
 
 model DailyStat {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String?
   date    DateTime @default(now())
   stats   Stats    @relation(fields: [statsId], references: [id])
   statsId String   @db.ObjectId
 
   // Exercise stats
-  minutesWorkedOut Int?
-  caloriesBurnt    Int?
-  exercises        Exercise[]
+  minutesWorkedOut                  Int?
+  caloriesToBurn                    Int?
+  caloriesBurnt                     Int?
+  exercises                         Exercise[]
+  focusArea                         String?
+  approxDurationToCompleteinMinutes Int?
+  equipmentRequired                 String[]
+  exerciseType                      String[]
+  totalExercises                    Int?
+  difficultyLevel                   String?
 
   // Diet stats
-  caloriesGained Int?
-  meals          Meal[]
-  waterIntake    Int?
+  caloriesGained        Int?
+  caloriesToGain        Int?
+  proteinGrams          Float?
+  carbsGrams            Float?
+  fatsGrams             Float?
+  fibreGrams            Float?
+  numberOfMeals         Int?
+  specialConsiderations String?
+  meals                 Meal[]
+  waterIntake           Int?
 
   // Health stats
   stepCount        Int?
@@ -108,16 +124,16 @@ model DailyStat {
 
 model Exercise {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  exerciseName    String
+  exerciseName    String?
   exerciseType    String[]
-  primaryMuscle   String
+  primaryMuscle   String?
   secondaryMuscle String?
-  duration        Int
-  equipment       String
-  calorieBurn     Int
-  sets            Int
-  reps            Int
-  restTime        Int
+  duration        Int?
+  equipment       String[]
+  calorieBurn     Int?
+  sets            Int?
+  reps            String?
+  restTime        Int?
   advice          String    @db.String
   dailyStat       DailyStat @relation(fields: [dailyStatId], references: [id])
   dailyStatId     String    @db.ObjectId
@@ -125,19 +141,19 @@ model Exercise {
 
 model Meal {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  type           MealType
-  name           String
+  type           MealType?
+  name           String?
   category       String[]
-  weight         Float
-  calories       Int
-  protein        Float
-  carbs          Float
-  fats           Float
-  fibre          Float
-  otherNutrients String
+  weight         Float?
+  calories       Int?
+  protein        Float?
+  carbs          Float?
+  fats           Float?
+  fibre          Float?
+  otherNutrients String?
   ingredients    String[]
   allergens      String?
-  cookingTime    Int
+  cookingTime    Int?
   recipe         String    @db.String
   dailyStat      DailyStat @relation(fields: [dailyStatId], references: [id])
   dailyStatId    String    @db.ObjectId

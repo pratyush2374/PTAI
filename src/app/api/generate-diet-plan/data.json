@@ -1,0 +1,163 @@
+{
+    "data": {
+        "totalCalories": 1800,
+        "proteinGrams": 120,
+        "carbsGrams": 200,
+        "fatsGrams": 50,
+        "fibreGrams": 30,
+        "waterIntake": 2500,
+        "numberOfMeals": 5,
+        "specialConsiderations": "Focus on high protein, high fiber, low fat vegetarian Indian meals.  Prioritize whole grains and legumes.",
+        "meals": [
+            {
+                "type": "BREAKFAST",
+                "name": "Moong Dal Cheela with Spinach",
+                "category": [
+                    "Indian",
+                    "Breakfast",
+                    "High Protein",
+                    "High Fiber"
+                ],
+                "weight": 150,
+                "calories": 250,
+                "protein": 15,
+                "carbs": 35,
+                "fats": 8,
+                "fibre": 5,
+                "otherNutrients": "Iron, Vitamin A, Vitamin K",
+                "ingredients": [
+                    "1/2 cup moong dal (soaked overnight)",
+                    "1 cup spinach (chopped)",
+                    "1/4 onion (chopped)",
+                    "1/4 tsp red chili powder",
+                    "1/4 tsp turmeric powder",
+                    "Salt to taste",
+                    "1 tbsp oil"
+                ],
+                "allergens": null,
+                "cookingTime": 20,
+                "recipe": "Grind soaked moong dal into a smooth batter. Add spinach, onion, spices, and salt. Mix well. Heat oil in a pan. Pour 1/4 cup batter onto the pan and spread into a thin circle. Cook for 2-3 minutes per side until golden brown."
+            },
+            {
+                "type": "SNACK",
+                "name": "Spiced Tofu with Roasted Nuts",
+                "category": [
+                    "Indian",
+                    "Snack",
+                    "High Protein",
+                    "High Fiber"
+                ],
+                "weight": 100,
+                "calories": 200,
+                "protein": 18,
+                "carbs": 10,
+                "fats": 10,
+                "fibre": 4,
+                "otherNutrients": "Calcium, Magnesium",
+                "ingredients": [
+                    "100g firm tofu (cubed)",
+                    "1/4 cup mixed nuts (almonds, cashews)",
+                    "1 tsp cumin powder",
+                    "1/2 tsp coriander powder",
+                    "1/4 tsp turmeric powder",
+                    "Salt to taste",
+                    "1 tbsp oil"
+                ],
+                "allergens": null,
+                "cookingTime": 15,
+                "recipe": "Roast nuts until lightly browned. Toss tofu with spices and salt. Heat oil in pan, sauté tofu until golden brown. Serve with roasted nuts."
+            },
+            {
+                "type": "LUNCH",
+                "name": "Rajma Masala with Brown Rice",
+                "category": [
+                    "Indian",
+                    "Lunch",
+                    "High Protein",
+                    "High Fiber"
+                ],
+                "weight": 300,
+                "calories": 400,
+                "protein": 25,
+                "carbs": 60,
+                "fats": 10,
+                "fibre": 10,
+                "otherNutrients": "Iron, Folate",
+                "ingredients": [
+                    "1 cup rajma (kidney beans) (soaked overnight)",
+                    "1/2 cup brown rice",
+                    "1/2 onion (chopped)",
+                    "1 tomato (chopped)",
+                    "1 tsp ginger-garlic paste",
+                    "1 tsp cumin powder",
+                    "1/2 tsp coriander powder",
+                    "1/4 tsp turmeric powder",
+                    "Salt to taste",
+                    "1 tbsp oil"
+                ],
+                "allergens": null,
+                "cookingTime": 45,
+                "recipe": "Cook brown rice according to package directions. Pressure cook rajma until soft. Sauté onion, tomato, and ginger-garlic paste in oil. Add spices and cooked rajma. Simmer for 10 minutes. Serve with brown rice."
+            },
+            {
+                "type": "SNACK",
+                "name": "Mixed Sprouts Salad with Lemon Dressing",
+                "category": [
+                    "Indian",
+                    "Snack",
+                    "High Protein",
+                    "High Fiber"
+                ],
+                "weight": 100,
+                "calories": 150,
+                "protein": 10,
+                "carbs": 25,
+                "fats": 5,
+                "fibre": 7,
+                "otherNutrients": "Vitamin C",
+                "ingredients": [
+                    "1/2 cup mixed sprouts (moong, chana)",
+                    "1/4 cucumber (chopped)",
+                    "1/4 tomato (chopped)",
+                    "1 tbsp chopped coriander",
+                    "Juice of 1/2 lemon",
+                    "Salt to taste"
+                ],
+                "allergens": null,
+                "cookingTime": 5,
+                "recipe": "Mix all ingredients together and enjoy."
+            },
+            {
+                "type": "DINNER",
+                "name": "Vegetable Pulao with Raita",
+                "category": [
+                    "Indian",
+                    "Dinner",
+                    "High Fiber",
+                    "Balanced"
+                ],
+                "weight": 250,
+                "calories": 400,
+                "protein": 12,
+                "carbs": 70,
+                "fats": 10,
+                "fibre": 8,
+                "otherNutrients": "Vitamin A, Potassium",
+                "ingredients": [
+                    "1 cup mixed vegetables (carrots, peas, beans)",
+                    "1 cup basmati rice",
+                    "1/2 onion (chopped)",
+                    "1 tsp ginger-garlic paste",
+                    "1/2 tsp turmeric powder",
+                    "Salt to taste",
+                    "1 tbsp oil",
+                    "1 cup yogurt for raita (optional)"
+                ],
+                "allergens": null,
+                "cookingTime": 30,
+                "recipe": "Sauté onion and ginger-garlic paste in oil. Add vegetables and rice. Stir well. Add water (1.5:1 water to rice ratio), turmeric powder, and salt. Bring to boil, then simmer until rice is cooked. Serve with raita (optional)."
+            }
+        ]
+    },
+    "message": "Diet plan generated and stored successfully"
+}

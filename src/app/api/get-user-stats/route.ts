@@ -1,57 +1,162 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import axios from "axios";
+import prisma from "@/lib/prismaClient";
 
 export async function POST(req: NextRequest) {
     try {
         const token = await getToken({ req });
-        if (!token?.email) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const email = token?.email || "kr.pratyushsharma2374@gmail.com";
+
+        // Fetch user data
+        const user = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true, email: true, lastPlanGeneratedOn: true },
+        });
+
+        if (!user) {
+            return NextResponse.json(
+                { error: "User not found" },
+                { status: 404 }
+            );
         }
 
-        // const email = "kr.pratyushsharma2374@gmail.com";
-        const email = token.email;
+        const today = new Date();
+        const isPlanGeneratedToday =
+            user.lastPlanGeneratedOn?.toISOString().slice(0, 10) ===
+            today.toISOString().slice(0, 10);
 
-        // Make API calls concurrent
-        const [gfitData, exercisePlan, dietPlan] = await Promise.allSettled([
-            axios.post(`${process.env.NEXTAUTH_URL}/api/get-gfit-data`, { email }),
-            axios.post(`${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`, { email }),
-            axios.post(`${process.env.NEXTAUTH_URL}/api/generate-diet-plan`, { email })
-        ]);
+        if (isPlanGeneratedToday) {
+            // Fetch already existing daily stats
+            console.log("Fetching existing daily stats");
+            const dailyStats = await prisma.dailyStat.findMany({
+                where: { email },
+                include: { exercises: true, meals: true },
+                orderBy: { date: "desc" },
+                take: 1,
+            });
 
-        // Process results and handle partial failures
-        const response = {
-            gfitData: processResult(gfitData, "Google Fit data"),
-            exercisePlan: processResult(exercisePlan, "exercise plan"),
-            dietPlan: processResult(dietPlan, "diet plan"),
-            timestamp: new Date().toISOString(),
-            success: false
-        };
+            console.log(dailyStats);
+            return NextResponse.json({
+                success: true,
+                dailyStats,
+                timestamp: new Date().toISOString(),
+            });
+        }
 
-        // Check if all requests succeeded
-        response.success = [gfitData, exercisePlan, dietPlan]
-            .every(result => result.status === "fulfilled");
+        console.log("Generating plans and fetching Google Fit data");
 
-        return NextResponse.json(response);
+        // Concurrent API calls to generate plans and fetch Google Fit data
+        const [gfitResponse, exerciseResponse, dietResponse] =
+            await Promise.all([
+                axios.post(`${process.env.NEXTAUTH_URL}/api/get-gfit-data`, {
+                    email,
+                }),
+                axios.post(
+                    `${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`,
+                    { email }
+                ),
+                axios.post(
+                    `${process.env.NEXTAUTH_URL}/api/generate-diet-plan`,
+                    { email }
+                ),
+            ]);
 
-    } catch (error) {
+        const gfitData = gfitResponse.data?.data;
+        const exercisePlan = exerciseResponse.data?.data;
+        const dietPlan = dietResponse.data?.data;
+
+        // console.log(`GfitData : ${JSON.stringify(gfitData)}`);
+        // console.log(`ExercisePlan : ${JSON.stringify(exercisePlan)}`);
+        // console.log(`DietPlan : ${JSON.stringify(dietPlan)}`);
+        console.log(exercisePlan.focusArea);
+
+        // Save daily stats only if all APIs succeed
+        const dailyStat = await prisma.dailyStat.create({
+            data: {
+                stats: {
+                    connect: { userId: user.id },
+                },
+                email: user.email,
+                date: today,
+                minutesWorkedOut:
+                    exercisePlan.approxDurationToCompleteinMinutes,
+                caloriesToBurn: exercisePlan.totalApproxCaloriesBurn,
+                focusArea: exercisePlan.focusArea,
+                approxDurationToCompleteinMinutes:
+                    exercisePlan.approxDurationToCompleteinMinutes,
+                equipmentRequired: exercisePlan.equipmentRequired,
+                exerciseType: exercisePlan.exerciseType,
+                totalExercises: exercisePlan.totalExercises,
+                difficultyLevel: exercisePlan.difficultyLevel,
+                exercises: {
+                    create: exercisePlan.exercises.map((exercise: any) => ({
+                        exerciseName: exercise.exerciseName,
+                        exerciseType: exercise.exerciseType,
+                        primaryMuscle: exercise.primaryMuscleTarget,
+                        secondaryMuscle: exercise.secondaryMuscleTarget,
+                        duration: exercise.exerciseDuration,
+                        equipment: exercise.equipmentRequired,
+                        calorieBurn: exercise.calorieBurn,
+                        sets: exercise.sets,
+                        reps: exercise.reps ? exercise.reps.toString() : "0",
+                        restTime: exercise.restTime,
+                        advice: exercise.adviseWhenDoingExercise,
+                    })),
+                },
+                caloriesToGain: dietPlan.totalCalories,
+                proteinGrams: dietPlan.proteinGrams,
+                carbsGrams: dietPlan.carbsGrams,
+                fatsGrams: dietPlan.fatsGrams,
+                fibreGrams: dietPlan.fibreGrams,
+                numberOfMeals: dietPlan.numberOfMeals,
+                specialConsiderations: dietPlan.specialConsiderations,
+                meals: {
+                    create: dietPlan.meals.map((meal: any) => ({
+                        type: meal.type,
+                        name: meal.name,
+                        category: meal.category,
+                        weight: meal.weight,
+                        calories: meal.calories,
+                        protein: meal.protein,
+                        carbs: meal.carbs,
+                        fats: meal.fats,
+                        fibre: meal.fibre,
+                        otherNutrients: meal.otherNutrients,
+                        ingredients: meal.ingredients,
+                        allergens: meal.allergens,
+                        cookingTime: meal.cookingTime,
+                        recipe: meal.recipe,
+                    })),
+                },
+
+                caloriesBurnt: gfitData?.calories,
+                stepCount: gfitData?.steps,
+                averageHeartRate: gfitData?.averageHeartRate,
+                totalHoursSlept: gfitData?.sleepData,
+            },
+        });
+
+        // Update user's last plan generation date
+        await prisma.user.update({
+            where: { email },
+            data: { lastPlanGeneratedOn: today },
+        });
+
         return NextResponse.json({
-            error: "Failed to get user stats",
-            details: error instanceof Error ? error.message : "Unknown error",
-            timestamp: new Date().toISOString()
-        }, { status: 500 });
+            success: true,
+            dailyStat,
+            timestamp: new Date().toISOString(),
+        });
+    } catch (error: any) {
+        return NextResponse.json(
+            {
+                error: "Failed to generate plans",
+                details:
+                    error instanceof Error ? error.message : "Unknown error",
+                timestamp: new Date().toISOString(),
+            },
+            { status: 500 }
+        );
     }
-}
-
-function processResult(result: PromiseSettledResult<any>, dataType: string) {
-    if (result.status === "fulfilled") {
-        return {
-            status: "success",
-            data: result.value.data
-        };
-    }
-    return {
-        status: "error",
-        error: `Failed to fetch ${dataType}: ${result.reason?.message || "Unknown error"}`
-    };
 }

@@ -63,37 +63,9 @@ export async function POST(req: NextRequest) {
 
         console.log(plan);
 
-        const dailyStat = await prisma.dailyStat.create({
-            data: {
-                stats: {
-                    connect: { userId: user.id },
-                },
-                caloriesGained: plan.totalCalories,
-                meals: {
-                    create: plan.meals.map((meal: any) => ({
-                        type: meal.type,
-                        name: meal.name,
-                        category: meal.category,
-                        weight: meal.weight,
-                        calories: meal.calories,
-                        protein: meal.protein,
-                        carbs: meal.carbs,
-                        fats: meal.fats,
-                        fibre: meal.fibre,
-                        otherNutrients: meal.otherNutrients,
-                        ingredients: meal.ingredients,
-                        allergens: meal.allergens,
-                        cookingTime: meal.cookingTime,
-                        recipe: meal.recipe,
-                    })),
-                },
-            },
-        });
-
         return NextResponse.json(
             {
                 data: plan,
-                dailyStatId: dailyStat.id,
                 message: "Diet plan generated and stored successfully",
             },
             { status: 200 }
