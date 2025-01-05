@@ -1,27 +1,9 @@
+// IndividualMeal.tsx
 "use client";
 
 import React, { useState } from "react";
 import styles from "../diet.module.css";
-
-interface MealDetails {
-    weight: string;
-    category: string;
-    fibre: string;
-    keyIngredients: string;
-    commonAllergens: string;
-    cookingTime: string;
-    recipe: string;
-}
-
-interface Meal {
-    name: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    otherNutrients: string;
-    details: MealDetails;
-}
+import { Meal } from "./types";
 
 interface IndividualMealProps {
     meal: Meal;
@@ -49,13 +31,22 @@ const IndividualMeal: React.FC<IndividualMealProps> = ({ meal }) => {
                     </div>
                     <div className={styles.macronutrients}>
                         <div className={styles.macroInner}>
-                            <span className={styles.macroVal}>{meal.protein}g</span> <span>Protein</span>
+                            <span className={styles.macroVal}>
+                                {meal.protein}g
+                            </span>{" "}
+                            <span>Protein</span>
                         </div>
                         <div className={styles.macroInner}>
-                            <span className={styles.macroVal}>{meal.carbs}g</span> <span>Carbs</span>
+                            <span className={styles.macroVal}>
+                                {meal.carbs}g
+                            </span>{" "}
+                            <span>Carbs</span>
                         </div>
                         <div className={styles.macroInner}>
-                            <span className={styles.macroVal}>{meal.fat}g</span> <span>Fat</span>
+                            <span className={styles.macroVal}>
+                                {meal.fats}g
+                            </span>{" "}
+                            <span>Fat</span>
                         </div>
                     </div>
                 </div>
@@ -64,28 +55,27 @@ const IndividualMeal: React.FC<IndividualMealProps> = ({ meal }) => {
             {showDetails && (
                 <div className={styles.mealDetails}>
                     <p>
-                        <strong>Weight:</strong> {meal.details.weight}
+                        <strong>Weight:</strong> {meal.weight}g
                     </p>
                     <p>
-                        <strong>Category:</strong> {meal.details.category}
+                        <strong>Category:</strong> {meal.category.join(", ")}
                     </p>
                     <p>
-                        <strong>Fibre:</strong> {meal.details.fibre}
+                        <strong>Fibre:</strong> {meal.fibre}g
                     </p>
                     <p>
                         <strong>Key Ingredients:</strong>{" "}
-                        {meal.details.keyIngredients}
+                        {meal.ingredients.join(", ")}
                     </p>
                     <p>
                         <strong>Common Allergens:</strong>{" "}
-                        {meal.details.commonAllergens}
+                        {meal.allergens || "None"}
                     </p>
                     <p>
-                        <strong>Cooking Time:</strong>{" "}
-                        {meal.details.cookingTime}
+                        <strong>Cooking Time:</strong> {meal.cookingTime} mins
                     </p>
                     <p>
-                        <strong>Recipe:</strong> {meal.details.recipe}
+                        <strong>Recipe:</strong> {meal.recipe}
                     </p>
                 </div>
             )}

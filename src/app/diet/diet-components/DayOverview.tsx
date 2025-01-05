@@ -1,13 +1,13 @@
+// DayOverview.tsx
 import Image from "next/image";
 import styles from "../diet.module.css";
+import { DailyStats } from "./types";
 
-const nutrients = [
-    { name: "Protein", value: "75g" },
-    { name: "Carbs", value: "150g" },
-    { name: "Fats", value: "30g" },
-];
+interface DayOverviewProps {
+    stats: DailyStats;
+}
 
-const OverallStats: React.FC = () => {
+const DayOverview: React.FC<DayOverviewProps> = ({ stats }) => {
     return (
         <div className={styles.outerOverall}>
             <h1 className={styles.overallStats}>Overall Stats</h1>
@@ -22,22 +22,29 @@ const OverallStats: React.FC = () => {
                     />
                     <div className={styles.totalCalories}>
                         <h2>
-                            ~1250 <span className={styles.intakeUnit}>cal</span>
+                            ~{stats.caloriesBurnt}{" "}
+                            <span className={styles.intakeUnit}>cal</span>
                         </h2>
                         <h3>Total Calories</h3>
                     </div>
                 </div>
 
                 <div className={`${styles.overallBox} ${styles.allNutrient}`}>
-                    {nutrients.map((nutrient, index) => (
-                        <div className={styles.nutrient} key={index}>
-                            <h2>{nutrient.name}</h2>
-                            <h3>{nutrient.value}</h3>
-                        </div>
-                    ))}
+                    <div className={styles.nutrient}>
+                        <h2>Protein</h2>
+                        <h3>{stats.proteinGrams}g</h3>
+                    </div>
+                    <div className={styles.nutrient}>
+                        <h2>Carbs</h2>
+                        <h3>{stats.carbsGrams}g</h3>
+                    </div>
+                    <div className={styles.nutrient}>
+                        <h2>Fats</h2>
+                        <h3>{stats.fatsGrams}g</h3>
+                    </div>
                 </div>
 
-                <div className={`${styles.overallBox} ${styles.extraOverall}`}>
+                {/* <div className={`${styles.overallBox} ${styles.extraOverall}`}>
                     <Image
                         src="/Dashboard Images/water color.svg"
                         alt="Hydration"
@@ -47,10 +54,13 @@ const OverallStats: React.FC = () => {
                     <div className={styles.waterOverall}>
                         <div className={styles.waterOverallInner}>
                             <h2>
-                                3 <span className={styles.intakeUnit}>lit</span>
+                                {stats.waterIntake || 0}{" "}
+                                <span className={styles.intakeUnit}>lit</span>
                             </h2>
                             <h2>
-                                12{" "}
+                                {stats.waterIntake
+                                    ? Math.round(stats.waterIntake * 4)
+                                    : 0}{" "}
                                 <span className={styles.intakeUnit}>
                                     glasses
                                 </span>
@@ -78,10 +88,10 @@ const OverallStats: React.FC = () => {
                         </div>
                         <h3>Supplements</h3>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );
 };
 
-export default OverallStats;
+export default DayOverview;

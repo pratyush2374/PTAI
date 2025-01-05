@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import styles from "../diet.module.css";
+import styles from "../trackDiet.module.css";
 
 interface MealDetails {
     weight: string;
