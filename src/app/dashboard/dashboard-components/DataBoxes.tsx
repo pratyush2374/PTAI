@@ -27,8 +27,10 @@ const DataBox: React.FC<DataBoxProps> = ({
     onClick,
 }) => {
     // Only show unit if value is a number and not zero
-    const shouldShowUnit = typeof value === 'number' && value !== 0 || (typeof value === 'string' && value !== "--");
-    
+    const shouldShowUnit =
+        (typeof value === "number" && value !== 0) ||
+        (typeof value === "string" && value !== "--");
+
     return (
         <div
             className={styles.dataBox}
@@ -40,7 +42,8 @@ const DataBox: React.FC<DataBoxProps> = ({
                 <h2>{title}</h2>
             </div>
             <div className={styles.dataValue} id={`${id}-value`}>
-                {value}{shouldShowUnit && <span className={styles.unit}>{unit}</span>}
+                {value}
+                {shouldShowUnit && <span className={styles.unit}>{unit}</span>}
             </div>
             <div className={styles.status}>
                 <div className={styles[statusClass]}></div>
@@ -57,7 +60,9 @@ const ExpandedBox: React.FC<{
     onClose: () => void;
 }> = ({ title, value, unit, onClose }) => {
     // Only show unit if value is a number and not zero
-    const shouldShowUnit = typeof value === 'number' && value !== 0 || (typeof value === 'string' && value !== "--");
+    const shouldShowUnit =
+        (typeof value === "number" && value !== 0) ||
+        (typeof value === "string" && value !== "--");
 
     return (
         <div className={styles.expandedBoxContainer}>
@@ -158,9 +163,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
                     onClose={handleClose}
                 />
             )}
-            <div className={styles.refresh}>
-                Refresh G - fit data
-            </div>
+            <div className={styles.refresh}>Refresh G - fit data</div>
         </div>
     );
 };

@@ -5,16 +5,15 @@ import prisma from "@/lib/prismaClient";
 
 export async function POST(req: NextRequest) {
     try {
-        const token = await getToken({ req });
-        const email = token?.email;
+        const { email } = await req.json();
 
-        if(!token) {
+        if (!email) {
             return NextResponse.json(
                 { error: "Unauthorized: Please log in" },
                 { status: 401 }
             );
         }
-        
+
         // Fetch user data
         const user = await prisma.user.findUnique({
             where: { email },
@@ -29,6 +28,9 @@ export async function POST(req: NextRequest) {
         }
 
         const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
         const isPlanGeneratedToday =
             user.lastPlanGeneratedOn?.toISOString().slice(0, 10) ===
             today.toISOString().slice(0, 10);
@@ -36,13 +38,19 @@ export async function POST(req: NextRequest) {
         if (isPlanGeneratedToday) {
             // Fetch already existing daily stats
             console.log("Fetching existing daily stats");
-            const dailyStats = await prisma.dailyStat.findMany({
-                where: { email },
-                include : {
-                    meals : true,
+            const dailyStats = await prisma.dailyStat.findFirst({
+                where: {
+                    email,
+                    date: {
+                        gte: startOfDay,
+                        lte: endOfDay,
+                    },
+                },
+                include: {
+                    meals: true,
                 },
                 orderBy: { date: "desc" },
-                take: 1,    
+                take: 1,
             });
 
             console.log(dailyStats);
@@ -78,7 +86,6 @@ export async function POST(req: NextRequest) {
         // console.log(`GfitData : ${JSON.stringify(gfitData)}`);
         // console.log(`ExercisePlan : ${JSON.stringify(exercisePlan)}`);
         // console.log(`DietPlan : ${JSON.stringify(dietPlan)}`);
-        console.log(exercisePlan.focusArea);
 
         // Save daily stats only if all APIs succeed
         const dailyStat = await prisma.dailyStat.create({
@@ -152,16 +159,28 @@ export async function POST(req: NextRequest) {
             data: { lastPlanGeneratedOn: today },
         });
 
-        const dailyStatsFromDBNewOneForConsistency = await prisma.dailyStat.findFirst({
-            where : {id : dailyStat.id},
-            include : {
-                meals : true,
-            }
-        })
+        const dailyStatsFromDBNewOneForConsistency =
+            await prisma.dailyStat.findFirst({
+                where: {
+                    email,
+                    date: {
+                        gte: startOfDay,
+                        lte: endOfDay,
+                    },
+                },
+                include: {
+                    meals: true,
+                },
+                orderBy: { date: "desc" },
+                take: 1,
+            });
+
+        console.log(dailyStatsFromDBNewOneForConsistency);
+
         return NextResponse.json({
             success: true,
             dailyStatsFromDBNewOneForConsistency,
-            statsId : dailyStat.id,
+            statsId: dailyStat.id,
             timestamp: new Date().toISOString(),
         });
     } catch (error: any) {

@@ -64,24 +64,38 @@ const handler = NextAuth({
         async jwt({ token, user, account, profile }) {
             if (user) {
                 token.id = user.id;
-                token.name = user.name;
+                token.fullName = user.fullName;
                 token.email = user.email;
 
                 //Checking if the user is in DB
-                const isNewUser = await prisma.user.findUnique({
+                const isUserInDB = await prisma.user.findUnique({
                     where: {
                         email: user.email,
                     },
                 });
 
                 //If the user is new, set isNewUser to false else true
-                if (isNewUser) {
+                if (isUserInDB) {
                     token.isNewUser = false;
-                }else {
+                    token.fullName = isUserInDB.fullName;
+                    token.email = isUserInDB.email;
+                    token.googleId = isUserInDB?.googleId as string;
+                    token.refreshToken = isUserInDB?.refreshToken as string;
+                } else {
                     token.isNewUser = true;
                 }
 
                 if (account?.provider == "google") {
+                    await prisma.user.update({
+                        where: {
+                            email: user.email,
+                        },
+                        data: {
+                            googleId: profile?.sub,
+                            profilePic: profile?.image,
+                            refreshToken: account?.refresh_token,
+                        },
+                    });
                     token.accessToken = account?.access_token;
                     token.refreshToken = account?.refresh_token;
                     token.googleId = profile?.sub;
@@ -94,7 +108,7 @@ const handler = NextAuth({
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id;
-                session.user.name = token.name;
+                session.user.fullName = token.fullName;
                 session.user.email = token.email;
                 session.user.isNewUser = token.isNewUser;
                 session.user.googleId = token.googleId;

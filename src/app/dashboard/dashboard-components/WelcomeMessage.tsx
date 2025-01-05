@@ -21,7 +21,7 @@ const WelcomeMessage: React.FC = () => {
     return (
         <div className={styles.welcomeMessage}>
             <p className={styles.greeting}>{greeting}</p>
-            <h1>Welcome Back, {session?.user?.name || "Guest"} 🎉</h1>
+            <h1>Welcome Back, {session?.user?.fullName || "Guest"} 🎉</h1>
         </div>
     );
 };

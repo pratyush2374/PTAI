@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
+import { getToken } from "next-auth/jwt";
 
 interface DailyStat {
     stepCount: number;
@@ -27,7 +28,7 @@ interface DailyStat {
 
 interface ApiResponse {
     success: boolean;
-    dailyStats: DailyStat[];
+    dailyStats: DailyStat;
     timestamp: string;
 }
 
@@ -68,16 +69,12 @@ const Main: React.FC = () => {
 
     const processUserStats = (response: ApiResponse): ProcessedData | null => {
         try {
-            if (
-                !response?.success ||
-                !Array.isArray(response?.dailyStats) ||
-                response.dailyStats.length === 0
-            ) {
+            if (!response?.success) {
                 console.error("Invalid data structure received:", response);
                 return null;
             }
 
-            const daily = response.dailyStats[0];
+            const daily = response.dailyStats;
 
             return {
                 dataBoxes: {
@@ -167,8 +164,11 @@ const Main: React.FC = () => {
         try {
             const response = await axios.post("/api/update-gfit-data");
             if (response.status === 200) {
-                localStorage.setItem("gFitData", JSON.stringify(response.data));
-                localStorage.setItem("gFitFetchTime", Date.now().toString());
+                sessionStorage.setItem(
+                    "gFitData",
+                    JSON.stringify(response.data)
+                );
+                sessionStorage.setItem("gFitFetchTime", Date.now().toString());
                 return response.data;
             }
             throw new Error("Failed to fetch GFit data");
@@ -180,14 +180,18 @@ const Main: React.FC = () => {
 
     const fetchExerciseAndDietData = async () => {
         try {
-            const response = await axios.post("/api/get-user-stats");
+            const email = session?.user.email;
+            const response = await axios.post("/api/get-user-stats", { email });
             if (response.status === 200) {
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "exerciseData",
                     JSON.stringify(response.data)
                 );
-                localStorage.setItem("dietData", JSON.stringify(response.data));
-                localStorage.setItem(
+                sessionStorage.setItem(
+                    "dietData",
+                    JSON.stringify(response.data)
+                );
+                sessionStorage.setItem(
                     "otherDataFetchTime",
                     Date.now().toString()
                 );
@@ -206,8 +210,8 @@ const Main: React.FC = () => {
             let otherData = null;
 
             // Check GFit data cache
-            const cachedGFitTime = localStorage.getItem("gFitFetchTime");
-            const cachedGFitData = localStorage.getItem("gFitData");
+            const cachedGFitTime = sessionStorage.getItem("gFitFetchTime");
+            const cachedGFitData = sessionStorage.getItem("gFitData");
 
             if (
                 cachedGFitTime &&
@@ -220,9 +224,10 @@ const Main: React.FC = () => {
             }
 
             // Check exercise and diet data cache
-            const cachedOtherTime = localStorage.getItem("otherDataFetchTime");
-            const cachedExerciseData = localStorage.getItem("exerciseData");
-            const cachedDietData = localStorage.getItem("dietData");
+            const cachedOtherTime =
+                sessionStorage.getItem("otherDataFetchTime");
+            const cachedExerciseData = sessionStorage.getItem("exerciseData");
+            const cachedDietData = sessionStorage.getItem("dietData");
 
             if (
                 cachedOtherTime &&
@@ -238,12 +243,11 @@ const Main: React.FC = () => {
             // Combine and process the data
             const combinedData = {
                 success: true,
-                dailyStats: [
-                    {
-                        ...gFitData.dailyStats[0],
-                        ...otherData.dailyStats[0],
-                    },
-                ],
+                dailyStats: {
+                    ...gFitData.dailyStats,
+                    ...otherData.dailyStats,
+                },
+
                 timestamp: Date.now().toString(),
             };
 
@@ -283,6 +287,7 @@ const Main: React.FC = () => {
                     </div>
                 ) : (
                     <>
+                        {console.log(session)}
                         <WelcomeMessage />
                         <DataBoxes dataForDataBoxes={processedData.dataBoxes} />
                         <TodaysPlan
