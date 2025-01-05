@@ -1,279 +1,243 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import styles from "../trackDiet.module.css";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
-interface MealDetails {
-    weight: string;
-    category: string;
-    fibre: string;
-    keyIngredients: string;
-    commonAllergens: string;
-    cookingTime: string;
-    recipe: string;
-}
-
-interface Meal {
+interface MealResponse {
     name: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    otherNutrients: string;
-    details: MealDetails;
+    type: string;
 }
 
-const mealsData: Record<string, Meal[]> = {
-    breakfast: [
-        {
-            name: "Masala Dosa with Coconut Chutney",
-            calories: 300,
-            protein: 6,
-            carbs: 40,
-            fat: 10,
-            otherNutrients: "Rich in Vitamin B, Iron, and Potassium",
-            details: {
-                weight: "250g",
-                category: "Vegetarian",
-                fibre: "4g",
-                keyIngredients: "Rice, Lentils, Coconut, Spices",
-                commonAllergens: "Coconut, Lentils",
-                cookingTime: "25 mins",
-                recipe: "Prepare batter, cook dosas, and serve with chutney.",
-            },
-        },
-        {
-            name: "Vegetable Upma",
-            calories: 250,
-            protein: 8,
-            carbs: 35,
-            fat: 6,
-            otherNutrients: "High in Fiber, Vitamin C, and Iron",
-            details: {
-                weight: "200g",
-                category: "Vegetarian",
-                fibre: "5g",
-                keyIngredients: "Semolina, Vegetables, Spices",
-                commonAllergens: "None",
-                cookingTime: "20 mins",
-                recipe: "Roast semolina, cook with vegetables and spices.",
-            },
-        },
-    ],
-    lunch: [
-        {
-            name: "Paneer Butter Masala with Naan",
-            calories: 600,
-            protein: 20,
-            carbs: 60,
-            fat: 25,
-            otherNutrients: "Rich in Calcium and Vitamin D",
-            details: {
-                weight: "400g",
-                category: "Vegetarian",
-                fibre: "3g",
-                keyIngredients: "Paneer, Butter, Cream, Spices, Wheat",
-                commonAllergens: "Dairy, Gluten",
-                cookingTime: "40 mins",
-                recipe: "Cook paneer in a creamy spiced tomato gravy.",
-            },
-        },
-        {
-            name: "Rajma Chawal (Kidney Beans with Rice)",
-            calories: 450,
-            protein: 15,
-            carbs: 70,
-            fat: 5,
-            otherNutrients: "High in Iron, Zinc, and Magnesium",
-            details: {
-                weight: "500g",
-                category: "Vegetarian",
-                fibre: "10g",
-                keyIngredients: "Kidney Beans, Rice, Spices",
-                commonAllergens: "None",
-                cookingTime: "45 mins",
-                recipe: "Cook kidney beans in a spiced gravy, serve with rice.",
-            },
-        },
-    ],
-    dinner: [
-        {
-            name: "Grilled Chicken Salad",
-            calories: 350,
-            protein: 30,
-            carbs: 10,
-            fat: 15,
-            otherNutrients: "Rich in Vitamin A, C, and Iron",
-            details: {
-                weight: "300g",
-                category: "Non-Vegetarian",
-                fibre: "5g",
-                keyIngredients: "Chicken, Lettuce, Vegetables, Olive Oil",
-                commonAllergens: "None",
-                cookingTime: "30 mins",
-                recipe: "Grill chicken, mix with fresh salad and dressing.",
-            },
-        },
-        {
-            name: "Dal Tadka with Roti",
-            calories: 400,
-            protein: 12,
-            carbs: 55,
-            fat: 10,
-            otherNutrients: "Rich in Protein and Iron",
-            details: {
-                weight: "350g",
-                category: "Vegetarian",
-                fibre: "7g",
-                keyIngredients: "Lentils, Spices, Wheat",
-                commonAllergens: "Gluten",
-                cookingTime: "35 mins",
-                recipe: "Cook lentils with tempered spices, serve with roti.",
-            },
-        },
-    ],
-};
+interface ApiResponse {
+    success: boolean;
+    mealArray: MealResponse[];
+    statsId: string;
+    timestamp: string;
+}
 
-const TrackDiet: React.FC = () => {
+interface FormData {
+    responses: Record<string, string>;
+    alternateFood: Record<string, string>;
+    statsId: string;
+}
+
+const DietTracker: React.FC = () => {
     const { toast } = useToast();
-    const [responses, setResponses] = useState<Record<string, string>>({});
-    const [alternateFood, setAlternateFood] = useState<Record<string, string>>(
-        {}
-    );
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [mealData, setMealData] = useState<MealResponse[]>([]);
+    const [statsId, setStatsId] = useState<string>("");
+    const { register, handleSubmit, setValue, watch } = useForm<FormData>();
+    const formValues = watch();
 
-    const handleResponse = (
-        mealType: string,
-        mealName: string,
-        response: string
-    ) => {
-        setResponses((prev) => ({
-            ...prev,
-            [`${mealType}-${mealName}`]: response,
-        }));
-    };
+    useEffect(() => {
+        const fetchMealData = async () => {
+            try {
+                const response = await axios.get(
+                    "/api/get-data-for-track-diet"
+                );
+                const data: ApiResponse = response.data;
+                if (data.success) {
+                    setMealData(data.mealArray);
+                    setStatsId(data.statsId);
+                }
+            } catch (error) {
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch meal data. Please try again.",
+                    variant: "destructive",
+                });
+            }
+        };
 
-    const handleAlternateFood = (
-        mealType: string,
-        mealName: string,
-        food: string
-    ) => {
-        setAlternateFood((prev) => ({
-            ...prev,
-            [`${mealType}-${mealName}`]: food,
-        }));
-    };
+        fetchMealData();
+    }, [toast]);
 
-    const handleSubmit = () => {
-        const allMealTypes = Object.keys(mealsData);
-        const missingResponses = allMealTypes.filter(
-            (mealType) =>
-                !mealsData[mealType].some(
-                    (meal) => responses[`${mealType}-${meal.name}`]
-                )
+    const validateForm = (data: FormData): boolean => {
+        // Check if all meals have a response
+        const missingResponses = mealData.filter(
+            (meal) => !data.responses?.[meal.name]
         );
 
         if (missingResponses.length > 0) {
+            const mealNames = missingResponses
+                .map((meal) => meal.name)
+                .join(", ");
             toast({
-                title: "Incomplete Tracking",
-                description: "Please select a response for all meal types",
+                title: "Missing Selections",
+                description: `Please select whether you ate or didn't eat for: ${mealNames}`,
                 variant: "destructive",
             });
+            return false;
+        }
+
+        // Check if alternate food is provided for all "didNotEat" responses
+        const missingAlternates = mealData.filter(
+            (meal) =>
+                data.responses?.[meal.name] === "didNotEat" &&
+                (!data.alternateFood?.[meal.name] ||
+                    !data.alternateFood[meal.name].trim())
+        );
+
+        if (missingAlternates.length > 0) {
+            const mealNames = missingAlternates
+                .map((meal) => meal.name)
+                .join(", ");
+            toast({
+                title: "Missing Alternate Food",
+                description: `Please specify what you ate instead for: ${mealNames}`,
+                variant: "destructive",
+            });
+            return false;
+        }
+
+        return true;
+    };
+
+    const sendToHealthAndStats = () => {
+        const router = useRouter()    
+        router.push("/health-and-stats")
+    }
+
+    const onSubmit = async (data: FormData) => {
+        if (!validateForm(data)) {
             return;
         }
 
-        const submissionData = {
-            responses,
-            alternateFood,
-        };
+        setIsSubmitting(true);
+        try {
+            const submissionData = {
+                ...data,
+                statsId,
+                timestamp: new Date().toISOString(),
+            };
+            console.log(submissionData);
+            await axios.post("/api/track-exercise", submissionData);
 
-        console.log("Diet Tracking Submission:", submissionData);
-        toast({
-            title: "Diet Tracking",
-            description: "Diet tracking submitted successfully!",
-        });
+            toast({
+                title: "Success",
+                description: "Diet tracking submitted successfully!",
+                action: <ToastAction altText="Go to Diet Tracker" onClick={sendToHealthAndStats}>Go to stats</ToastAction>,
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description:
+                    "Failed to submit diet tracking. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleResponse = (mealName: string, response: string) => {
+        setValue(`responses.${mealName}`, response);
+    };
+
+    const handleAlternateFood = (mealName: string, food: string) => {
+        setValue(`alternateFood.${mealName}`, food);
+    };
+
+    const getMealsByType = (type: string) => {
+        return mealData.filter((meal) => meal.type === type.toUpperCase());
     };
 
     return (
         <div className={styles.dietTracker}>
             <h1 className={styles.heading}>Track Your Diet</h1>
-            {Object.keys(mealsData).map((mealType) => (
-                <div key={mealType} className={styles.mealSectionLast}>
-                    <h2 className={styles.mealType}>{mealType}</h2>
-                    {mealsData[mealType].map((meal, index) => (
-                        <div key={index} className={styles.mealCard}>
-                            <div className={styles.mealHeader}>
-                                <h3>{meal.name}</h3>
-                                <div className={styles.responseButtons}>
-                                    <button
-                                        className={`${styles.ateButton} ${
-                                            responses[
-                                                `${mealType}-${meal.name}`
-                                            ] === "ate"
-                                                ? styles.selected
-                                                : ""
-                                        }`}
-                                        onClick={() =>
-                                            handleResponse(
-                                                mealType,
-                                                meal.name,
-                                                "ate"
-                                            )
-                                        }
-                                    >
-                                        Ate
-                                    </button>
-                                    <button
-                                        className={`${styles.didNotEatButton} ${
-                                            responses[
-                                                `${mealType}-${meal.name}`
-                                            ] === "didNotEat"
-                                                ? styles.selected
-                                                : ""
-                                        }`}
-                                        onClick={() =>
-                                            handleResponse(
-                                                mealType,
-                                                meal.name,
-                                                "didNotEat"
-                                            )
-                                        }
-                                    >
-                                        Didn't Eat
-                                    </button>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {["BREAKFAST", "LUNCH", "SNACK", "DINNER"].map((mealType) => (
+                    <div key={mealType} className={styles.mealSectionLast}>
+                        <h2 className={styles.mealType}>
+                            {mealType.toLowerCase()}
+                        </h2>
+                        {getMealsByType(mealType).map((meal, index) => (
+                            <div key={index} className={styles.mealCard}>
+                                <div className={styles.mealHeader}>
+                                    <h3>{meal.name}</h3>
+                                    <div className={styles.responseButtons}>
+                                        <button
+                                            type="button"
+                                            className={`${styles.ateButton} ${
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "ate"
+                                                    ? styles.selected
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                handleResponse(meal.name, "ate")
+                                            }
+                                        >
+                                            Ate
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`${
+                                                styles.didNotEatButton
+                                            } ${
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "didNotEat"
+                                                    ? styles.selected
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                handleResponse(
+                                                    meal.name,
+                                                    "didNotEat"
+                                                )
+                                            }
+                                        >
+                                            Didn't Eat
+                                        </button>
+                                    </div>
                                 </div>
+                                {formValues?.responses?.[meal.name] ===
+                                    "didNotEat" && (
+                                    <div className={styles.didNotEatForm}>
+                                        <label htmlFor={`input-${meal.name}`}>
+                                            What did you eat instead? (If any) -
+                                            Describe eg - 250g of rice
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id={`input-${meal.name}`}
+                                            placeholder="Enter the food you ate"
+                                            onChange={(e) =>
+                                                handleAlternateFood(
+                                                    meal.name,
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={styles.alternateInput}
+                                            required={
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "didNotEat"
+                                            }
+                                        />
+                                    </div>
+                                )}
                             </div>
-                            {responses[`${mealType}-${meal.name}`] ===
-                                "didNotEat" && (
-                                <div className={styles.didNotEatForm}>
-                                    <label
-                                        htmlFor={`input-${mealType}-${index}`}
-                                    >
-                                        What did you eat instead? (If any) - Describe eg - 250g of rice
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id={`input-${mealType}-${index}`}
-                                        placeholder="Enter the food you ate"
-                                        onChange={(e) =>
-                                            handleAlternateFood(
-                                                mealType,
-                                                meal.name,
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            ))}
-            <button className={styles.submitButton} onClick={handleSubmit}>
-                Submit Diet Tracking
-            </button>
+                        ))}
+                    </div>
+                ))}
+                <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? "Submitting..." : "Submit Diet Tracking"}
+                </button>
+            </form>
         </div>
     );
 };
 
-export default TrackDiet;
+export default DietTracker;
