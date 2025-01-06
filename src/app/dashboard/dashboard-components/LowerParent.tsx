@@ -1,6 +1,6 @@
 import styles from "../dashboard.module.css";
 import AllStats from "./AllStats";
-import Graph from "../../health-and-stats/health-tracker-components/Graph";
+import Graph from "../../health-and-stats/health-and-stats-components/Graph";
 
 const LowerParent: React.FC = () => {
     return (

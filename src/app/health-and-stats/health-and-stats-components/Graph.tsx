@@ -11,6 +11,8 @@ const Graph: React.FC = () => {
         { value: 77, label: "Annual Average" },
     ];
 
+    // get request to /api/get-exercise-graph-data
+
     return (
         <>
             <h1 className={styles.heading}>Your weight data</h1>
