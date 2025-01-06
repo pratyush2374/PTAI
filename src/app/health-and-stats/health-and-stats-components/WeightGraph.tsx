@@ -12,7 +12,6 @@ import {
     Legend,
 } from "chart.js";
 
-// Register the required components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -22,8 +21,14 @@ ChartJS.register(
     Legend
 );
 
-const WeightGraph: React.FC = () => {
-    const data = {
+interface WeightGraphProps {
+    data: {
+        [key: string]: number;
+    };
+}
+
+const WeightGraph: React.FC<WeightGraphProps> = ({ data }) => {
+    const chartData = {
         labels: [
             "Jan",
             "Feb",
@@ -42,7 +47,18 @@ const WeightGraph: React.FC = () => {
             {
                 label: "Weight (kg)",
                 data: [
-                    78, 77.5, 76, 75, 74, 73.5, 73, 72.5, 72, 72.2, 72.3, 72,
+                    data.january,
+                    data.february,
+                    data.march,
+                    data.april,
+                    data.may,
+                    data.june,
+                    data.july,
+                    data.august,
+                    data.september,
+                    data.october,
+                    data.november,
+                    data.december,
                 ],
                 borderColor: "#007bff",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
@@ -65,7 +81,7 @@ const WeightGraph: React.FC = () => {
                 max: 100,
                 beginAtZero: false,
                 ticks: {
-                    stepSize: 10, // Sets the gap between ticks to 10
+                    stepSize: 10,
                 },
                 grid: {
                     borderDash: [5, 5],
@@ -86,7 +102,7 @@ const WeightGraph: React.FC = () => {
         },
     };
 
-    return <Line data={data} options={options} />;
+    return <Line data={chartData} options={options} />;
 };
 
 export default WeightGraph;

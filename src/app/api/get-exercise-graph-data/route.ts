@@ -59,14 +59,14 @@ function calculateMonthlyWeightAverages(data: WeightEntry[]): MonthlyAverages {
 export async function GET(req: NextRequest) {
     try {
         const token = await getToken({ req });
-        const email = token?.email || "kr.pratyushsharma2374@gmail.com";
+        const email = token?.email;
 
-        // if (!token) {
-        //     return NextResponse.json(
-        //         { error: "Unauthorized: Please log in" },
-        //         { status: 401 }
-        //     );
-        // }
+        if (!token) {
+            return NextResponse.json(
+                { error: "Unauthorized: Please log in" },
+                { status: 401 }
+            );
+        }
 
         // Fetch weight data
         let weight = null;

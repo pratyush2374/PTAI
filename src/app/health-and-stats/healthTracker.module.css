@@ -1,4 +1,4 @@
-.outerHealthAndStats{
+.outerHealthAndStats {
     width: 100%;
     margin: auto;
     margin-top: 80px;
@@ -76,6 +76,54 @@
     width: 100%;
 }
 
+.weightForm {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    margin: auto;
+    align-items: center;
+}
+
+.weightInput {
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.weightInput:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.weightInput::placeholder {
+    color: #94a3b8;
+}
+
+.weightSubmitBtn {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.weightSubmitBtn:hover {
+    background-color: #2563eb;
+}
+
+.weightSubmitBtn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
     .weightSection {
         width: 90%;
@@ -89,8 +137,7 @@
         font-size: 20px;
     }
 
-    .heading{
+    .heading {
         font-size: 20px;
     }
-
 }
