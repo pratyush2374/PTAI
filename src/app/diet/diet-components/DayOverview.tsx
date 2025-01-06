@@ -22,7 +22,7 @@ const DayOverview: React.FC<DayOverviewProps> = ({ stats }) => {
                     />
                     <div className={styles.totalCalories}>
                         <h2>
-                            ~{stats.caloriesBurnt}{" "}
+                            ~{stats.caloriesToGain}{" "}
                             <span className={styles.intakeUnit}>cal</span>
                         </h2>
                         <h3>Total Calories</h3>

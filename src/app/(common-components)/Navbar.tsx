@@ -16,9 +16,9 @@ const Navbar: React.FC = () => {
         { name: "Dashboard", link: "/dashboard" },
         { name: "Exercise", link: "/exercise" },
         { name: "Diet", link: "/diet" },
-        { name: "Track Exercise", link: "/track-exercise" },
+        // { name: "Track Exercise", link: "/track-exercise" },
         { name: "Track Diet", link: "/track-diet" },
-        { name: "Health", link: "/health-tracker" },
+        { name: "Health & Stats", link: "/health-and-stats" },
         { name: "Account Settings", link: "/account-settings" },
         { name: "Sign Out", link: "/sign-out" },
     ];

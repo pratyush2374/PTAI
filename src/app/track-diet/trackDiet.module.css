@@ -427,6 +427,10 @@
   .didNotEatForm {
     margin-top: 15px;
   }
+
+  .didNotEatForm label {
+    font-size: 0.9rem;
+  }
   
   .didNotEatForm input {
     width: 100%;

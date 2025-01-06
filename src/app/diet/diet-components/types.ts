@@ -20,7 +20,7 @@ export interface Meal {
 export interface DailyStats {
   minutesWorkedOut: number;
   caloriesToBurn: number;
-  caloriesBurnt: number;
+  caloriesToGain: number;
   proteinGrams: number;
   carbsGrams: number;
   fatsGrams: number;
