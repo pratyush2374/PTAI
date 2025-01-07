@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import axios from "axios";
 import prisma from "@/lib/prismaClient";
 
 export async function GET(req: NextRequest) {
     try {
         const token = await getToken({ req });
-        const email = token?.email || "kr.pratyushsharma2374@gmail.com";
+        const email = token?.email;
 
-        // if (!token) {
-        //     return NextResponse.json(
-        //         { error: "Unauthorized: Please log in" },
-        //         { status: 401 }
-        //     );
-        // }
+        if (!token) {
+            return NextResponse.json(
+                { error: "Unauthorized: Please log in" },
+                { status: 401 }
+            );
+        }
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -59,6 +58,7 @@ export async function GET(req: NextRequest) {
                                 ),
                             },
                         },
+                        take: 1,
                     },
                 },
             });
@@ -66,8 +66,9 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            userStats,
+            userStats: { ...userStats, daily: userStats?.daily[0] },
         });
+        
     } catch (error: any) {
         return NextResponse.json(
             {

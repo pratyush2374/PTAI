@@ -141,8 +141,6 @@ export async function POST(req: NextRequest) {
                     { email }
                 );
 
-                console.log(updatedGFitData.data);
-
                 await prisma.dailyStat.updateMany({
                     where: {
                         email,
