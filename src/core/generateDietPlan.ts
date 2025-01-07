@@ -60,6 +60,7 @@ const generateDietPlan = async (userData: any) => {
         5. Provide detailed, actionable recipes
         6. Respect the user's macronutrient preferences
         7. Account for health problems in meal selection
+        8. Generate total 4 meals only for the day and consider the user's fitness goals 
         `;
 
         const result = await model.generateContent(prompt);

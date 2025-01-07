@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "../dashboard.module.css";
-import SocialMediaLink from "./SocialMediaLink";
-import FooterLink from "./FooterLink";
+import SocialMediaLink from "../dashboard/dashboard-components/SocialMediaLink";
+import FooterLink from "../dashboard/dashboard-components/FooterLink";
 
 const Footer: React.FC = () => {
     const quickLinks = [

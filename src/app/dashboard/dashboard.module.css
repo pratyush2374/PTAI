@@ -178,121 +178,6 @@
     display: none;
 }
 
-/* Right Side section */
-
-.right {
-    background-color: rgb(251, 251, 251);
-    padding: 30px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    width: 25%;
-}
-
-.userInfo {
-    margin-bottom: 30px;
-}
-
-.user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: fit-content;
-    margin: auto;
-}
-
-.user img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
-.rightUserName {
-    font-size: 18px;
-    font-weight: 600;
-    color: #212529;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.yrGoals {
-    font-size: 16px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-.goalsInner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.goalsInner img {
-    width: 25px;
-    height: 25px;
-}
-
-.individualGoal {
-    margin-left: 5px;
-    text-align: center;
-}
-
-.individualGoal h1 {
-    font-size: 12px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.individualGoal h2 {
-    font-size: 10px;
-    font-weight: 400;
-    color: #6c757d;
-}
-
-.goalPercentage {
-    font-size: 12px;
-    font-weight: 500;
-    color: #007bff;
-}
-
-.rightUnit {
-    font-size: 12px;
-    font-weight: 400;
-    margin-left: 3px;
-}
-
-.userDetails {
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.userDetails>div {
-    text-align: center;
-}
-
-.userDetails h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.userDetails h3 {
-    font-size: 14px;
-    font-weight: 400;
-    color: #6c757d;
-    margin-top: 5px;
-}
-
 /* Today's Plan  */
 
 .todaysPlan {
@@ -972,11 +857,6 @@
 
     .dataBox h2 {
         font-size: 14px;
-    }
-
-    .right {
-        width: 100%;
-        border-radius: 0 0 10px 10px;
     }
 
     .dataBox {

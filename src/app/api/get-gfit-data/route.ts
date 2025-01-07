@@ -150,6 +150,7 @@ export async function POST(req: NextRequest) {
 
         let fitnessResponse;
         if (accessTokenExpiry! > Date.now()) {
+            console.log("Using existing access token");
             const startTime = getStartOfDay();
             fitnessResponse = await fetchFitnessData(
                 accessToken as string,
@@ -168,6 +169,7 @@ export async function POST(req: NextRequest) {
             );
         } else {
             // Get new access token
+            console.log("Getting new access token and then getting data");
             const accessTokenReceivedFromGoogle = await getGoogleAccessToken(
                 user.refreshToken
             );
@@ -186,8 +188,8 @@ export async function POST(req: NextRequest) {
                 {
                     success: true,
                     data: processedData,
-                    accessTokenReceivedFromGoogle,
-                    accessTokenExpiryNew,
+                    accessToken : accessTokenReceivedFromGoogle,
+                    accessTokenExpiry: accessTokenExpiryNew,
                 },
                 { status: 200 }
             );
