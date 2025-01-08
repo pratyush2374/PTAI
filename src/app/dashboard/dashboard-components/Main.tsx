@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 interface DailyStat {
     stepCount: number;
     caloriesBurnt: number;
+    caloriesToBurn : number;
     totalHoursSlept: number | null;
     averageHeartRate: number | null;
     focusArea: string;
@@ -135,8 +136,8 @@ const Main: React.FC = () => {
                             ? daily.totalExercises
                             : 0,
                     totalApproxCaloriesBurn:
-                        typeof daily.caloriesBurnt === "number"
-                            ? daily.caloriesBurnt
+                        typeof daily.caloriesToBurn === "number"
+                            ? daily.caloriesToBurn
                             : 0,
                     difficultyLevel: daily.difficultyLevel || "N/A",
                 },

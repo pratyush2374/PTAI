@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import prisma from "@/lib/prismaClient";
 import { z } from "zod";
 import { getToken } from "next-auth/jwt";
-import giveOverviewOfBloodPressure from "@/core/bloodPressureSummary";
 
 interface GoogleTokenResponse {
     access_token: string;
@@ -25,21 +24,17 @@ const requestSchema = z.object({
     accessTokenExpiry: z.number().optional(),
 });
 
-interface BloodPressureReading {
-    systolic: number;
-    diastolic: number;
+interface BloodGlucoseReading {
+    glucoseLevel: number;
     timestamp: string;
 }
 
-interface DailyBloodPressure {
+interface DailyBloodGlucose {
     date: string;
-    readings: BloodPressureReading[];
-    averageSystolic: number;
-    averageDiastolic: number;
-    minSystolic: number;
-    maxSystolic: number;
-    minDiastolic: number;
-    maxDiastolic: number;
+    readings: BloodGlucoseReading[];
+    averageGlucose: number;
+    minGlucose: number;
+    maxGlucose: number;
     readingCount: number;
 }
 
@@ -65,13 +60,13 @@ async function getGoogleAccessToken(refreshToken: string): Promise<string> {
     }
 }
 
-async function fetchBloodPressureData(
+async function fetchBloodGlucoseData(
     accessToken: string,
     startTime: number,
     endTime: number
 ): Promise<any> {
     const requestBody = {
-        aggregateBy: [{ dataTypeName: "com.google.blood_pressure" }],
+        aggregateBy: [{ dataTypeName: "com.google.blood_glucose" }],
         bucketByTime: { durationMillis: DAY_IN_MS },
         startTimeMillis: startTime,
         endTimeMillis: endTime,
@@ -87,57 +82,48 @@ async function fetchBloodPressureData(
 
         return response.data;
     } catch (error: any) {
-        console.error("Failed to fetch blood pressure data:", error.message);
-        throw new Error("Failed to fetch blood pressure data from Google");
+        console.error("Failed to fetch blood glucose data:", error.message);
+        throw new Error("Failed to fetch blood glucose data from Google");
     }
 }
 
-function processBloodPressureData(response: any): DailyBloodPressure[] {
+function processBloodGlucoseData(response: any): DailyBloodGlucose[] {
     if (!response?.bucket) {
         console.warn("Unexpected response structure:", response);
         return [];
     }
 
     return response.bucket.map((bucket: any) => {
-        const readings: BloodPressureReading[] = [];
-        const systolicReadings: number[] = [];
-        const diastolicReadings: number[] = [];
+        const readings: BloodGlucoseReading[] = [];
+        const glucoseReadings: number[] = [];
 
         // Process each reading in the bucket
         bucket.dataset[0]?.point?.forEach((point: any) => {
             const values = point.value;
             
-            // Google Fit returns 3 identical values for systolic (0-2)
-            // and 3 identical values for diastolic (3-5)
-            if (values && values.length >= 6) {
-                const systolic = values[0]?.fpVal ?? 0;  // Taking first systolic value
-                const diastolic = values[3]?.fpVal ?? 0; // Taking first diastolic value
+            if (values && values.length > 0) {
+                const glucoseLevel = values[0]?.fpVal ?? 0;
                 
                 // Only add valid readings
-                if (systolic > 0 && diastolic > 0) {
+                if (glucoseLevel > 0) {
                     const timestamp = new Date(
                         parseInt(point.startTimeNanos) / 1000000
                     ).toISOString();
 
                     readings.push({
-                        systolic,
-                        diastolic,
+                        glucoseLevel,
                         timestamp,
                     });
 
-                    systolicReadings.push(systolic);
-                    diastolicReadings.push(diastolic);
+                    glucoseReadings.push(glucoseLevel);
                 }
             }
         });
 
         // Calculate statistics only if we have valid readings
         const readingCount = readings.length;
-        const averageSystolic = readingCount > 0
-            ? Math.round(systolicReadings.reduce((a, b) => a + b, 0) / readingCount)
-            : 0;
-        const averageDiastolic = readingCount > 0
-            ? Math.round(diastolicReadings.reduce((a, b) => a + b, 0) / readingCount)
+        const averageGlucose = readingCount > 0
+            ? Math.round(glucoseReadings.reduce((a, b) => a + b, 0) / readingCount)
             : 0;
 
         return {
@@ -145,12 +131,9 @@ function processBloodPressureData(response: any): DailyBloodPressure[] {
                 .toISOString()
                 .split("T")[0],
             readings,
-            averageSystolic,
-            averageDiastolic,
-            minSystolic: readingCount > 0 ? Math.min(...systolicReadings) : null,
-            maxSystolic: readingCount > 0 ? Math.max(...systolicReadings) : null,
-            minDiastolic: readingCount > 0 ? Math.min(...diastolicReadings) : null,
-            maxDiastolic: readingCount > 0 ? Math.max(...diastolicReadings) : null,
+            averageGlucose,
+            minGlucose: readingCount > 0 ? Math.min(...glucoseReadings) : null,
+            maxGlucose: readingCount > 0 ? Math.max(...glucoseReadings) : null,
             readingCount
         };
     });
@@ -173,7 +156,7 @@ export async function POST(req: NextRequest) {
     try {
         const { accessToken, accessTokenExpiry } = await req.json();
         const token = await getToken({ req });
-        const email = token?.email; 
+        const email = token?.email;
 
         if (!token) {
             return NextResponse.json(
@@ -195,13 +178,13 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        let bloodPressureData;
+        let bloodGlucoseData;
         const startTime = getStartOfFifteenDaysAgo();
         const endTime = getEndOfToday();
 
         if (accessTokenExpiry! > Date.now()) {
             console.log("Using existing access token");
-            bloodPressureData = await fetchBloodPressureData(
+            bloodGlucoseData = await fetchBloodGlucoseData(
                 accessToken as string,
                 startTime,
                 endTime
@@ -213,7 +196,7 @@ export async function POST(req: NextRequest) {
             );
             const accessTokenExpiryNew = new Date().getTime() + 3600 * 1000;
 
-            bloodPressureData = await fetchBloodPressureData(
+            bloodGlucoseData = await fetchBloodGlucoseData(
                 accessTokenReceivedFromGoogle,
                 startTime,
                 endTime
@@ -222,8 +205,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(
                 {
                     success: true,
-                    data: processBloodPressureData(bloodPressureData),
-                    // overview,
+                    data: processBloodGlucoseData(bloodGlucoseData),
                     metadata: {
                         startDate: new Date(startTime).toISOString(),
                         endDate: new Date(endTime).toISOString(),
@@ -236,13 +218,10 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // const overview = await giveOverviewOfBloodPressure(bloodPressureData);
-        // Process and return the data
         return NextResponse.json(
             {
                 success: true,
-                data: processBloodPressureData(bloodPressureData),
-                // overview,
+                data: processBloodGlucoseData(bloodGlucoseData),
                 metadata: {
                     startDate: new Date(startTime).toISOString(),
                     endDate: new Date(endTime).toISOString(),
