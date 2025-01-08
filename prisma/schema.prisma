@@ -75,6 +75,8 @@ model Stats {
   daily             DailyStat[]
   currentStreak     Int
   highestStreak     Int
+  stepsGoal         Int?        @default(10000)
+  sleepGoal         Int?        @default(8)
   achievements      String[]
   totalWeightChange Float
   averageWeight     Float

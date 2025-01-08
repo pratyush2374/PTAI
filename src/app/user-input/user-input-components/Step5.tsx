@@ -48,7 +48,7 @@ const Step5: React.FC<Step5Props> = ({
           "Low Fat",
           "Low Sugar",
           "Vegan",
-          "Vegetarian",
+          "Strict Vegetarian",
           "Gluten Free",
           "Dairy Free",
           "Low Sodium",
@@ -78,7 +78,6 @@ const Step5: React.FC<Step5Props> = ({
       <div className="flex flex-wrap gap-4">
         {[
           "Chicken",
-          "Pork",
           "Lamb",
           "Fish",
           "Eggs",
