@@ -55,7 +55,7 @@
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
-    margin: 50px auto;
+    margin: 30px auto 50px;
 }
 
 .dataBox {

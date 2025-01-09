@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
             );
         }
 
+        const userNotRegisteredWithGoogle = user.googleId ? false : true;
         // Sanitize the user object
         const userToSend = {
             id: user.id,
@@ -42,6 +43,7 @@ export async function GET(req: NextRequest) {
             gender: user.gender,
             height: user.height,
             additionalInfo: user.additionalInfo,
+            userNotRegisteredWithGoogle,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             preferences: user.preferences,

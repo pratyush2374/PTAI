@@ -24,7 +24,12 @@ export async function POST(req: NextRequest) {
 
         const user = await prisma.user.findUnique({
             where: { email },
-            select: { id: true, email: true, lastPlanGeneratedOn: true },
+            select: {
+                id: true,
+                email: true,
+                lastPlanGeneratedOn: true,
+                googleId: true,
+            },
         });
 
         if (!user) {
@@ -43,10 +48,11 @@ export async function POST(req: NextRequest) {
             try {
                 if (accessToken && accessTokenExpiry) {
                     console.log("You have sent access token and its expiry");
-                    
+
                     const now = Date.now();
-                    const accessTokenIssueTime = accessTokenExpiry - (10 * 60 * 1000);
-                    
+                    const accessTokenIssueTime =
+                        accessTokenExpiry - 10 * 60 * 1000;
+
                     if (now - accessTokenIssueTime < 10 * 60 * 1000) {
                         console.log(
                             "You have requested new data within 10 min"
@@ -132,6 +138,28 @@ export async function POST(req: NextRequest) {
                         statsId: dailyStats?.id,
                         timestamp: new Date().toISOString(),
                     });
+                } else if (!user.googleId){
+                    const dailyStats = await prisma.dailyStat.findFirst({
+                        where: {
+                            email,
+                            date: {
+                                gte: startOfDay,
+                                lte: endOfDay,
+                            },
+                        },
+                        include: {
+                            meals: true,
+                        },
+                        orderBy: { date: "desc" },
+                    });
+    
+                    return NextResponse.json({
+                        success: true,
+                        dailyStats,
+                        userNotRegisteredWithGoogle: true,
+                        statsId: dailyStats?.id,
+                        timestamp: new Date().toISOString(),
+                    });
                 }
 
                 console.log("You have not sent access token and its expiry");
@@ -186,16 +214,11 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Generate new plans and fetch Google Fit data
-        try {
-            console.log("Generating plans and fetching Google Fit data");
+        if (!user.googleId) {
+            try {
+                console.log("Generating plans and fetching Google Fit data");
 
-            const [gfitResponse, exerciseResponse, dietResponse] =
-                await Promise.all([
-                    axios.post(
-                        `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
-                        { email }
-                    ),
+                const [exerciseResponse, dietResponse] = await Promise.all([
                     axios.post(
                         `${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`,
                         { email }
@@ -215,120 +238,272 @@ export async function POST(req: NextRequest) {
                     throw error;
                 });
 
-            const gfitData = gfitResponse.data?.data;
-            const exercisePlan = exerciseResponse.data?.data;
-            const dietPlan = dietResponse.data?.data;
+                const exercisePlan = exerciseResponse.data?.data;
+                const dietPlan = dietResponse.data?.data;
 
-            if (!gfitData || !exercisePlan || !dietPlan) {
-                throw new Error("Missing required data from API responses");
+                if (!exercisePlan || !dietPlan) {
+                    throw new Error("Missing required data from API responses");
+                }
+
+                // Create daily stats with transaction to ensure data consistency
+                const dailyStat = await prisma.$transaction(async (prisma) => {
+                    const newDailyStat = await prisma.dailyStat.create({
+                        data: {
+                            stats: {
+                                connect: { userId: user.id },
+                            },
+                            email: user.email,
+                            date: today,
+                            minutesWorkedOut:
+                                exercisePlan.approxDurationToCompleteinMinutes,
+                            caloriesToBurn:
+                                exercisePlan.totalApproxCaloriesBurn,
+                            focusArea: exercisePlan.focusArea,
+                            approxDurationToCompleteinMinutes:
+                                exercisePlan.approxDurationToCompleteinMinutes,
+                            equipmentRequired: exercisePlan.equipmentRequired,
+                            exerciseType: exercisePlan.exerciseType,
+                            totalExercises: exercisePlan.totalExercises,
+                            difficultyLevel: exercisePlan.difficultyLevel,
+                            exercises: {
+                                create: exercisePlan.exercises.map(
+                                    (exercise: any) => ({
+                                        exerciseName: exercise.exerciseName,
+                                        exerciseType: exercise.exerciseType,
+                                        primaryMuscle:
+                                            exercise.primaryMuscleTarget,
+                                        secondaryMuscle:
+                                            exercise.secondaryMuscleTarget,
+                                        duration: exercise.exerciseDuration,
+                                        equipment: exercise.equipmentRequired,
+                                        calorieBurn: exercise.calorieBurn,
+                                        sets: exercise.sets,
+                                        reps: exercise.reps
+                                            ? exercise.reps.toString()
+                                            : "0",
+                                        restTime: exercise.restTime,
+                                        advice: exercise.adviseWhenDoingExercise,
+                                    })
+                                ),
+                            },
+                            caloriesToGain: dietPlan.totalCalories,
+                            proteinGrams: dietPlan.proteinGrams,
+                            carbsGrams: dietPlan.carbsGrams,
+                            fatsGrams: dietPlan.fatsGrams,
+                            fibreGrams: dietPlan.fibreGrams,
+                            numberOfMeals: dietPlan.numberOfMeals,
+                            specialConsiderations:
+                                dietPlan.specialConsiderations,
+                            meals: {
+                                create: dietPlan.meals.map((meal: any) => ({
+                                    type: meal.type,
+                                    name: meal.name,
+                                    category: meal.category,
+                                    weight: meal.weight,
+                                    calories: meal.calories,
+                                    protein: meal.protein,
+                                    carbs: meal.carbs,
+                                    fats: meal.fats,
+                                    fibre: meal.fibre,
+                                    otherNutrients: meal.otherNutrients,
+                                    ingredients: meal.ingredients,
+                                    allergens: meal.allergens,
+                                    cookingTime: meal.cookingTime,
+                                    recipe: meal.recipe,
+                                })),
+                            },
+                        },
+                    });
+
+                    await prisma.user.update({
+                        where: { email },
+                        data: { lastPlanGeneratedOn: today },
+                    });
+
+                    return newDailyStat;
+                });
+
+                const streakUpdate = await updateUserStreak(
+                    user.id,
+                    user.email
+                );
+
+                const dailyStatsFromDB = await prisma.dailyStat.findFirst({
+                    where: {
+                        email,
+                        date: {
+                            gte: startOfDay,
+                            lte: endOfDay,
+                        },
+                    },
+                    include: {
+                        meals: true,
+                    },
+                    orderBy: { date: "desc" },
+                });
+
+                return NextResponse.json({
+                    success: true,
+                    dailyStats: dailyStatsFromDB,
+                    userNotRegisteredWithGoogle: true,
+                    statsId: dailyStat.id,
+                    timestamp: new Date().toISOString(),
+                });
+            } catch (error) {
+                console.error("Error generating plans:", error);
+                return createErrorResponse("Failed to generate plans");
             }
+        } else {
+            // Generate new plans and fetch Google Fit data
+            try {
+                console.log("Generating plans and fetching Google Fit data");
 
-            // Create daily stats with transaction to ensure data consistency
-            const dailyStat = await prisma.$transaction(async (prisma) => {
-                const newDailyStat = await prisma.dailyStat.create({
-                    data: {
-                        stats: {
-                            connect: { userId: user.id },
+                const [gfitResponse, exerciseResponse, dietResponse] =
+                    await Promise.all([
+                        axios.post(
+                            `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
+                            { email }
+                        ),
+                        axios.post(
+                            `${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`,
+                            { email }
+                        ),
+                        axios.post(
+                            `${process.env.NEXTAUTH_URL}/api/generate-diet-plan`,
+                            { email }
+                        ),
+                    ]).catch((error) => {
+                        if (error instanceof AxiosError) {
+                            throw new Error(
+                                `API call failed: ${
+                                    error.response?.data?.error || error.message
+                                }`
+                            );
+                        }
+                        throw error;
+                    });
+
+                const gfitData = gfitResponse.data?.data;
+                const exercisePlan = exerciseResponse.data?.data;
+                const dietPlan = dietResponse.data?.data;
+
+                if (!gfitData || !exercisePlan || !dietPlan) {
+                    throw new Error("Missing required data from API responses");
+                }
+
+                // Create daily stats with transaction to ensure data consistency
+                const dailyStat = await prisma.$transaction(async (prisma) => {
+                    const newDailyStat = await prisma.dailyStat.create({
+                        data: {
+                            stats: {
+                                connect: { userId: user.id },
+                            },
+                            email: user.email,
+                            date: today,
+                            minutesWorkedOut:
+                                exercisePlan.approxDurationToCompleteinMinutes,
+                            caloriesToBurn:
+                                exercisePlan.totalApproxCaloriesBurn,
+                            focusArea: exercisePlan.focusArea,
+                            approxDurationToCompleteinMinutes:
+                                exercisePlan.approxDurationToCompleteinMinutes,
+                            equipmentRequired: exercisePlan.equipmentRequired,
+                            exerciseType: exercisePlan.exerciseType,
+                            totalExercises: exercisePlan.totalExercises,
+                            difficultyLevel: exercisePlan.difficultyLevel,
+                            exercises: {
+                                create: exercisePlan.exercises.map(
+                                    (exercise: any) => ({
+                                        exerciseName: exercise.exerciseName,
+                                        exerciseType: exercise.exerciseType,
+                                        primaryMuscle:
+                                            exercise.primaryMuscleTarget,
+                                        secondaryMuscle:
+                                            exercise.secondaryMuscleTarget,
+                                        duration: exercise.exerciseDuration,
+                                        equipment: exercise.equipmentRequired,
+                                        calorieBurn: exercise.calorieBurn,
+                                        sets: exercise.sets,
+                                        reps: exercise.reps
+                                            ? exercise.reps.toString()
+                                            : "0",
+                                        restTime: exercise.restTime,
+                                        advice: exercise.adviseWhenDoingExercise,
+                                    })
+                                ),
+                            },
+                            caloriesToGain: dietPlan.totalCalories,
+                            proteinGrams: dietPlan.proteinGrams,
+                            carbsGrams: dietPlan.carbsGrams,
+                            fatsGrams: dietPlan.fatsGrams,
+                            fibreGrams: dietPlan.fibreGrams,
+                            numberOfMeals: dietPlan.numberOfMeals,
+                            specialConsiderations:
+                                dietPlan.specialConsiderations,
+                            meals: {
+                                create: dietPlan.meals.map((meal: any) => ({
+                                    type: meal.type,
+                                    name: meal.name,
+                                    category: meal.category,
+                                    weight: meal.weight,
+                                    calories: meal.calories,
+                                    protein: meal.protein,
+                                    carbs: meal.carbs,
+                                    fats: meal.fats,
+                                    fibre: meal.fibre,
+                                    otherNutrients: meal.otherNutrients,
+                                    ingredients: meal.ingredients,
+                                    allergens: meal.allergens,
+                                    cookingTime: meal.cookingTime,
+                                    recipe: meal.recipe,
+                                })),
+                            },
+                            caloriesBurnt: gfitData?.calories,
+                            stepCount: gfitData?.steps,
+                            averageHeartRate: gfitData?.averageHeartRate,
+                            totalHoursSlept: gfitData?.sleepData,
                         },
-                        email: user.email,
-                        date: today,
-                        minutesWorkedOut:
-                            exercisePlan.approxDurationToCompleteinMinutes,
-                        caloriesToBurn: exercisePlan.totalApproxCaloriesBurn,
-                        focusArea: exercisePlan.focusArea,
-                        approxDurationToCompleteinMinutes:
-                            exercisePlan.approxDurationToCompleteinMinutes,
-                        equipmentRequired: exercisePlan.equipmentRequired,
-                        exerciseType: exercisePlan.exerciseType,
-                        totalExercises: exercisePlan.totalExercises,
-                        difficultyLevel: exercisePlan.difficultyLevel,
-                        exercises: {
-                            create: exercisePlan.exercises.map(
-                                (exercise: any) => ({
-                                    exerciseName: exercise.exerciseName,
-                                    exerciseType: exercise.exerciseType,
-                                    primaryMuscle: exercise.primaryMuscleTarget,
-                                    secondaryMuscle:
-                                        exercise.secondaryMuscleTarget,
-                                    duration: exercise.exerciseDuration,
-                                    equipment: exercise.equipmentRequired,
-                                    calorieBurn: exercise.calorieBurn,
-                                    sets: exercise.sets,
-                                    reps: exercise.reps
-                                        ? exercise.reps.toString()
-                                        : "0",
-                                    restTime: exercise.restTime,
-                                    advice: exercise.adviseWhenDoingExercise,
-                                })
-                            ),
-                        },
-                        caloriesToGain: dietPlan.totalCalories,
-                        proteinGrams: dietPlan.proteinGrams,
-                        carbsGrams: dietPlan.carbsGrams,
-                        fatsGrams: dietPlan.fatsGrams,
-                        fibreGrams: dietPlan.fibreGrams,
-                        numberOfMeals: dietPlan.numberOfMeals,
-                        specialConsiderations: dietPlan.specialConsiderations,
-                        meals: {
-                            create: dietPlan.meals.map((meal: any) => ({
-                                type: meal.type,
-                                name: meal.name,
-                                category: meal.category,
-                                weight: meal.weight,
-                                calories: meal.calories,
-                                protein: meal.protein,
-                                carbs: meal.carbs,
-                                fats: meal.fats,
-                                fibre: meal.fibre,
-                                otherNutrients: meal.otherNutrients,
-                                ingredients: meal.ingredients,
-                                allergens: meal.allergens,
-                                cookingTime: meal.cookingTime,
-                                recipe: meal.recipe,
-                            })),
-                        },
-                        caloriesBurnt: gfitData?.calories,
-                        stepCount: gfitData?.steps,
-                        averageHeartRate: gfitData?.averageHeartRate,
-                        totalHoursSlept: gfitData?.sleepData,
-                    },
+                    });
+
+                    await prisma.user.update({
+                        where: { email },
+                        data: { lastPlanGeneratedOn: today },
+                    });
+
+                    return newDailyStat;
                 });
 
-                await prisma.user.update({
-                    where: { email },
-                    data: { lastPlanGeneratedOn: today },
+                const streakUpdate = await updateUserStreak(
+                    user.id,
+                    user.email
+                );
+
+                const dailyStatsFromDB = await prisma.dailyStat.findFirst({
+                    where: {
+                        email,
+                        date: {
+                            gte: startOfDay,
+                            lte: endOfDay,
+                        },
+                    },
+                    include: {
+                        meals: true,
+                    },
+                    orderBy: { date: "desc" },
                 });
 
-                return newDailyStat;
-            });
-
-            const streakUpdate = await updateUserStreak(user.id, user.email);
-
-            const dailyStatsFromDB = await prisma.dailyStat.findFirst({
-                where: {
-                    email,
-                    date: {
-                        gte: startOfDay,
-                        lte: endOfDay,
-                    },
-                },
-                include: {
-                    meals: true,
-                },
-                orderBy: { date: "desc" },
-            });
-
-            return NextResponse.json({
-                success: true,
-                dailyStats: dailyStatsFromDB,
-                accessToken: gfitResponse.data.accessToken,
-                accessTokenExpiry: gfitResponse.data.accessTokenExpiry,
-                statsId: dailyStat.id,
-                timestamp: new Date().toISOString(),
-            });
-        } catch (error) {
-            console.error("Error generating plans:", error);
-            return createErrorResponse("Failed to generate plans");
+                return NextResponse.json({
+                    success: true,
+                    dailyStats: dailyStatsFromDB,
+                    accessToken: gfitResponse.data.accessToken,
+                    accessTokenExpiry: gfitResponse.data.accessTokenExpiry,
+                    statsId: dailyStat.id,
+                    timestamp: new Date().toISOString(),
+                });
+            } catch (error) {
+                console.error("Error generating plans:", error);
+                return createErrorResponse("Failed to generate plans");
+            }
         }
     } catch (error) {
         console.error("Unexpected error:", error);

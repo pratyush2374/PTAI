@@ -13,7 +13,7 @@ import axios from "axios";
 import crypto from "crypto";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const UserInput: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -58,21 +58,13 @@ const UserInput: React.FC = () => {
             sessionStorage.getItem("user") as string
         );
         setUserSessionData(userFromCred);
-
-        // Getting data from next auth session
-        const userFromGoogle = session.data?.user;
-        setUserDataFromGoogle(userFromGoogle);
-        console.log(userFromGoogle);
-
-        if (!userFromCred && userFromGoogle == undefined) {
-            toast({
-                variant: "destructive",
-                title: "Some error occurred while fetching user details",
-                description: "Please try again",
-            });
-            router.push("/sign-up");
-        }
     }, []);
+
+    useEffect(() => {
+        if (session.data?.user) {
+            setUserDataFromGoogle(session.data.user);
+        }
+    }, [session.data]);
 
     const decryptPassword = (encryptedPassword: string): string => {
         const AES_SECRET = process.env.NEXT_PUBLIC_AES_SECRET as string;
@@ -116,7 +108,7 @@ const UserInput: React.FC = () => {
     const submitData = async () => {
         try {
             setIsSubmitting(true);
-
+        
             if (!userSessionData && !userDataFromGoogle) {
                 toast({
                     variant: "destructive",
@@ -143,7 +135,9 @@ const UserInput: React.FC = () => {
                 ...(userDataFromGoogle?.googleId && {
                     googleId: userDataFromGoogle.googleId,
                 }),
-                ...(userDataFromGoogle?.refreshToken && {refreshToken: userDataFromGoogle.refreshToken}),
+                ...(userDataFromGoogle?.refreshToken && {
+                    refreshToken: userDataFromGoogle.refreshToken,
+                }),
                 height,
                 weight,
                 dob,
@@ -166,7 +160,7 @@ const UserInput: React.FC = () => {
             if (response.status !== 200) {
                 toast({
                     variant: "destructive",
-                    title: "Error submitting data 2",
+                    title: "Error submitting data",
                     description: "Please try again",
                 });
                 setIsSubmitting(false);
@@ -180,10 +174,12 @@ const UserInput: React.FC = () => {
 
                 if (userSessionData) {
                     const email = userSessionData.email;
-                    console.log(email + " " + passwordDecrypted);
                     await signInUserWithNextAuth(email, passwordDecrypted!);
                 } else {
-                    router.push("/dashboard");
+                    const password = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD!;
+                    const email = session.data?.user.email as string;
+                    await signOut({ redirect: false });
+                    await signInUserWithNextAuth(email, password);
                 }
             }
         } catch (error) {

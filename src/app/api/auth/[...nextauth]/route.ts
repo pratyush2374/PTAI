@@ -63,10 +63,6 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, user, account, profile }) {
             if (user) {
-                token.id = user.id;
-                token.fullName = user.fullName;
-                token.email = user.email;
-
                 //Checking if the user is in DB
                 const isUserInDB = await prisma.user.findUnique({
                     where: {
@@ -76,30 +72,39 @@ const handler = NextAuth({
 
                 //If the user is new, set isNewUser to false else true
                 if (isUserInDB) {
-                    token.isNewUser = false;
-                    token.fullName = isUserInDB.fullName;
-                    token.email = isUserInDB.email;
-                    token.googleId = isUserInDB?.googleId as string;
-                    token.refreshToken = isUserInDB?.refreshToken as string;
+                    if (account?.provider == "google") {
+                        await prisma.user.update({
+                            where: {
+                                email: user.email,
+                            },
+                            data: {
+                                googleId: profile?.sub,
+                                profilePic: profile?.image,
+                                refreshToken: account?.refresh_token,
+                            },
+                        });
+                        token.id = isUserInDB.id;
+                        token.isNewUser = false;
+                        token.fullName = isUserInDB.fullName;
+                        token.email = isUserInDB.email;
+                        token.googleId = isUserInDB?.googleId as string;
+                        token.refreshToken = isUserInDB?.refreshToken as string;
+                    } else {
+                        token.id = isUserInDB.id;
+                        token.isNewUser = false;
+                        token.fullName = isUserInDB.fullName;
+                        token.email = isUserInDB.email;
+                        token.googleId = isUserInDB?.googleId as string;
+                        token.refreshToken = isUserInDB?.refreshToken as string;
+                    }
                 } else {
                     token.isNewUser = true;
-                }
-
-                if (account?.provider == "google") {
-                    await prisma.user.update({
-                        where: {
-                            email: user.email,
-                        },
-                        data: {
-                            googleId: profile?.sub,
-                            profilePic: profile?.image,
-                            refreshToken: account?.refresh_token,
-                        },
-                    });
-                    token.accessToken = account?.access_token;
-                    token.refreshToken = account?.refresh_token;
-                    token.googleId = profile?.sub;
-                    token.image = profile?.image;
+                    if (account?.provider == "google") {
+                        token.accessToken = account?.access_token;
+                        token.refreshToken = account?.refresh_token;
+                        token.googleId = profile?.sub;
+                        token.image = profile?.image;
+                    }
                 }
             }
             return token;

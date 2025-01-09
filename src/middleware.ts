@@ -10,8 +10,7 @@ export async function middleware(request: NextRequest) {
     const isPublicRoute =
         url.pathname === "/" ||
         url.pathname === "/sign-in" ||
-        url.pathname === "/sign-up" ||
-        url.pathname === "/user-input";
+        url.pathname === "/sign-up"
 
     // Protected routes that require authentication
     const isProtectedRoute = [
@@ -26,6 +25,7 @@ export async function middleware(request: NextRequest) {
     // If user is authenticated and trying to access public routes,
     // redirect them to dashboard
     if (token && isPublicRoute) {
+        if(token.isNewUser) return NextResponse.redirect(new URL("/user-input", request.url));
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 

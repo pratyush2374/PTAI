@@ -9,6 +9,7 @@ import HealthProblems from "./HealthProblems";
 import GoalsAndOthers from "./GoalsAndOthers";
 import { useToast } from "@/hooks/use-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import GoogleRegister from "./GoogleRegister";
 
 interface UserData {
     success: boolean;
@@ -23,6 +24,7 @@ interface UserData {
         gender: string;
         height: number;
         additionalInfo: string;
+        userNotRegisteredWithGoogle : boolean;
         preferences: {
             activityLevel: string;
             preferredExerciseType: string[];
@@ -90,7 +92,9 @@ const AccountSettings: React.FC = () => {
                     "https://www.w3schools.com/w3images/avatar2.png"
                 }
             />
-
+            {userData.user.userNotRegisteredWithGoogle && (
+                <GoogleRegister />
+            )}
             <div className="details-section mt-6 justify-center">
                 <PersonalDetails
                     fullName={user.fullName}

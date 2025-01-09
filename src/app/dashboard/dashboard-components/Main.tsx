@@ -31,11 +31,13 @@ interface ApiResponse {
     dailyStats: DailyStat;
     accessToken: string;
     accessTokenExpiry: number;
+    userNotRegisteredWithGoogle : boolean;
     timestamp: string;
 }
 
 interface ProcessedData {
     dataBoxes: {
+        userNotRegisteredWithGoogle : boolean;
         steps: number;
         calories: number;
         sleepData: number | string;
@@ -110,6 +112,7 @@ const Main: React.FC = () => {
 
             return {
                 dataBoxes: {
+                    userNotRegisteredWithGoogle : response.userNotRegisteredWithGoogle,
                     steps:
                         typeof daily.stepCount === "number"
                             ? daily.stepCount

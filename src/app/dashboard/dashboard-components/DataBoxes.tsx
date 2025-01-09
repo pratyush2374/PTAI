@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "../dashboard.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 interface DataBoxProps {
     id: string;
@@ -141,6 +142,17 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
 
     return (
         <div>
+            {dataForDataBoxes.userNotRegisteredWithGoogle && (
+                <h2 className="ml-[30px]">
+                    User not registered with Google Fit{" "}
+                    <Link
+                        href="/account-settings"
+                        className="text-blue-500 underline"
+                    >
+                        Register
+                    </Link>
+                </h2>
+            )}
             <div className={styles.dataBoxes}>
                 {dataBoxes.map((box) => (
                     <DataBox
