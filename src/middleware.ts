@@ -7,13 +7,21 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl;
 
     // Public routes that should be accessible without authentication
-    const isPublicRoute = url.pathname === "/" || 
-                         url.pathname === "/sign-in" || 
-                         url.pathname === "/sign-up" ||
-                         url.pathname === "/user-input";
+    const isPublicRoute =
+        url.pathname === "/" ||
+        url.pathname === "/sign-in" ||
+        url.pathname === "/sign-up" ||
+        url.pathname === "/user-input";
 
     // Protected routes that require authentication
-    const isProtectedRoute = url.pathname.startsWith("/dashboard");
+    const isProtectedRoute = [
+        "/dashboard",
+        "/exercise",
+        "/diet",
+        "/track-diet",
+        "/health-and-stats",
+        "/account-settings",
+    ].some((protectedPath) => url.pathname.startsWith(protectedPath));
 
     // If user is authenticated and trying to access public routes,
     // redirect them to dashboard
@@ -33,9 +41,15 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // "/",
-        // "/sign-in",
-        // "/sign-up",
-        // "/dashboard",
+        "/",
+        "/sign-in",
+        "/sign-up",
+        "/user-input",
+        "/dashboard",
+        "/exercise",
+        "/diet",
+        "/track-diet",
+        "/health-and-stats",
+        "/account-settings",
     ],
 };

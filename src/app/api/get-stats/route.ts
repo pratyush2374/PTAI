@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prismaClient";
 
+
 export async function GET(req: NextRequest) {
     try {
         const token = await getToken({ req });
