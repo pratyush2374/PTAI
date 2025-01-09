@@ -97,7 +97,7 @@ const AllExercises: React.FC<AllExercisesProps> = ({ exercises }) => {
         </div>
       ))}
 
-      <Link href="/track-exercise" className="nextLink">
+      {/* <Link href="/track-exercise" className="nextLink">
         <div className={styles.goTo}>
           Track Exercise{" "}
           <Image
@@ -107,7 +107,7 @@ const AllExercises: React.FC<AllExercisesProps> = ({ exercises }) => {
             height={18}
           />
         </div>
-      </Link>
+      </Link> */}
     </>
   );
 };

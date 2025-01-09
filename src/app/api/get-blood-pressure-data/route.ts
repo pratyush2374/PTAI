@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import prisma from "@/lib/prismaClient";
 import { z } from "zod";
 import { getToken } from "next-auth/jwt";
-import giveOverviewOfBloodPressure from "@/core/bloodPressureSummary";
+import giveOverviewOfBloodPressure from "@/core/generateReport";
 
 interface GoogleTokenResponse {
     access_token: string;

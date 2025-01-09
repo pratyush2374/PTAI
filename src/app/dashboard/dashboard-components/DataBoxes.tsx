@@ -9,7 +9,7 @@ interface DataBoxProps {
     title: string;
     value: string | number;
     unit: string;
-    statusClass: string;
+    progress: number;
     onClick: (
         id: string,
         title: string,
@@ -24,13 +24,15 @@ const DataBox: React.FC<DataBoxProps> = ({
     title,
     value,
     unit,
-    statusClass,
+    progress,
     onClick,
 }) => {
-    // Only show unit if value is a number and not zero
     const shouldShowUnit =
         (typeof value === "number" && value !== 0) ||
         (typeof value === "string" && value !== "--");
+
+    // Ensure progress is between 0 and 100
+    const normalizedProgress = Math.min(Math.max(progress, 0), 100);
 
     return (
         <div
@@ -46,9 +48,11 @@ const DataBox: React.FC<DataBoxProps> = ({
                 {value}
                 {shouldShowUnit && <span className={styles.unit}>{unit}</span>}
             </div>
-            <div className={styles.status}>
-                <div className={styles[statusClass]}></div>
-                <div className={styles.emptyStatus}></div>
+            <div className="w-full h-2 bg-gray-200 rounded-full">
+                <div 
+                    className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-in-out"
+                    style={{ width: `${normalizedProgress}%` }}
+                />
             </div>
         </div>
     );
@@ -60,7 +64,6 @@ const ExpandedBox: React.FC<{
     unit: string;
     onClose: () => void;
 }> = ({ title, value, unit, onClose }) => {
-    // Only show unit if value is a number and not zero
     const shouldShowUnit =
         (typeof value === "number" && value !== 0) ||
         (typeof value === "string" && value !== "--");
@@ -85,12 +88,41 @@ const ExpandedBox: React.FC<{
     );
 };
 
-const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
+interface DataBoxesProps {
+    dataForDataBoxes: {
+        userNotRegisteredWithGoogle: boolean;
+        stepsGoal: number;
+        sleepGoal: number;
+        caloriesToBurn: number;
+        steps: number;
+        calories: number;
+        sleepData: number | string;
+        averageHeartRate: number;
+    };
+}
+
+const DataBoxes: React.FC<DataBoxesProps> = ({ dataForDataBoxes }) => {
     const [expandedBox, setExpandedBox] = useState<{
         title: string;
         value: string | number;
         unit: string;
     } | null>(null);
+
+    // Calculate progress percentages
+    const calculateStepsProgress = () => {
+        if (!dataForDataBoxes.steps || !dataForDataBoxes.stepsGoal) return 0;
+        return (dataForDataBoxes.steps / dataForDataBoxes.stepsGoal) * 100;
+    };
+
+    const calculateCaloriesProgress = () => {
+        if (!dataForDataBoxes.calories || !dataForDataBoxes.caloriesToBurn) return 0;
+        return (dataForDataBoxes.calories / dataForDataBoxes.caloriesToBurn) * 100;
+    };
+
+    const calculateSleepProgress = () => {
+        if (!dataForDataBoxes.sleepData || !dataForDataBoxes.sleepGoal) return 0;
+        return (Number(dataForDataBoxes.sleepData) / dataForDataBoxes.sleepGoal) * 100;
+    };
 
     const dataBoxes = [
         {
@@ -99,7 +131,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             title: "Steps",
             value: dataForDataBoxes.steps || "--",
             unit: "",
-            statusClass: "filledStatusSteps",
+            progress: calculateStepsProgress(),
         },
         {
             id: "calories-box",
@@ -107,7 +139,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             title: "Calories",
             value: dataForDataBoxes.calories || "--",
             unit: " cal",
-            statusClass: "filledStatusCalories",
+            progress: calculateCaloriesProgress(),
         },
         {
             id: "sleep-box",
@@ -115,7 +147,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             title: "Sleep",
             value: dataForDataBoxes.sleepData || "--",
             unit: " hrs",
-            statusClass: "filledStatusSleep",
+            progress: calculateSleepProgress(),
         },
         {
             id: "heart-box",
@@ -123,7 +155,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
             title: "Heart Rate",
             value: dataForDataBoxes.averageHeartRate || "--",
             unit: " bpm",
-            statusClass: "filledStatusHeartRate",
+            progress: 100, // Since there's no goal for heart rate, showing full
         },
     ];
 
@@ -157,12 +189,7 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
                 {dataBoxes.map((box) => (
                     <DataBox
                         key={box.id}
-                        id={box.id}
-                        icon={box.icon}
-                        title={box.title}
-                        value={box.value}
-                        unit={box.unit}
-                        statusClass={box.statusClass}
+                        {...box}
                         onClick={handleBoxClick}
                     />
                 ))}
@@ -175,7 +202,6 @@ const DataBoxes: React.FC<any> = ({ dataForDataBoxes }) => {
                     onClose={handleClose}
                 />
             )}
-            <div className={styles.refresh}>Refresh G - fit data</div>
         </div>
     );
 };

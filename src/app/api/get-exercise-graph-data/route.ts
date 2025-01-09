@@ -93,20 +93,36 @@ export async function GET(req: NextRequest) {
                 },
             });
         }
+        const targetWeight = await prisma.stats.findFirst({
+            where: {
+                userId: token?.id,
+            },
+            select: {
+                weightGoal: true,
+            },
+        });
 
         const monthlyWeightAvg = calculateMonthlyWeightAverages(weight);
         const recentWeight = weight[weight.length - 1].weight;
-        const averageWeightLong = Object.values(monthlyWeightAvg).reduce(
-            (total, weight) => total + weight,
-            0
-        )/ Object.values(monthlyWeightAvg).length;
+        const averageWeightLong =
+            Object.values(monthlyWeightAvg).reduce(
+                (total, weight) => total + weight,
+                0
+            ) / Object.values(monthlyWeightAvg).length;
         const averageWeight = Number(averageWeightLong.toFixed(2));
-        const lastMonthChangeLong = monthlyWeightAvg["december"] - monthlyWeightAvg["november"];
+        const lastMonthChangeLong =
+            monthlyWeightAvg["december"] - monthlyWeightAvg["november"];
         const lastMonthChange = Number(lastMonthChangeLong.toFixed(2));
 
         return NextResponse.json({
             success: true,
-            data: {monthlyWeightAvg, recentWeight, averageWeight, lastMonthChange},
+            data: {
+                monthlyWeightAvg,
+                recentWeight,
+                averageWeight,
+                lastMonthChange,
+                ...targetWeight,
+            },
         });
     } catch (error: any) {
         return NextResponse.json(

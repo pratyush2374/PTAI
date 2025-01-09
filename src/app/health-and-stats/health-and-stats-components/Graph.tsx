@@ -15,6 +15,7 @@ interface WeightData {
   recentWeight: number;
   averageWeight: number;
   lastMonthChange: number;
+  weightGoal : number | null;
 }
 
 const Graph: React.FC = () => {
@@ -28,6 +29,7 @@ const Graph: React.FC = () => {
   const fetchWeightData = async () => {
     try {
       const response = await axios.get('/api/get-exercise-graph-data');
+      console.log(response.data);
       setWeightData(response.data.data);
     } catch (error) {
       toast({
@@ -68,7 +70,7 @@ const Graph: React.FC = () => {
 
   const weightDetails = [
     { value: weightData?.recentWeight ?? 0, label: "Current" },
-    { value: 72, label: "Goal" }, // Assuming goal is static
+    { value: weightData?.weightGoal ?? 0, label: "Goal" }, 
     { value: weightData?.lastMonthChange ?? 0, label: "Last 30 days" },
     { value: weightData?.averageWeight ?? 0, label: "Annual Average" },
   ];

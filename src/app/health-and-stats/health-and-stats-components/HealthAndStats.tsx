@@ -13,10 +13,10 @@ const HealthAndStats: React.FC = () => {
         <>
             <Navbar />
             <div className={styles.outerHealthAndStats}>
-                <Tabs defaultValue="weightData" className="md:w-[800px] w-[400px] mx-auto">
+                <Tabs defaultValue="userStats" className="md:w-[800px] w-[400px] mx-auto">
                     <TabsList>
-                        <TabsTrigger value="weightData">Weight Data</TabsTrigger>
                         <TabsTrigger value="userStats">User Stats</TabsTrigger>
+                        <TabsTrigger value="weightData">Weight Data</TabsTrigger>
                         <TabsTrigger value="bloodPressure" className="mr-1">Blood Pressure</TabsTrigger>
                         <TabsTrigger value="bloodGlucose">Blood Glucose</TabsTrigger>
                         <TabsTrigger value="sleepStats">Sleep Stats</TabsTrigger>

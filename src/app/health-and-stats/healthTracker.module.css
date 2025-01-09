@@ -446,4 +446,70 @@
   .heading {
     font-size: 1.5rem;
   }
+  .weightGraphOther{
+    width: 90%;
+    height: 200px;
+    margin: auto;
+  }
+
+  .weightGraph{
+    height: 200px;
+    margin: auto;
+  }
 }
+
+/* ---------------------------------- */
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.reportButton {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: fit-content;
+  margin: 1rem auto;
+  display: block;
+}
+
+.reportButton:hover {
+  background-color: #1d4ed8;
+}
+
+.reportButton:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.reportContainer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.reportHeading {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.reportContent {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+

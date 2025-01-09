@@ -39,11 +39,14 @@ const SleepStats: React.FC = () => {
     const [sleepData, setSleepData] = useState<SleepReading[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+    const [report, setReport] = useState(null);
 
     const fetchSleepData = async () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken");
-            const accessTokenExpiry = sessionStorage.getItem("accessTokenExpiry");
+            const accessTokenExpiry =
+                sessionStorage.getItem("accessTokenExpiry");
 
             if (!accessToken || !accessTokenExpiry) {
                 throw new Error("No access token found");
@@ -58,7 +61,10 @@ const SleepStats: React.FC = () => {
             );
 
             if (response.data.accessToken) {
-                sessionStorage.setItem("accessToken", response.data.accessToken);
+                sessionStorage.setItem(
+                    "accessToken",
+                    response.data.accessToken
+                );
                 sessionStorage.setItem(
                     "accessTokenExpiry",
                     response.data.accessTokenExpiry.toString()
@@ -80,6 +86,37 @@ const SleepStats: React.FC = () => {
     useEffect(() => {
         fetchSleepData();
     }, []);
+
+    const generateReport = async () => {
+        setIsGeneratingReport(true);
+        try {
+            const dataForReport = {
+                which: "Sleep Data",
+                sleepData,
+            };
+            const response = await axios.post(
+                "/api/generate-report",
+                dataForReport
+            );
+            setReport(response.data.report);
+            toast({
+                title: "Success",
+                description: "Report generated successfully",
+            });
+            window.scrollBy({
+                top: 700,
+                behavior: "smooth",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to generate report",
+                variant: "destructive",
+            });
+        } finally {
+            setIsGeneratingReport(false);
+        }
+    };
 
     const getLatestSleepData = () => {
         if (!sleepData || sleepData.length === 0) return null;
@@ -125,12 +162,27 @@ const SleepStats: React.FC = () => {
                 ))}
             </div>
 
-            <div className={styles.graphContainer}>
+            <div className={styles.weightGraph}>
                 {sleepData && <SleepGraph data={sleepData} />}
             </div>
+            <button
+                className={styles.reportButton}
+                onClick={generateReport}
+                disabled={isGeneratingReport}
+            >
+                {isGeneratingReport
+                    ? "Generating Report..."
+                    : "Generate Report"}
+            </button>
+
+            {report && (
+                <div className={styles.reportContainer}>
+                    <h2 className={styles.reportHeading}>Generated Report</h2>
+                    <p className={styles.reportContent}>{report}</p>
+                </div>
+            )}
         </div>
     );
 };
 
 export default SleepStats;
-

@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 interface DailyStat {
     stepCount: number;
     caloriesBurnt: number;
-    caloriesToBurn : number;
+    caloriesToBurn: number;
     totalHoursSlept: number | null;
     averageHeartRate: number | null;
     focusArea: string;
@@ -31,13 +31,18 @@ interface ApiResponse {
     dailyStats: DailyStat;
     accessToken: string;
     accessTokenExpiry: number;
-    userNotRegisteredWithGoogle : boolean;
+    userNotRegisteredWithGoogle: boolean;
+    stepsGoal: number;
+    sleepGoal: number;
     timestamp: string;
 }
 
 interface ProcessedData {
     dataBoxes: {
-        userNotRegisteredWithGoogle : boolean;
+        userNotRegisteredWithGoogle: boolean;
+        stepsGoal: number;
+        sleepGoal: number;
+        caloriesToBurn: number;
         steps: number;
         calories: number;
         sleepData: number | string;
@@ -112,7 +117,11 @@ const Main: React.FC = () => {
 
             return {
                 dataBoxes: {
-                    userNotRegisteredWithGoogle : response.userNotRegisteredWithGoogle,
+                    userNotRegisteredWithGoogle:
+                        response.userNotRegisteredWithGoogle,
+                    stepsGoal: response.stepsGoal,
+                    sleepGoal: response.sleepGoal,
+                    caloriesToBurn: daily.caloriesToBurn,
                     steps:
                         typeof daily.stepCount === "number"
                             ? daily.stepCount

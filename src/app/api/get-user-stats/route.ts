@@ -71,6 +71,16 @@ export async function POST(req: NextRequest) {
                             orderBy: { date: "desc" },
                         });
 
+                        const userStat = await prisma.stats.findUnique({
+                            where: {
+                                userId: user.id,
+                            },
+                            select: {
+                                stepsGoal: true,
+                                sleepGoal: true,
+                            },
+                        });
+
                         if (!dailyStats) {
                             return createErrorResponse(
                                 "Daily stats not found",
@@ -83,6 +93,7 @@ export async function POST(req: NextRequest) {
                             dailyStats,
                             accessToken,
                             accessTokenExpiry,
+                            ...userStat,
                             statsId: dailyStats.id,
                             timestamp: new Date().toISOString(),
                         });
@@ -97,7 +108,7 @@ export async function POST(req: NextRequest) {
                         { email, accessToken, accessTokenExpiry }
                     );
 
-                    const updatedStats = await prisma.dailyStat.updateMany({
+                    await prisma.dailyStat.updateMany({
                         where: {
                             email,
                             date: {
@@ -129,16 +140,27 @@ export async function POST(req: NextRequest) {
                         orderBy: { date: "desc" },
                     });
 
+                    const userStat = await prisma.stats.findUnique({
+                        where: {
+                            userId: user.id,
+                        },
+                        select: {
+                            stepsGoal: true,
+                            sleepGoal: true,
+                        },
+                    });
+
                     return NextResponse.json({
                         success: true,
                         dailyStats,
                         accessToken: updatedGFitData.data.accessToken,
                         accessTokenExpiry:
                             updatedGFitData.data.accessTokenExpiry,
+                        ...userStat,
                         statsId: dailyStats?.id,
                         timestamp: new Date().toISOString(),
                     });
-                } else if (!user.googleId){
+                } else if (!user.googleId) {
                     const dailyStats = await prisma.dailyStat.findFirst({
                         where: {
                             email,
@@ -152,11 +174,22 @@ export async function POST(req: NextRequest) {
                         },
                         orderBy: { date: "desc" },
                     });
-    
+
+                    const userStat = await prisma.stats.findUnique({
+                        where: {
+                            userId: user.id,
+                        },
+                        select: {
+                            stepsGoal: true,
+                            sleepGoal: true,
+                        },
+                    });
+
                     return NextResponse.json({
                         success: true,
                         dailyStats,
                         userNotRegisteredWithGoogle: true,
+                        ...userStat,
                         statsId: dailyStats?.id,
                         timestamp: new Date().toISOString(),
                     });
@@ -200,11 +233,22 @@ export async function POST(req: NextRequest) {
                     orderBy: { date: "desc" },
                 });
 
+                const userStat = await prisma.stats.findUnique({
+                    where: {
+                        userId: user.id,
+                    },
+                    select: {
+                        stepsGoal: true,
+                        sleepGoal: true,
+                    },
+                });
+
                 return NextResponse.json({
                     success: true,
                     dailyStats,
                     accessToken: updatedGFitData.data.accessToken,
                     accessTokenExpiry: updatedGFitData.data.accessTokenExpiry,
+                    ...userStat,
                     statsId: dailyStats?.id,
                     timestamp: new Date().toISOString(),
                 });
@@ -342,10 +386,21 @@ export async function POST(req: NextRequest) {
                     orderBy: { date: "desc" },
                 });
 
+                const userStat = await prisma.stats.findUnique({
+                    where: {
+                        userId: user.id,
+                    },
+                    select: {
+                        stepsGoal: true,
+                        sleepGoal: true,
+                    },
+                });
+
                 return NextResponse.json({
                     success: true,
                     dailyStats: dailyStatsFromDB,
                     userNotRegisteredWithGoogle: true,
+                    ...userStat,
                     statsId: dailyStat.id,
                     timestamp: new Date().toISOString(),
                 });
@@ -492,11 +547,22 @@ export async function POST(req: NextRequest) {
                     orderBy: { date: "desc" },
                 });
 
+                const userStat = await prisma.stats.findUnique({
+                    where: {
+                        userId: user.id,
+                    },
+                    select: {
+                        stepsGoal: true,
+                        sleepGoal: true,
+                    },
+                });
+
                 return NextResponse.json({
                     success: true,
                     dailyStats: dailyStatsFromDB,
                     accessToken: gfitResponse.data.accessToken,
                     accessTokenExpiry: gfitResponse.data.accessTokenExpiry,
+                    ...userStat,
                     statsId: dailyStat.id,
                     timestamp: new Date().toISOString(),
                 });

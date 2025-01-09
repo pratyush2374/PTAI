@@ -37,6 +37,8 @@ const BloodGlucose: React.FC = () => {
     >(null);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
+    const [report, setReport] = useState(null);
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
     const fetchBloodSugarData = async () => {
         try {
@@ -82,6 +84,39 @@ const BloodGlucose: React.FC = () => {
     useEffect(() => {
         fetchBloodSugarData();
     }, []);
+
+    const generateReport = async () => {
+        setIsGeneratingReport(true);
+        try {
+            const dataForReport = {
+                which: "Blood Glucose",
+                bloodSugarData,
+            };
+            console.log(bloodSugarData);
+            const response = await axios.post(
+                "/api/generate-report",
+                dataForReport
+            );
+            setReport(response.data.report);
+            toast({
+                title: "Success",
+                description: "Report generated successfully",
+            });
+
+            window.scrollBy({
+                top: 700,
+                behavior: "smooth",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to generate report",
+                variant: "destructive",
+            });
+        } finally {
+            setIsGeneratingReport(false);
+        }
+    };
 
     const getLatestReadings = () => {
         if (!bloodSugarData || bloodSugarData.length === 0) return null;
@@ -129,9 +164,26 @@ const BloodGlucose: React.FC = () => {
                 ))}
             </div>
 
-            <div className={styles.graphContainer}>
+            <div className={styles.weightGraph}>
                 {bloodSugarData && <BloodSugarGraph data={bloodSugarData} />}
             </div>
+
+            <button
+                className={styles.reportButton}
+                onClick={generateReport}
+                disabled={isGeneratingReport}
+            >
+                {isGeneratingReport
+                    ? "Generating Report..."
+                    : "Generate Report"}
+            </button>
+
+            {report && (
+                <div className={styles.reportContainer}>
+                    <h2 className={styles.reportHeading}>Generated Report</h2>
+                    <p className={styles.reportContent}>{report}</p>
+                </div>
+            )}
         </div>
     );
 };

@@ -97,7 +97,7 @@ const BloodPressureGraph: React.FC<BloodPressureGraphProps> = ({ data }) => {
   };
 
   return (
-    <div className={styles.graph}>
+    <div className={styles.weightGraphOther}>
       <Line data={chartData} options={options} />
     </div>
   );
