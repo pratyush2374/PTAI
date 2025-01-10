@@ -47,16 +47,12 @@ export async function POST(req: NextRequest) {
         if (isPlanGeneratedToday) {
             try {
                 if (accessToken && accessTokenExpiry) {
-                    console.log("You have sent access token and its expiry");
 
                     const now = Date.now();
                     const accessTokenIssueTime =
                         accessTokenExpiry - 10 * 60 * 1000;
 
                     if (now - accessTokenIssueTime < 10 * 60 * 1000) {
-                        console.log(
-                            "You have requested new data within 10 min"
-                        );
                         const dailyStats = await prisma.dailyStat.findFirst({
                             where: {
                                 email,
@@ -99,9 +95,6 @@ export async function POST(req: NextRequest) {
                         });
                     }
 
-                    console.log(
-                        "You have sent access token and its expiry, but it's been over 10 mins so we need to update it"
-                    );
                     // Update existing stats with new Google Fit data
                     const updatedGFitData = await axios.post(
                         `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
@@ -195,7 +188,6 @@ export async function POST(req: NextRequest) {
                     });
                 }
 
-                console.log("You have not sent access token and its expiry");
                 // Update existing stats with new Google Fit data where in the user has not sent access token
                 const updatedGFitData = await axios.post(
                     `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
@@ -260,7 +252,6 @@ export async function POST(req: NextRequest) {
 
         if (!user.googleId) {
             try {
-                console.log("Generating plans and fetching Google Fit data");
 
                 const [exerciseResponse, dietResponse] = await Promise.all([
                     axios.post(
@@ -411,7 +402,6 @@ export async function POST(req: NextRequest) {
         } else {
             // Generate new plans and fetch Google Fit data
             try {
-                console.log("Generating plans and fetching Google Fit data");
 
                 const [gfitResponse, exerciseResponse, dietResponse] =
                     await Promise.all([

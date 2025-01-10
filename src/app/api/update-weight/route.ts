@@ -47,7 +47,6 @@ export async function POST(req: NextRequest) {
             message: "Weight updated successfully",
         });
     } catch (error: any) {
-        console.log(error.message);
         return NextResponse.json(
             {
                 error: "Failed to generate plans",

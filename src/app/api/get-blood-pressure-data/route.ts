@@ -200,14 +200,12 @@ export async function POST(req: NextRequest) {
         const endTime = getEndOfToday();
 
         if (accessTokenExpiry! > Date.now()) {
-            console.log("Using existing access token");
             bloodPressureData = await fetchBloodPressureData(
                 accessToken as string,
                 startTime,
                 endTime
             );
         } else {
-            console.log("Getting new access token and then getting data");
             const accessTokenReceivedFromGoogle = await getGoogleAccessToken(
                 user.refreshToken
             );

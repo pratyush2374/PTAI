@@ -92,7 +92,6 @@ const BloodGlucose: React.FC = () => {
                 which: "Blood Glucose",
                 bloodSugarData,
             };
-            console.log(bloodSugarData);
             const response = await axios.post(
                 "/api/generate-report",
                 dataForReport

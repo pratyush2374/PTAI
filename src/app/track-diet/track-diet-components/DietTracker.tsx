@@ -99,7 +99,6 @@ const DietTracker: React.FC = () => {
                 statsId,
                 timestamp: new Date().toISOString(),
             };
-            console.log(submissionData);
             const response  = await axios.post("/api/track-diet", submissionData);
             toast({
                 title: "Success",

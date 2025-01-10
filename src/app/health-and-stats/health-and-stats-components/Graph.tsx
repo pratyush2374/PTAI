@@ -29,7 +29,6 @@ const Graph: React.FC = () => {
   const fetchWeightData = async () => {
     try {
       const response = await axios.get('/api/get-exercise-graph-data');
-      console.log(response.data);
       setWeightData(response.data.data);
     } catch (error) {
       toast({

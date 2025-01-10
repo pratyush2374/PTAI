@@ -98,7 +98,6 @@ const UserInput: React.FC = () => {
 
         if (res?.error) {
             setError(res.error);
-            console.log(res.error);
         } else if (res?.ok) {
             sessionStorage.removeItem("user");
             router.push("/dashboard");
@@ -121,7 +120,6 @@ const UserInput: React.FC = () => {
             let passwordDecrypted;
             if (userSessionData?.password) {
                 passwordDecrypted = decryptPassword(userSessionData!.password);
-                console.log(passwordDecrypted);
             }
 
             const response = await axios.post("/api/sign-up", {
@@ -156,7 +154,6 @@ const UserInput: React.FC = () => {
                 allergies,
                 additionalInfo,
             });
-            console.log(response.data);
             if (response.status !== 200) {
                 toast({
                     variant: "destructive",
@@ -189,7 +186,6 @@ const UserInput: React.FC = () => {
                 title: "Some Error Occured 3",
                 description: "Please try again",
             });
-            console.log(error);
             sessionStorage.removeItem("user");
         } finally {
             setIsSubmitting(false);

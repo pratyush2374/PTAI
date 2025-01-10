@@ -4,8 +4,6 @@ export const POST = async (req: NextRequest) => {
     try {
         const { name, email, message } = await req.json();
 
-        console.log(name, email, message);
-
         return NextResponse.json(
             { message: "Received data" },
             { status: 200 }

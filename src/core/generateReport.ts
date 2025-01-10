@@ -60,8 +60,7 @@ const generateReport = async (which: string, data: any, userData: any) => {
         if (!result?.response?.text) {
             throw new Error("No response received from the AI model.");
         }
-
-        console.log(result.response.text());
+        
         return result.response.text();
     } catch (error: any) {
         console.error("Error in generateReport:", error.message || error);

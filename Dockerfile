@@ -1,40 +1,38 @@
-# Stage 1: Build
-FROM node:20 AS builder
+# Stage 1: Install dependencies and build the app
+FROM node:20-alpine AS builder
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
-COPY package*.json ./
+# Install dependencies first (for caching)
+COPY package.json package-lock.json ./  
+RUN npm ci --include=dev
 
-# Install dependencies using npm ci for reproducibility
-RUN npm i --force
-
-# Copy the rest of the application code
+# Copy the application code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Stage 2: Production
+# Stage 2: Create the production image
 FROM node:20-alpine AS runner
 
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy only necessary files from the builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-
-# Set environment variables
+# Set environment variables for production
 ENV NODE_ENV=production
 ENV PORT=3000
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./
+
+# Install production dependencies
+RUN npm ci --omit=dev
 
 # Expose the port
 EXPOSE 3000
 
-
-# Start the Next.js application
+# Command to run the application
 CMD ["npm", "run", "start"]

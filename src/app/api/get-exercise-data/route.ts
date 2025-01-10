@@ -40,7 +40,6 @@ export async function GET(req: NextRequest) {
 
         if (isPlanGeneratedToday) {
             // Fetch already existing daily stats
-            console.log("Fetching existing daily stats");
             dailyStats = await prisma.dailyStat.findFirst({
                 where: {
                     email,
@@ -56,15 +55,12 @@ export async function GET(req: NextRequest) {
                 // take: 1,
             });
 
-            console.log(dailyStats);
             return NextResponse.json({
                 success: true,
                 dailyStats,
                 timestamp: new Date().toISOString(),
             });
         }
-
-        console.log("Generating plans.....");
 
         const response: any = await axios.post(
             `${process.env.NEXTAUTH_URL}/api/get-user-stats`,

@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "Reset Password - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Reset your password securely to regain access to your Personal Trainer AI account. Enter a new password and confirm to continue.",
     keywords:
@@ -15,7 +16,6 @@ export const metadata: Metadata = {
         title: "Reset Password - PTAI | Personal Trainer AI",
         description:
             "Securely reset your password to access your PTAI account and continue your fitness journey with personalized AI-powered recommendations.",
-        url: "http://localhost:3000/reset-password",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

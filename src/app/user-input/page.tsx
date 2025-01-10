@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "User Input - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Provide your personal details and fitness preferences to get AI-powered recommendations for your diet and exercise plans. Customize your fitness journey with PTAI.",
     keywords:
@@ -16,7 +17,6 @@ export const metadata: Metadata = {
         title: "User Input - PTAI | Personal Trainer AI",
         description:
             "Enter your fitness details to receive personalized diet and exercise plans powered by AI. Start your journey towards your health goals with PTAI.",
-        url: "http://localhost:3000/user-input",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

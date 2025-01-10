@@ -3,6 +3,7 @@ import Exercise from "./exercise-components/Exercise";
 
 export const metadata: Metadata = {
     title: "Exercise - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Explore personalized exercise plans tailored to your fitness goals with PTAI. Enhance your health journey with AI-driven recommendations.",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "Exercise - PTAI | Personal Trainer AI",
         description:
             "Discover personalized exercise routines to achieve your fitness goals. Leverage AI-powered insights to optimize your health journey with PTAI.",
-        url: "http://localhost:3000/exercise",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

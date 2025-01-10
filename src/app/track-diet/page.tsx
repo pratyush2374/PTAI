@@ -3,6 +3,7 @@ import TrackDiet from "./track-diet-components/TrackDiet";
 
 export const metadata: Metadata = {
     title: "Track Diet - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Track your diet data, monitor calorie intake, and follow AI-recommended meal plans to achieve your fitness goals with PTAI.",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "Track Diet - PTAI | Personal Trainer AI",
         description:
             "Monitor your diet data, track your calorie intake, and follow AI-powered meal plans to stay on top of your health goals with PTAI.",
-        url: "http://localhost:3000/track-diet",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

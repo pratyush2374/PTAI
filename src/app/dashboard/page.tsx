@@ -3,6 +3,7 @@ import Dashboard from "./dashboard-components/Dashboard";
 
 export const metadata: Metadata = {
     title: "Dashboard - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Access your personalized dashboard to track your fitness journey, view AI-recommended diet and exercise plans, and monitor progress towards your health goals.",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "Dashboard - PTAI | Personal Trainer AI",
         description:
             "View your personalized dashboard to track your fitness goals and access AI-powered diet and exercise plans. Stay motivated on your health journey with PTAI.",
-        url: "http://localhost:3000/dashboard",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

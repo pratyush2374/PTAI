@@ -36,16 +36,12 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        console.log(user);
-
         const previous7DaysExerciseFocusAreas =
             user.stats?.daily
                 .flatMap((day) =>
                     day.exercises.map((exercise) => exercise.primaryMuscle)
                 )
                 .filter((muscle): muscle is string => !!muscle) || [];
-
-        console.log(previous7DaysExerciseFocusAreas);
 
         const userData = {
             age: user.age,
@@ -67,7 +63,6 @@ export async function POST(req: NextRequest) {
         };
 
         const plan = await generateExercisePlan(userData);
-        console.log(plan);
 
         return NextResponse.json(
             {

@@ -3,6 +3,7 @@ import Diet from "./diet-components/Diet";
 
 export const metadata: Metadata = {
     title: "Diet - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Access personalized diet plans tailored to your health and fitness goals with PTAI. Optimize your nutrition with AI-powered recommendations.",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "Diet - PTAI | Personal Trainer AI",
         description:
             "Discover AI-powered diet plans customized to your fitness goals. Track your nutrition and achieve optimal health with PTAI.",
-        url: "http://localhost:3000/diet",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

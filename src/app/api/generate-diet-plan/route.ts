@@ -57,11 +57,7 @@ export async function POST(req: NextRequest) {
             previous7DaysMeals,
         };
 
-        console.log(`User data ${userData}`);
-
         const plan = await generateDietPlan(userData);
-
-        console.log(plan);
 
         return NextResponse.json(
             {

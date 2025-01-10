@@ -60,7 +60,6 @@ export const POST = async (req: NextRequest) => {
             );
         }
     } catch (error) {
-        console.error("Error changing password:", error);
         return NextResponse.json(
             { message: "Internal Server Error" },
             { status: 500 }

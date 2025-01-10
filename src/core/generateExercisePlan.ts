@@ -79,8 +79,6 @@ const generateExercisePlan = async (userData: any) => {
             throw new Error("Failed to parse JSON from response.");
         }
 
-        console.log(jsonMatch[1]);
-
         const str1 = jsonMatch[1].replace(
             /as many as possible/gi,
             `"As many as possible"`

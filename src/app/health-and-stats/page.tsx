@@ -3,6 +3,7 @@ import HealthAndStats from "./health-and-stats-components/HealthAndStats";
 
 export const metadata: Metadata = {
     title: "Health & Stats - PTAI | Personal Trainer AI",
+    metadataBase: new URL('http://localhost:3000'),
     description:
         "Track your health stats, monitor progress, and view AI-powered recommendations to achieve your fitness goals with PTAI.",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "Health & Stats - PTAI | Personal Trainer AI",
         description:
             "Monitor your health stats and track progress with AI-recommended fitness plans. Stay on top of your health journey with PTAI.",
-        url: "http://localhost:3000/health-and-stats",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

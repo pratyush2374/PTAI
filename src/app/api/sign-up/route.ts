@@ -112,7 +112,6 @@ export async function POST(req: NextRequest) {
             { status: 200 }
         );
     } catch (error) {
-        console.log(`Error creating user: ${error}`);
         return NextResponse.json(
             { message: "Internal Server Error", error },
             { status: 500 }

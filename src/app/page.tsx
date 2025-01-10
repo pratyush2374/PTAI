@@ -3,6 +3,7 @@ import LandingPage from "@/app/page-components/Landing";
 
 export const metadata: Metadata = {
     title: "PTAI - Personal Trainer AI",
+    metadataBase: new URL("http://localhost:3000"),
     description:
         "PTAI is an AI-powered personal fitness app that tailors diet and exercise plans to your individual goals. Start your journey towards a healthier, fitter you today!",
     keywords:
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
         title: "PTAI - Personal Trainer AI",
         description:
             "Transform your fitness journey with personalized, AI-powered diet and exercise plans tailored to your unique goals.",
-        url: "http://localhost:3000",
         siteName: "PTAI - Personal Trainer AI",
         images: [
             {

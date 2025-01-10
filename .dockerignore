@@ -1,0 +1,50 @@
+# Ignore node_modules and other build artifacts
+node_modules
+.pnpm-debug.log
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+.pnpm-lock.yaml
+.yarn
+.yarnrc.yml
+yarn.lock
+
+# Local environment files
+.env.local
+.env.development
+.env.production
+.env.test
+.env
+
+# Output directories
+.next
+.vercel
+dist
+
+# Logs
+logs
+*.log
+*.log.*
+
+# OS or editor-specific files
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+.vscode-test
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage
+
+# Git-related files
+.git
+.gitignore

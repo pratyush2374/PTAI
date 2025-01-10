@@ -100,7 +100,7 @@ function processData(response: any): any {
                 0
             ) / heartRateArray.length;
     } else {
-        console.log("heartRateArray is not a valid array or is empty.");
+        console.log("empty array");
     }
 
     const dataToSend = {
@@ -149,8 +149,7 @@ export async function POST(req: NextRequest) {
         }
 
         let fitnessResponse;
-        if (accessTokenExpiry! > Date.now()) {
-            console.log("Using existing access token");
+        if (accessTokenExpiry! > Date.now()) { 
             const startTime = getStartOfDay();
             fitnessResponse = await fetchFitnessData(
                 accessToken as string,
@@ -169,7 +168,6 @@ export async function POST(req: NextRequest) {
             );
         } else {
             // Get new access token
-            console.log("Getting new access token and then getting data");
             const accessTokenReceivedFromGoogle = await getGoogleAccessToken(
                 user.refreshToken
             );

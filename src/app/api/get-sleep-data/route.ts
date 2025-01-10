@@ -176,14 +176,14 @@ export async function POST(req: NextRequest) {
     try {
         const { accessToken, accessTokenExpiry } = await req.json();
         const token = await getToken({ req });
-        const email = token?.email || "kr.pratyushsharma2374@gmail.com";
+        const email = token?.email;
 
-        // if (!token) {
-        //     return NextResponse.json(
-        //         { message: "Unauthorized: Please log in" },
-        //         { status: 401 }
-        //     );
-        // }
+        if (!token) {
+            return NextResponse.json(
+                { message: "Unauthorized: Please log in" },
+                { status: 401 }
+            );
+        }
 
         const user = await prisma.user.findUnique({
             where: { email },
@@ -202,14 +202,12 @@ export async function POST(req: NextRequest) {
         const endTime = getEndOfToday();
 
         if (accessTokenExpiry! > Date.now()) {
-            console.log("Using existing access token");
             sleepData = await fetchSleepData(
                 accessToken as string,
                 startTime,
                 endTime
             );
         } else {
-            console.log("Getting new access token and then getting data");
             const accessTokenReceivedFromGoogle = await getGoogleAccessToken(
                 user.refreshToken
             );

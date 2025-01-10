@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
         // Fetch already existing daily stats
-        console.log("Fetching existing daily stats");
 
         const dailyStats = await prisma.dailyStat.findFirst({
             where: {
