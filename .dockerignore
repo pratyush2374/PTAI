@@ -1,50 +1,45 @@
-# Ignore node_modules and other build artifacts
+# Dependencies
 node_modules
-.pnpm-debug.log
-npm-debug.log
+npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-lock.yaml
-.yarn
-.yarnrc.yml
-yarn.lock
 
-# Local environment files
-.env.local
-.env.development
-.env.production
-.env.test
-.env
-
-# Output directories
+# Next.js build output
 .next
-.vercel
-dist
+out
 
-# Logs
-logs
-*.log
-*.log.*
-
-# OS or editor-specific files
-.DS_Store
-Thumbs.db
-.idea
-.vscode
-.vscode-test
-
-# Temporary files
-*.swp
-*.swo
-*.tmp
-*.temp
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory
-coverage
-
-# Git-related files
+# Version control
 .git
 .gitignore
+
+# Environment files
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs and editors
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose*
+
+# Testing
+coverage
+*.test.js
+*.spec.js
+
+# Misc
+README.md
+LICENSE
+*.log

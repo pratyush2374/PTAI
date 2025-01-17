@@ -24,15 +24,13 @@ ENV PORT=3000
 # Set the working directory
 WORKDIR /app
 
-# Copy the built application from the builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package.json ./
-
-# Install production dependencies
-RUN npm ci --omit=dev
+# Copy only the necessary files from standalone build
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # Expose the port
 EXPOSE 3000
 
-# Command to run the application
-CMD ["npm", "run", "start"]
+# Run the standalone server directly
+CMD ["node", "server.js"]
