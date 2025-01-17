@@ -17,6 +17,7 @@ const createErrorResponse = (message: string, status: number = 500) => {
 export async function POST(req: NextRequest) {
     try {
         const { email, accessToken, accessTokenExpiry } = await req.json();
+        console.log(`Email: ${email} and NEXTAUTH_URL: ${process.env.NEXTAUTH_URL}`);
         // Fetch user data with error handling
         if (!email) {
             return createErrorResponse("You are not logged in", 401);

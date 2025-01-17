@@ -7,8 +7,6 @@ export async function middleware(request: NextRequest) {
         req: request,
         secret: process.env.NEXTAUTH_SECRET,
     });
-    console.log("Middleware Token:", token);
-    console.log("Current Path:", request.nextUrl.pathname);
     const url = request.nextUrl;
 
     // Public routes that should be accessible without authentication
