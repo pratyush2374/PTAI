@@ -17,7 +17,7 @@ const createErrorResponse = (message: string, status: number = 500) => {
 export async function POST(req: NextRequest) {
     try {
         const { email, accessToken, accessTokenExpiry } = await req.json();
-        console.log(`Email: ${email} and NEXTAUTH_URL: ${process.env.NEXTAUTH_URL}`);
+        console.log(`Email: ${email} and CLIENT_URL: ${process.env.CLIENT_URL}`);
         // Fetch user data with error handling
         if (!email) {
             return createErrorResponse("You are not logged in", 401);
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
                     // Update existing stats with new Google Fit data
                     const updatedGFitData = await axios.post(
-                        `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
+                        `${process.env.CLIENT_URL}/api/get-gfit-data`,
                         { email, accessToken, accessTokenExpiry }
                     );
 
@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
 
                 // Update existing stats with new Google Fit data where in the user has not sent access token
                 const updatedGFitData = await axios.post(
-                    `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
+                    `${process.env.CLIENT_URL}/api/get-gfit-data`,
                     { email }
                 );
 
@@ -256,11 +256,11 @@ export async function POST(req: NextRequest) {
 
                 const [exerciseResponse, dietResponse] = await Promise.all([
                     axios.post(
-                        `${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`,
+                        `${process.env.CLIENT_URL}/api/generate-exercise-plan`,
                         { email }
                     ),
                     axios.post(
-                        `${process.env.NEXTAUTH_URL}/api/generate-diet-plan`,
+                        `${process.env.CLIENT_URL}/api/generate-diet-plan`,
                         { email }
                     ),
                 ]).catch((error) => {
@@ -407,15 +407,15 @@ export async function POST(req: NextRequest) {
                 const [gfitResponse, exerciseResponse, dietResponse] =
                     await Promise.all([
                         axios.post(
-                            `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
+                            `${process.env.CLIENT_URL}/api/get-gfit-data`,
                             { email }
                         ),
                         axios.post(
-                            `${process.env.NEXTAUTH_URL}/api/generate-exercise-plan`,
+                            `${process.env.CLIENT_URL}/api/generate-exercise-plan`,
                             { email }
                         ),
                         axios.post(
-                            `${process.env.NEXTAUTH_URL}/api/generate-diet-plan`,
+                            `${process.env.CLIENT_URL}/api/generate-diet-plan`,
                             { email }
                         ),
                     ]).catch((error) => {

@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         }
 
         const response: any = await axios.post(
-            `${process.env.NEXTAUTH_URL}/api/get-user-stats`,
+            `${process.env.CLIENT_URL}/api/get-user-stats`,
             { email }
         );
 

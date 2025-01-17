@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         }
 
         const response: any = await axios.post(
-            `${process.env.NEXTAUTH_URL}/api/get-gfit-data`,
+            `${process.env.CLIENT_URL}/api/get-gfit-data`,
             { email, accessToken, accessTokenExpiry }
         );
 

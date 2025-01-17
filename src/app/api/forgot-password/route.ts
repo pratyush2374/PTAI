@@ -17,9 +17,9 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
-        // Check if the NEXTAUTH_URL is configured
-        if (!process.env.NEXTAUTH_URL) {
-            console.error("NEXTAUTH_URL environment variable is not set");
+        // Check if the CLIENT_URL is configured
+        if (!process.env.CLIENT_URL) {
+            console.error("CLIENT_URL environment variable is not set");
             return NextResponse.json(
                 { message: "Server configuration error" },
                 { status: 500 }
@@ -47,7 +47,7 @@ export const POST = async (req: NextRequest) => {
 
         // Create a password reset link
         const resetLink = `${
-            process.env.NEXTAUTH_URL
+            process.env.CLIENT_URL
         }/reset-password?token=${encodeURIComponent(token)}`;
 
         // Send the reset email
