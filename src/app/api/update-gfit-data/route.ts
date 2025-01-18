@@ -4,7 +4,7 @@ import axios from "axios";
 import prisma from "@/lib/prismaClient";
 
 export const runtime = 'nodejs'
-export const maxDuration = 300
+export const maxDuration = 59
 
 export async function POST(req: NextRequest) {
     try {
