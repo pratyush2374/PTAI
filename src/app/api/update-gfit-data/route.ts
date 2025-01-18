@@ -3,6 +3,9 @@ import { getToken } from "next-auth/jwt";
 import axios from "axios";
 import prisma from "@/lib/prismaClient";
 
+export const runtime = 'nodejs'
+export const maxDuration = 300
+
 export async function POST(req: NextRequest) {
     try {
         const { accessToken, accessTokenExpiry } = await req.json();

@@ -3,6 +3,9 @@ import { getToken } from "next-auth/jwt";
 import axios, { AxiosError } from "axios";
 import prisma from "@/lib/prismaClient";
 
+export const runtime = 'nodejs'
+export const maxDuration = 300
+
 // Helper function to create consistent error responses
 const createErrorResponse = (message: string, status: number = 500) => {
     return NextResponse.json(
