@@ -13,7 +13,9 @@ const generateDietPlan = async (userData: any) => {
         - Weight: ${userData.weight} kg
         - Gender: ${userData.gender}
         - Activity Level: ${userData.activityLevel}
-        - Macronutrient Preferences: ${userData.macronutrientPreferences.join(", ")}
+        - Macronutrient Preferences: ${userData.macronutrientPreferences.join(
+            ", "
+        )}
         - Dietary Preferences: ${userData.dietaryPreferences.join(", ")}
         - Allergies: ${userData.allergies.join(", ")}
         - Health Problems: ${userData.healthProblems.join(", ")}
@@ -22,6 +24,7 @@ const generateDietPlan = async (userData: any) => {
         
         Generate a strict JSON response following this exact format for a daily meal plan. The response MUST be valid JSON with no markdown formatting:
         Give indian meals and cuisine preferably
+        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
         {
             "totalCalories": "integer",
             "proteinGrams": "integer",
@@ -61,6 +64,7 @@ const generateDietPlan = async (userData: any) => {
         6. Respect the user's macronutrient preferences
         7. Account for health problems in meal selection
         8. Generate total 4 meals only for the day and consider the user's fitness goals 
+        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
         `;
 
         const result = await model.generateContent(prompt);

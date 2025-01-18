@@ -29,6 +29,7 @@ const generateExercisePlan = async (userData: any) => {
         
         I would like you to generate a JSON output based on the following template and match the user's preferences and requirements. The output should be a valid and strict JSON format.
         Generate a strict JSON response following this exact format. The response MUST be valid JSON with no markdown formatting:
+        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
         
          Expected output format:
   
@@ -67,6 +68,7 @@ const generateExercisePlan = async (userData: any) => {
         3. The response must be pure JSON with no markdown or code blocks
         4. Equipment arrays should be empty ([]) if no equipment is needed
         5. All string values must be specific and actionable
+        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
         `;
 
         const result = await model.generateContent(prompt);
