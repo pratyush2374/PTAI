@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "@/lib/prismaClient";
 
 const handler = NextAuth({
-    adapter : PrismaAdapter(prisma) as any,
+    // adapter : PrismaAdapter(prisma) as any,
     providers: [
         CredentialsProvider({
             id: "credentials",

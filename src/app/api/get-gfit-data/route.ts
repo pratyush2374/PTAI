@@ -40,7 +40,7 @@ async function getGoogleAccessToken(refreshToken: string): Promise<string> {
 
         return response.data.access_token;
     } catch (error) {
-        console.error("Failed to refresh Google access token:", error);
+        console.error(`Failed to refresh Google access token:, ${error}`);
         throw new Error("Failed to refresh Google access token");
     }
 }
@@ -75,7 +75,7 @@ async function fetchFitnessData(
 
         return response.data;
     } catch (error) {
-        console.error("Failed to fetch fitness data:", error);
+        console.error(`Failed to fetch fitness data:, ${error}`);
         throw new Error("Failed to fetch fitness data from Google");
     }
 }
@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
             );
         }
     } catch (error) {
-        console.error("Error in POST handler:", error);
+        console.error(`Error in POST handler:, ${error}`);
 
         if (error instanceof z.ZodError) {
             return NextResponse.json(
