@@ -160,6 +160,8 @@ const generateDietPlan = async (
     7. If "Jain" then include a pure Jainism diet.
     8. If "No pork" and "No egg" then strictly don't include them in the diet 
     Customize the meal plan to align with these specific macronutrient and dietary preferences.
+
+    Give only 4 meals for the day !
     `;
 
     // Generate the diet plan
