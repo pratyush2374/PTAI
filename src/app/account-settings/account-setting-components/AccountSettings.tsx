@@ -10,6 +10,7 @@ import GoalsAndOthers from "./GoalsAndOthers";
 import { useToast } from "@/hooks/use-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import GoogleRegister from "./GoogleRegister";
+import Loading from "@/app/(common-components)/Loading";
 
 interface UserData {
     success: boolean;
@@ -77,7 +78,7 @@ const AccountSettings: React.FC = () => {
         fetchUserData();
     }, []);
 
-    if (!userData) return <LoadingSpinner />;
+    if (!userData) return <Loading />;
 
     const { user } = userData;
 

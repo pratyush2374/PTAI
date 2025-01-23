@@ -3,7 +3,7 @@ import Dashboard from "./dashboard-components/Dashboard";
 
 export const metadata: Metadata = {
     title: "Dashboard - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Access your personalized dashboard to track your fitness journey, view AI-recommended diet and exercise plans, and monitor progress towards your health goals.",
     keywords:

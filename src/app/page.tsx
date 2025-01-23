@@ -3,7 +3,7 @@ import LandingPage from "@/app/page-components/Landing";
 
 export const metadata: Metadata = {
     title: "PTAI - Personal Trainer AI",
-    metadataBase: new URL("http://localhost:3000"),
+    metadataBase: new URL("https://ptai.vercel.app"),
     description:
         "PTAI is an AI-powered personal fitness app that tailors diet and exercise plans to your individual goals. Start your journey towards a healthier, fitter you today!",
     keywords:

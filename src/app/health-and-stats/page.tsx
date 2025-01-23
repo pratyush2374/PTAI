@@ -3,7 +3,7 @@ import HealthAndStats from "./health-and-stats-components/HealthAndStats";
 
 export const metadata: Metadata = {
     title: "Health & Stats - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Track your health stats, monitor progress, and view AI-powered recommendations to achieve your fitness goals with PTAI.",
     keywords:

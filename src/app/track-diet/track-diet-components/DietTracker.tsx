@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import styles from "../trackDiet.module.css";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/(common-components)/Loading";
 
 interface MealResponse {
     name: string;
@@ -99,7 +100,10 @@ const DietTracker: React.FC = () => {
                 statsId,
                 timestamp: new Date().toISOString(),
             };
-            const response  = await axios.post("/api/track-diet", submissionData);
+            const response = await axios.post(
+                "/api/track-diet",
+                submissionData
+            );
             toast({
                 title: "Success",
                 description: `Diet tracking submitted successfully!, ${response.data?.message}`,
@@ -136,126 +140,99 @@ const DietTracker: React.FC = () => {
         return mealData.filter((meal) => meal.type === type.toUpperCase());
     };
 
-    return (
+    return isLoading ? (
+        <Loading />
+    ) : (
         <div className={styles.dietTracker}>
             <h1 className={styles.heading}>Track Your Diet</h1>
-
-            {isLoading ? (
-                <h1 className="text-center">Loading...</h1>
-            ) : (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    {["BREAKFAST", "LUNCH", "SNACK", "DINNER"].map(
-                        (mealType) => (
-                            <div
-                                key={mealType}
-                                className={styles.mealSectionLast}
-                            >
-                                <h2 className={styles.mealType}>
-                                    {mealType.toLowerCase()}
-                                </h2>
-                                {getMealsByType(mealType).map((meal, index) => (
-                                    <div
-                                        key={index}
-                                        className={styles.mealCard}
-                                    >
-                                        <div className={styles.mealHeader}>
-                                            <h3>{meal.name}</h3>
-                                            <div
-                                                className={
-                                                    styles.responseButtons
-                                                }
-                                            >
-                                                <button
-                                                    type="button"
-                                                    className={`${
-                                                        styles.ateButton
-                                                    } ${
-                                                        formValues?.responses?.[
-                                                            meal.name
-                                                        ] === "ate"
-                                                            ? styles.selected
-                                                            : ""
-                                                    }`}
-                                                    onClick={() =>
-                                                        handleResponse(
-                                                            meal.name,
-                                                            "ate"
-                                                        )
-                                                    }
-                                                >
-                                                    Ate
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className={`${
-                                                        styles.didNotEatButton
-                                                    } ${
-                                                        formValues?.responses?.[
-                                                            meal.name
-                                                        ] === "didNotEat"
-                                                            ? styles.selected
-                                                            : ""
-                                                    }`}
-                                                    onClick={() =>
-                                                        handleResponse(
-                                                            meal.name,
-                                                            "didNotEat"
-                                                        )
-                                                    }
-                                                >
-                                                    Didn't Eat
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {formValues?.responses?.[meal.name] ===
-                                            "didNotEat" && (
-                                            <div
-                                                className={styles.didNotEatForm}
-                                            >
-                                                <label
-                                                    htmlFor={`input-${meal.name}`}
-                                                >
-                                                    What did you eat instead?
-                                                    (If any) - Describe in detail eg -
-                                                    120g of cooked rice with 100g of cooked black gram..
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id={`input-${meal.name}`}
-                                                    placeholder="Enter the food you ate"
-                                                    onChange={(e) =>
-                                                        handleAlternateFood(
-                                                            meal.name,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    className={
-                                                        styles.alternateInput
-                                                    }
-                                                    // required={
-                                                    //     formValues?.responses?.[
-                                                    //         meal.name
-                                                    //     ] === "didNotEat"
-                                                    // }
-                                                />
-                                            </div>
-                                        )}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {["BREAKFAST", "LUNCH", "SNACK", "DINNER"].map((mealType) => (
+                    <div key={mealType} className={styles.mealSectionLast}>
+                        <h2 className={styles.mealType}>
+                            {mealType.toLowerCase()}
+                        </h2>
+                        {getMealsByType(mealType).map((meal, index) => (
+                            <div key={index} className={styles.mealCard}>
+                                <div className={styles.mealHeader}>
+                                    <h3>{meal.name}</h3>
+                                    <div className={styles.responseButtons}>
+                                        <button
+                                            type="button"
+                                            className={`${styles.ateButton} ${
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "ate"
+                                                    ? styles.selected
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                handleResponse(meal.name, "ate")
+                                            }
+                                        >
+                                            Ate
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`${
+                                                styles.didNotEatButton
+                                            } ${
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "didNotEat"
+                                                    ? styles.selected
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                handleResponse(
+                                                    meal.name,
+                                                    "didNotEat"
+                                                )
+                                            }
+                                        >
+                                            Didn't Eat
+                                        </button>
                                     </div>
-                                ))}
+                                </div>
+                                {formValues?.responses?.[meal.name] ===
+                                    "didNotEat" && (
+                                    <div className={styles.didNotEatForm}>
+                                        <label htmlFor={`input-${meal.name}`}>
+                                            What did you eat instead? (If any) -
+                                            Describe in detail eg - 120g of
+                                            cooked rice with 100g of cooked
+                                            black gram..
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id={`input-${meal.name}`}
+                                            placeholder="Enter the food you ate"
+                                            onChange={(e) =>
+                                                handleAlternateFood(
+                                                    meal.name,
+                                                    e.target.value
+                                                )
+                                            }
+                                            className={styles.alternateInput}
+                                            // required={
+                                            //     formValues?.responses?.[
+                                            //         meal.name
+                                            //     ] === "didNotEat"
+                                            // }
+                                        />
+                                    </div>
+                                )}
                             </div>
-                        )
-                    )}
-                    <button
-                        type="submit"
-                        className={styles.submitButton}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting
-                            ? "Submitting..."
-                            : "Submit Diet Tracking"}
-                    </button>
-                </form>
-            )}
+                        ))}
+                    </div>
+                ))}
+                <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? "Submitting..." : "Submit Diet Tracking"}
+                </button>
+            </form>
         </div>
     );
 };

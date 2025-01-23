@@ -1,87 +1,172 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
-const generateDietPlan = async (userData: any) => {
-    try {
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+interface UserData {
+    age: number;
+    height: number;
+    weight: number;
+    gender: string;
+    activityLevel: string;
+    macronutrientPreferences: string[];
+    dietaryPreferences: string[];
+    allergies: string[];
+    healthProblems: string[];
+    fitnessGoals: string[];
+    previous7DaysMeals: any[];
+}
 
-        const prompt = `
-        Given the following user data:
-        
-        - Age: ${userData.age}
-        - Height: ${userData.height} cm
-        - Weight: ${userData.weight} kg
-        - Gender: ${userData.gender}
-        - Activity Level: ${userData.activityLevel}
-        - Macronutrient Preferences: ${userData.macronutrientPreferences.join(
-            ", "
-        )}
-        - Dietary Preferences: ${userData.dietaryPreferences.join(", ")}
-        - Allergies: ${userData.allergies.join(", ")}
-        - Health Problems: ${userData.healthProblems.join(", ")}
-        - Fitness Goals: ${userData.fitnessGoals.join(", ")}
-        - Previous 7 Days Meals: ${userData.previous7DaysMeals.join(", ")}
-        
-        Generate a strict JSON response following this exact format for a daily meal plan. The response MUST be valid JSON with no markdown formatting:
-        Give indian meals and cuisine preferably
-        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
-        {
-            "totalCalories": "integer",
-            "proteinGrams": "integer",
-            "carbsGrams": "integer",
-            "fatsGrams": "integer",
-            "fibreGrams": "integer",
-            "waterIntake": "integer (in ml)",
-            "numberOfMeals": "integer",
-            "specialConsiderations": "string",
-            "meals": [
-                {
-                    "type": "BREAKFAST | LUNCH | SNACK | DINNER",
-                    "name": "string",
-                    "category": "array of strings",
-                    "weight": "float (in grams)",
-                    "calories": "integer",
-                    "protein": "float",
-                    "carbs": "float",
-                    "fats": "float",
-                    "fibre": "float",
-                    "otherNutrients": "string (comma-separated key nutrients)",
-                    "ingredients": "array of strings",
-                    "allergens": "string (or null if none)",
-                    "cookingTime": "integer (in minutes)",
-                    "recipe": "string (detailed step-by-step instructions)"
-                }
-                ...more meals based on numberOfMeals
-            ]
-        }
+interface Meal {
+    type: "BREAKFAST" | "LUNCH" | "SNACK" | "DINNER";
+    name: string;
+    category: string[];
+    weight: number;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+    fibre: number;
+    otherNutrients: string;
+    ingredients: string[];
+    allergens: string | null;
+    cookingTime: number;
+    recipe: string;
+}
 
-        IMPORTANT RULES:
-        1. All number fields must be specific values (calories, nutrients, etc.)
-        2. Meals must be balanced and spread throughout the day
-        3. The response must be pure JSON with no markdown
-        4. Consider user's allergies and dietary preferences strictly
-        5. Provide detailed, actionable recipes
-        6. Respect the user's macronutrient preferences
-        7. Account for health problems in meal selection
-        8. Generate total 4 meals only for the day and consider the user's fitness goals 
-        If you don't give the data in the format that i am asking for then it will cause an api issue giving 500 error and thus causing bad user experience and loss of money as well so please give me the data in very very very very very very strict format as i have asked you PLEASE
-        `;
+interface DietPlanOutput {
+    totalCalories: number;
+    proteinGrams: number;
+    carbsGrams: number;
+    fatsGrams: number;
+    fibreGrams: number;
+    waterIntake: number;
+    numberOfMeals: number;
+    specialConsiderations: string;
+    meals: Meal[];
+}
 
-        const result = await model.generateContent(prompt);
-        if (!result?.response?.text) {
-            throw new Error("No response received from the AI model.");
-        }
+const generateDietPlan = async (
+    userData: UserData
+): Promise<DietPlanOutput> => {
+    console.log(userData);
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-        const jsonMatch = result.response.text().match(/```json([\s\S]+?)```/);
-        if (!jsonMatch) {
-            throw new Error("Failed to parse JSON from response.");
-        }
+    // Define the schema for the diet plan response
+    const schema = {
+        type: SchemaType.OBJECT,
+        properties: {
+            totalCalories: { type: SchemaType.NUMBER },
+            proteinGrams: { type: SchemaType.NUMBER },
+            carbsGrams: { type: SchemaType.NUMBER },
+            fatsGrams: { type: SchemaType.NUMBER },
+            fibreGrams: { type: SchemaType.NUMBER },
+            waterIntake: { type: SchemaType.NUMBER },
+            numberOfMeals: { type: SchemaType.NUMBER },
+            specialConsiderations: { type: SchemaType.STRING },
+            meals: {
+                type: SchemaType.ARRAY,
+                items: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        type: {
+                            type: SchemaType.STRING,
+                            enum: ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
+                        },
+                        name: { type: SchemaType.STRING },
+                        category: {
+                            type: SchemaType.ARRAY,
+                            items: { type: SchemaType.STRING },
+                        },
+                        weight: { type: SchemaType.NUMBER },
+                        calories: { type: SchemaType.NUMBER },
+                        protein: { type: SchemaType.NUMBER },
+                        carbs: { type: SchemaType.NUMBER },
+                        fats: { type: SchemaType.NUMBER },
+                        fibre: { type: SchemaType.NUMBER },
+                        otherNutrients: { type: SchemaType.STRING },
+                        ingredients: {
+                            type: SchemaType.ARRAY,
+                            items: { type: SchemaType.STRING },
+                        },
+                        allergens: {
+                            type: SchemaType.STRING,
+                            nullable: true,
+                        },
+                        cookingTime: { type: SchemaType.NUMBER },
+                        recipe: { type: SchemaType.STRING },
+                    },
+                    required: [
+                        "type",
+                        "name",
+                        "category",
+                        "weight",
+                        "calories",
+                        "protein",
+                        "carbs",
+                        "fats",
+                        "fibre",
+                        "otherNutrients",
+                        "ingredients",
+                        "allergens",
+                        "cookingTime",
+                        "recipe",
+                    ],
+                },
+            },
+        },
+        required: [
+            "totalCalories",
+            "proteinGrams",
+            "carbsGrams",
+            "fatsGrams",
+            "fibreGrams",
+            "waterIntake",
+            "numberOfMeals",
+            "specialConsiderations",
+            "meals",
+        ],
+    };
 
-        return JSON.parse(jsonMatch[1]);
-    } catch (error: any) {
-        console.error("Error in generateDietPlan:", error.message || error);
-        throw new Error("Failed to generate diet plan. Please try again.");
-    }
+    // Configure the model
+    const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: schema,
+        },
+    });
+
+    // Create the prompt
+    const prompt = `Generate a personalized diet plan based on the following user data:
+
+    Age: ${userData.age}
+    Height: ${userData.height} cm
+    Weight: ${userData.weight} kg
+    Gender: ${userData.gender}
+    Activity Level: ${userData.activityLevel}
+    Macronutrient Preferences: ${userData.macronutrientPreferences.join(", ")}
+    Dietary Preferences: ${userData.dietaryPreferences.join(", ")}
+    Allergies: ${userData.allergies.join(", ")}
+    Health Problems: ${userData.healthProblems.join(", ")}
+    Fitness Goals: ${userData.fitnessGoals.join(", ")}
+
+    These are the previous 7 days meals of the user: ${userData.previous7DaysMeals.join(", ")} so avoid repeating those meals again in the plan.
+
+    Special Dietary Considerations:
+    1. If "Strict Vegetarian" is present, ONLY use vegetarian protein sources like tofu, legumes, nuts, and seeds.
+    2. If "Vegan" is present, exclude ALL animal products including dairy and eggs.
+    3. For "High Protein", prioritize protein-rich ingredients.
+    4. For "Low Carb", minimize carbohydrate-heavy foods.
+    5. For "Keto", focus on high-fat, low-carb options.
+    6. For "Gluten Free", avoid wheat and gluten-containing grains.
+    7. If "Jain" then include a pure Jainism diet.
+    8. If "No pork" and "No egg" then strictly don't include them in the diet 
+    Customize the meal plan to align with these specific macronutrient and dietary preferences.
+    `;
+
+    // Generate the diet plan
+    const result = await model.generateContent(prompt);
+    const dietPlanData = JSON.parse(result.response.text());
+
+    return dietPlanData;
 };
 
 export default generateDietPlan;

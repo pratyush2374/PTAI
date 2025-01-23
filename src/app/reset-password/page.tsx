@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "Reset Password - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Reset your password securely to regain access to your Personal Trainer AI account. Enter a new password and confirm to continue.",
     keywords:

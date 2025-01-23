@@ -37,11 +37,10 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const previous7DaysMeals = 
+        const previous7DaysMeals =
             user.stats?.daily
-                .flatMap((day) => 
-                    day.meals.map((meal) => meal.type)
-                ) || [];
+                .map((day) => day.meals.map((meal) => meal.name))
+                .flat() || [];
 
         const userData = {
             age: user.age,
@@ -49,7 +48,8 @@ export async function POST(req: NextRequest) {
             weight: user.weights[0]?.weight || 65,
             gender: user.gender.toLowerCase(),
             activityLevel: user.preferences?.activityLevel || "sedentary",
-            macronutrientPreferences: user.preferences?.macronutrientPreferences || [],
+            macronutrientPreferences:
+                user.preferences?.macronutrientPreferences || [],
             dietaryPreferences: user.healthAndDietary?.dietaryPreferences || [],
             allergies: user.healthAndDietary?.allergies || [],
             healthProblems: user.healthAndDietary?.healthProblems || [],
@@ -71,7 +71,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 error: "Failed to generate diet plan",
-                details: error instanceof Error ? error.message : "Unknown error",
+                details:
+                    error instanceof Error ? error.message : "Unknown error",
             },
             { status: 500 }
         );

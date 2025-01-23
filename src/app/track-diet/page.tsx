@@ -3,7 +3,7 @@ import TrackDiet from "./track-diet-components/TrackDiet";
 
 export const metadata: Metadata = {
     title: "Track Diet - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Track your diet data, monitor calorie intake, and follow AI-recommended meal plans to achieve your fitness goals with PTAI.",
     keywords:

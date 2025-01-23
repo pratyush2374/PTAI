@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../healthTracker.module.css";
 import { useToast } from "@/hooks/use-toast";
+import Loading from "@/app/(common-components)/Loading";
 
 interface UserStatsData {
     success: boolean;
@@ -65,7 +66,7 @@ const UserStats: React.FC = () => {
         fetchData();
     }, []);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loading />;
     if (!data) return <div>No data available</div>;
 
     const { userStats } = data;

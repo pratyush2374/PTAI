@@ -33,7 +33,7 @@ const SignIn = () => {
     useEffect(() => {
         if (session.status === "authenticated") {
             if (session.data.user.isNewUser === true) {
-                router.push("/sign-up");
+                router.push("/user-input");
             } else {
                 router.push("/dashboard");
             }

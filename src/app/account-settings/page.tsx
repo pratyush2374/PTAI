@@ -5,7 +5,7 @@ import Navbar from "../(common-components)/Navbar";
 
 export const metadata: Metadata = {
     title: "Account Settings - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Manage your account settings on PTAI. Update your profile, change your preferences, and securely manage your account for a seamless fitness experience.",
     keywords:

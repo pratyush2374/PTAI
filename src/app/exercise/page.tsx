@@ -3,7 +3,7 @@ import Exercise from "./exercise-components/Exercise";
 
 export const metadata: Metadata = {
     title: "Exercise - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Explore personalized exercise plans tailored to your fitness goals with PTAI. Enhance your health journey with AI-driven recommendations.",
     keywords:

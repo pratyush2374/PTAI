@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
+import Loading from "./LoadingDashboard";
 
 interface DailyStat {
     stepCount: number;
@@ -240,24 +241,17 @@ const Main: React.FC = () => {
         }
     }, [status]);
 
-    return (
+    return generating || !processedData ? (
+        <Loading />
+    ) : (
         <div className={styles.main}>
             <div className={styles.left}>
-                {generating || !processedData ? (
-                    <div className={styles.generating}>
-                        <h1>Loading your stats...</h1>
-                        <div className={styles.loader}></div>
-                    </div>
-                ) : (
-                    <>
-                        <WelcomeMessage />
-                        <DataBoxes dataForDataBoxes={processedData.dataBoxes} />
-                        <TodaysPlan
-                            dataForExercise={processedData.exercise}
-                            dataForDiet={processedData.diet}
-                        />
-                    </>
-                )}
+                <WelcomeMessage />
+                <DataBoxes dataForDataBoxes={processedData.dataBoxes} />
+                <TodaysPlan
+                    dataForExercise={processedData.exercise}
+                    dataForDiet={processedData.diet}
+                />
             </div>
         </div>
     );

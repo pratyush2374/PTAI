@@ -8,6 +8,7 @@ import DayOverview from "./DayOverview";
 import Navbar from "@/app/(common-components)/Navbar";
 import Message from "./Message";
 import styles from "../exercise.module.css";
+import Loading from "@/app/(common-components)/Loading";
 
 interface DailyStats {
   focusArea: string;
@@ -48,7 +49,7 @@ const Exercise: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

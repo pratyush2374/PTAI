@@ -9,6 +9,7 @@ import DayOverview from "./DayOverview";
 import AllMeals from "./AllMeals";
 import Navbar from "@/app/(common-components)/Navbar";
 import { DailyStats } from "./types";
+import Loading from "@/app/(common-components)/Loading";
 
 const Diet: React.FC = () => {
     const [dietData, setDietData] = useState<DailyStats | null>(null);
@@ -33,7 +34,7 @@ const Diet: React.FC = () => {
     }, []);
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <Loading />;
     }
 
     if (error) {

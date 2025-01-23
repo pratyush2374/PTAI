@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "Sign In - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Sign in to your PTAI account to access personalized diet and exercise plans tailored to your fitness goals. Stay on track with AI-powered fitness insights.",
     keywords:

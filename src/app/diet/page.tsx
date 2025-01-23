@@ -3,7 +3,7 @@ import Diet from "./diet-components/Diet";
 
 export const metadata: Metadata = {
     title: "Diet - PTAI | Personal Trainer AI",
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: new URL('https://ptai.vercel.app'),
     description:
         "Access personalized diet plans tailored to your health and fitness goals with PTAI. Optimize your nutrition with AI-powered recommendations.",
     keywords:
