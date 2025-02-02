@@ -1,80 +1,98 @@
-# 🏋️ PTAI: Personal Trainer AI 
+# 🤖 PTAI (Personal Trainer AI) 🏋️‍♂️
 
-## 🚀 Project Overview
+🚀 **Live Demo:** [PTAI](https://ptai.vercel.app)
 
-PTAI is a cutting-edge personal fitness web application that harnesses the power of artificial intelligence to deliver personalized fitness and wellness solutions. Our mission is to revolutionize how individuals approach their health and fitness journey by providing intelligent, adaptive, and tailored guidance.
+---
 
-## ✨ Key Features
+## 📌 Overview
 
-### 🤖 Personalized AI-Driven Fitness
-- Intelligent exercise recommendations based on individual user profiles
-- Dynamic fitness routines adapting to user progress and goals
+PTAI is an AI-powered fitness assistant that helps users with personalized **diet plans**, **exercise routines**, and **fitness goals**. Built using **Next.js** for both frontend and backend, PTAI integrates AI and fitness data to provide an intuitive user experience. 🏆💪
 
-### 🍽️ Smart Nutrition Planning
-- Customized diet plans considering user preferences and dietary restrictions
-- Nutritional insights tailored to fitness objectives
+---
 
-### 📊 Comprehensive Tracking
-- Goal setting and progress monitoring
-- Detailed activity analytics
-- BMI calculation and health insights
+## 🛠️ Tech Stack
 
-## 🛠 Tech Stack
+- **Framework:** Next.js (Frontend + Backend)
+- **Database:** MongoDB 🛢️
+- **AI Integration:** Google Generative AI 🤖
+- **Styling:** Tailwind CSS 🎨, ShadCN 💅
+- **State Management & Utilities:** React Hook Form 📄, Zod 🛡️, Axios 🌐
+- **Authentication:** JWT 🔑, NextAuth ⚡
+- **Security:** Bcrypt 🔒, AES Encryption 🔑
+- **Email Service:** Nodemailer 📧
+- **Data Visualization:** Chart.js 📊
+- **Icons:** Lucide React 🎭
 
-### Frontend
-![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-blue?style=for-the-badge&logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+---
 
-### Backend
-![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-gray?style=for-the-badge&logo=express&logoColor=white) 
-![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
+## 📥 Installation & Setup
 
-### AI Integration
-![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
-
-## 🔧 Getting Started
-
-### Prerequisites
-- Node.js (v18+)
-- MongoDB
-- Docker (optional)
-
-### Installation
-
-1. Clone the repository
+### 🚀 Clone the Repository
 ```bash
-git clone https://github.com/pratyush2374/ptai.git
-cd ptai
+git clone https://github.com/pratyush2374/PTAI.git
+cd PTAI
 ```
 
-2. Install dependencies
+### 📦 Install Dependencies
 ```bash
 npm install
 ```
 
-3. Set up environment variables
-```bash
-cp .env.example .env.local
-# Edit .env.local with your configuration
+### ⚙️ Environment Variables
+Create a `.env.local` file and add the following:
+```env
+DATABASE_URL=mongodb+srv://your_mongo_url
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
+EMAIL_USER=your_gmail_id
+EMAIL_PASS=your_gmail_app_password
+NEXT_PUBLIC_AES_SECRET=f8x3b7e212oisda8012nd1c4a5a9e0f1g6h8j3k9l0p2
+JWT_SECRET=109asdads0129090asd8has012nads091ned8sa2d0239sj1endas09n
+NEXT_PUBLIC_DEFAULT_PASSWORD=default_password_for_google_login
+GEMINI_API_KEY=your_gemini_api_key
+CLIENT_URL=http://localhost:3000
 ```
 
-4. Run the development server
+### ▶️ Run the Project
+
+#### 🚧 Development Mode
 ```bash
 npm run dev
 ```
+**Runs on:** `http://localhost:3000` ⚡
 
-## 🤝 Contributing
-
-Contributions are welcome! 
-
-## 🌟 Support
-
-If you find this project helpful, please consider giving it a star on GitHub! 
+#### 🏗️ Build & Start in Production Mode
+```bash
+npm run build
+npm start
+```
 
 ---
 
-**Developed with ❤️ by the PTAI Team**
+## 🎯 Features
+
+✅ AI-powered personalized fitness plans 🏃‍♂️🤖  
+✅ Google OAuth for fetching fitness data 🔄  
+✅ Secure authentication with JWT & bcrypt 🔒  
+✅ Email-based communication via Nodemailer 📩  
+✅ Interactive charts & analytics using Chart.js 📊  
+✅ Fully responsive UI with Tailwind & ShadCN 📱  
+✅ Encrypted user data for security 🔑  
+
+---
+
+## 🌟 Contributing
+
+We welcome contributions! 🚀 Feel free to fork the repo, create a branch, and submit a pull request. 🙌
+
+---
+
+## 📧 Contact
+
+📩 Email: [pratyushsharma2374@gmail.com](mailto:pratyushsharma2374@gmail.com)  
+🐙 GitHub: [pratyush2374](https://github.com/pratyush2374)  
+💼 LinkedIn: [pratyush2374](https://www.linkedin.com/in/pratyush2374)  
+
+Happy Coding! 🚀💻
