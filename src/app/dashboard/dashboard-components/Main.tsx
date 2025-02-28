@@ -223,7 +223,7 @@ const Main: React.FC = () => {
             toast({
                 title: "Error",
                 description:
-                    error.response?.data?.message || "Error in fetching stats",
+                    error.response?.data?.error || "Error in fetching stats",
                 variant: "destructive",
             });
         } finally {

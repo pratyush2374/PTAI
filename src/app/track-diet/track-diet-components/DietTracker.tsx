@@ -8,6 +8,7 @@ import styles from "../trackDiet.module.css";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/(common-components)/Loading";
+import { Info } from "lucide-react";
 
 interface MealResponse {
     name: string;
@@ -145,6 +146,13 @@ const DietTracker: React.FC = () => {
     ) : (
         <div className={styles.dietTracker}>
             <h1 className={styles.heading}>Track Your Diet</h1>
+            <div className="flex items-center p-3 mt-1 bg-blue-50 border border-blue-200 rounded-md text-sm text-gray-600">
+                <Info size={16} className="text-blue-500 mr-2 flex-shrink-0" />
+                <div>
+                    Note: Entering a random text field will be considered as 0
+                    calories
+                </div>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {["BREAKFAST", "LUNCH", "SNACK", "DINNER"].map((mealType) => (
                     <div key={mealType} className={styles.mealSectionLast}>
@@ -205,7 +213,7 @@ const DietTracker: React.FC = () => {
                                         <input
                                             type="text"
                                             id={`input-${meal.name}`}
-                                            placeholder="Enter the food you ate"
+                                            placeholder="Enter the food you ate, write no if you didn't eat anything"
                                             onChange={(e) =>
                                                 handleAlternateFood(
                                                     meal.name,
@@ -213,11 +221,11 @@ const DietTracker: React.FC = () => {
                                                 )
                                             }
                                             className={styles.alternateInput}
-                                            // required={
-                                            //     formValues?.responses?.[
-                                            //         meal.name
-                                            //     ] === "didNotEat"
-                                            // }
+                                            required={
+                                                formValues?.responses?.[
+                                                    meal.name
+                                                ] === "didNotEat"
+                                            }
                                         />
                                     </div>
                                 )}

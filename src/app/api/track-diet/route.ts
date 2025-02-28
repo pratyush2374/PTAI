@@ -100,6 +100,8 @@ export async function POST(req: NextRequest) {
             calculateCalories
         );
 
+        console.log(totalCalories);
+
         await prisma.dailyStat.update({
             where: {
                 id: statsIdFromRequest,
@@ -113,9 +115,10 @@ export async function POST(req: NextRequest) {
             message: `Total calories calculated for the day: ${totalCalories} cal`,
         });
     } catch (error: any) {
+        console.log(error);
         return NextResponse.json(
             {
-                error: "Failed to generate plans",
+                error: "Failed to calculate total calories",
                 details:
                     error instanceof Error ? error.message : "Unknown error",
                 timestamp: new Date().toISOString(),

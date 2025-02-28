@@ -59,16 +59,13 @@ export async function POST(req: NextRequest) {
                     if (now - accessTokenIssueTime < 10 * 60 * 1000) {
                         const dailyStats = await prisma.dailyStat.findFirst({
                             where: {
-                                email,
-                                date: {
-                                    gte: startOfDay,
-                                    lte: endOfDay,
-                                },
+                                email,                                
                             },
                             include: {
                                 meals: true,
                             },
                             orderBy: { date: "desc" },
+                            take: 1,
                         });
 
                         const userStat = await prisma.stats.findUnique({
